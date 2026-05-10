@@ -18,7 +18,7 @@ app.post("/webhook", (req, res) => {
 
   setTimeout(() => {
     paid = false;
-  }, 30000);
+  }, 300000);
 
   res.status(200).send("ok");
 });
