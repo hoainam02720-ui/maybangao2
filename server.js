@@ -1,16 +1,33 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
 
 const app = express();
 
-app.use(express.static(__dirname));
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+let trangThai = "OFF";
+
+app.get("/", (req, res) => {
+  res.send("Máy bán gạo đang chạy 😄");
 });
 
-const PORT = process.env.PORT || 8080;
+app.post("/webhook", (req, res) => {
 
-app.listen(PORT, () => {
-  console.log('Server chạy');
+  console.log(req.body);
+
+  trangThai = "ON";
+
+  res.send("Đã nhận thanh toán");
+
+});
+
+app.get("/status", (req, res) => {
+
+  res.send(trangThai);
+
+  trangThai = "OFF";
+
+});
+
+app.listen(8080, () => {
+  console.log("Server chạy cổng 8080");
 });
