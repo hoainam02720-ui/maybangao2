@@ -1,18 +1,112 @@
+const express = require("express")
+const multer = require("multer")
+const fs = require("fs")
+
+const app = express()
+
+app.use("/uploads", express.static("uploads"))
+
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads")
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads")
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname)
+  }
+})
+
+const upload = multer({ storage: storage })
+
+
+
+// ======================
+// TRANG CHINH
+// ======================
+
+app.get("/", (req, res) => {
+
+res.send(`
+
+<body style="
+background:black;
+color:white;
+font-family:Arial;
+padding:20px;
+">
+
+<h1 style="color:yellow;">
+NAMRICE AUTO
+</h1>
+
+<h2 style="color:lime;">
+DANG KHOA
+</h2>
+
+<hr>
+
+<h2>UPLOAD VIDEO</h2>
+
+<form action="/upload" method="POST" enctype="multipart/form-data">
+
+<input type="file" name="video">
+
+<br><br>
+
+<button type="submit">
+UPLOAD VIDEO
+</button>
+
+</form>
+
+<br><br>
+
+<a href="/videos"
+style="
+color:cyan;
+font-size:30px;
+">
+XEM VIDEO
+</a>
+
+</body>
+
+`)
+
+})
+
+
+
+// ======================
+// UPLOAD VIDEO
+// ======================
+
+app.post("/upload", upload.single("video"), (req, res) => {
+
+res.redirect("/videos")
+
+})
+
+
+
 // ======================
 // XOA VIDEO
 // ======================
 
-app.get("/delete/:name",(req,res)=>{
+app.get("/delete/:name", (req, res) => {
 
-const file=req.params.name
+const file = req.params.name
 
-try{
+try {
 
-fs.unlinkSync("uploads/"+file)
+fs.unlinkSync("uploads/" + file)
 
-console.log("DA XOA:",file)
+console.log("DA XOA:", file)
 
-}catch(err){
+} catch (err) {
 
 console.log(err)
 
@@ -24,23 +118,24 @@ res.redirect("/videos")
 
 
 
+
 // ======================
 // VIDEO FEED KIEU TIKTOK
 // ======================
 
-app.get("/videos",(req,res)=>{
+app.get("/videos", (req, res) => {
 
-const files=fs.readdirSync("uploads")
+const files = fs.readdirSync("uploads")
 
-let html=""
+let html = ""
 
-files.reverse().forEach(file=>{
+files.reverse().forEach(file => {
 
-const randomViews=Math.floor(Math.random()*90000)+1000
-const randomLikes=Math.floor(Math.random()*5000)+100
-const randomComments=Math.floor(Math.random()*300)+10
+const randomViews = Math.floor(Math.random()*90000)+1000
+const randomLikes = Math.floor(Math.random()*5000)+100
+const randomComments = Math.floor(Math.random()*300)+10
 
-html+=`
+html += `
 
 <div style="
 height:100vh;
@@ -246,5 +341,13 @@ ${html}
 </body>
 
 `)
+
+})
+
+
+
+app.listen(3000, () => {
+
+console.log("Server running")
 
 })
