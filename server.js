@@ -1,5 +1,3 @@
-
-
 const express = require("express")
 const multer = require("multer")
 const fs = require("fs")
@@ -9,178 +7,108 @@ const app = express()
 app.use("/uploads", express.static("uploads"))
 
 if (!fs.existsSync("uploads")) {
-fs.mkdirSync("uploads")
+  fs.mkdirSync("uploads")
 }
 
 const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, "uploads")
+  },
 
-destination: function(req, file, cb) {
-cb(null, "uploads")
-},
-
-filename: function(req, file, cb) {
-cb(null, Date.now() + "-" + file.originalname)
-}
-
+  filename: function(req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname)
+  }
 })
 
 const upload = multer({ storage: storage })
 
-
-
-// =========================
-// TRANG CHINH
-// =========================
-
 app.get("/", (req, res) => {
 
-res.send(`
-<body style="
-background:black;
-color:white;
-font-family:Arial;
-padding:30px;
-">
+  res.send(`
+  <body style="background:black;color:white;font-family:Arial;padding:30px;">
 
-<h1>NAMRICE AUTO</h1>
+  <h1>NAMRICE AUTO</h1>
 
-<form action="/upload" method="POST" enctype="multipart/form-data">
+  <form action="/upload" method="POST" enctype="multipart/form-data">
 
-<input type="file" name="video">
+  <input type="file" name="video">
 
-<button type="submit">
-UPLOAD VIDEO
-</button>
+  <button type="submit">
+  UPLOAD VIDEO
+  </button>
 
-</form>
+  </form>
 
-<br>
+  <br>
 
-<a href="/videos" style="
-color:lime;
-font-size:25px;
-">
-MO VIDEO
-</a>
+  <a href="/videos" style="color:lime;font-size:25px;">
+  MO VIDEO
+  </a>
 
-</body>
-`)
+  </body>
+  `)
+
 })
-
-
-
-// =========================
-// UPLOAD VIDEO
-// =========================
 
 app.post("/upload", upload.single("video"), (req, res) => {
 
-res.redirect("/videos")
+  res.redirect("/videos")
 
 })
-
-
-
-// =========================
-// XOA VIDEO
-// =========================
-
-app.get("/delete/:name", (req, res) => {
-
-const file = req.params.name
-
-try {
-
-fs.unlinkSync("uploads/" + file)
-
-console.log("DA XOA:", file)
-
-} catch(err) {
-
-console.log(err)
-
-}
-
-res.redirect("/videos")
-
-})
-
-
-
-// =========================
-// VIDEO FEED
-// =========================
 
 app.get("/videos", (req, res) => {
 
-const files = fs.readdirSync("uploads")
+  const files = fs.readdirSync("uploads")
 
-let html = ""
+  let html = ""
 
-files.reverse().forEach(file => {
+  files.reverse().forEach(file => {
 
-html += `
-<div style="
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-background:black;
-border-bottom:2px solid #222;
-">
+    html += `
+    <div style="
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:black;
+    ">
 
-<video
-width="330"
-height="580"
-controls
-autoplay
-style="
-border-radius:20px;
-background:black;
-object-fit:cover;
-"
->
+    <video
+    width="330"
+    height="580"
+    controls
+    autoplay
+    style="
+    border-radius:20px;
+    object-fit:cover;
+    background:black;
+    "
+    >
 
-<source src="/uploads/${file}" type="video/mp4">
+    <source src="/uploads/${file}" type="video/mp4">
 
-</video>
+    </video>
 
-<br>
+    </div>
+    `
 
-<a href="/delete/${file}" style="
-background:red;
-color:white;
-padding:12px 20px;
-border-radius:12px;
-text-decoration:none;
-font-size:22px;
-">
-XOA VIDEO
-</a>
+  })
 
-</div>
-`
+  res.send(`
+  <body style="
+  margin:0;
+  background:black;
+  ">
+
+  ${html}
+
+  </body>
+  `)
 
 })
-
-res.send(`
-<body style="
-margin:0;
-background:black;
-">
-
-${html}
-
-</body>
-`)
-})
-
-
 
 app.listen(3000, () => {
 
-console.log("Server running")
+  console.log("Server running")
 
 })
-
