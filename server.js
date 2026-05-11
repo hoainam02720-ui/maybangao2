@@ -94,7 +94,29 @@ res.send("OK")
 
 })
 
+app.get("/auth",(req,res)=>{
 
+const appKey=process.env.TTS_APP_KEY
+
+const redirectUri="https://maybangao2-production.up.railway.app/callback"
+
+const authUrl=`https://services.tiktokshop.com/open/authorize?app_key=${appKey}&state=namrice123&redirect_uri=${encodeURIComponent(redirectUri)}`
+
+res.redirect(authUrl)
+
+})
+
+
+
+app.get("/callback",(req,res)=>{
+
+const code=req.query.code
+
+console.log("TIKTOK CODE:",code)
+
+res.send("KET NOI TIKTOK SHOP THANH CONG")
+
+})
 
 app.listen(process.env.PORT || 3000,()=>{
 
