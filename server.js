@@ -1,9 +1,9 @@
-const express=require("express")
-const app=express()
+const express = require("express")
+const app = express()
 
-let locked=true
+let locked = true
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
 
 res.send(`
 <body style="background:black;color:white">
@@ -12,7 +12,7 @@ res.send(`
 NAMRICE AUTO
 </div>
 
-<div style="font-size:55px;color:${locked ? "lime" : "red"}">
+<div style="font-size:55px;color:lime">
 ${locked ? "ĐANG KHÓA" : "ĐÃ MỞ KHÓA"}
 </div>
 
@@ -29,20 +29,24 @@ MÁY MAY01
 
 })
 
-app.get("/picked",(req,res)=>{
+app.get("/picked", (req, res) => {
 
-locked=false
+locked = false
 
 res.send("DA MO KHOA")
 
 })
 
-app.get("/lock",(req,res)=>{
+app.get("/lock", (req, res) => {
 
-locked=true
+locked = true
 
 res.send("DA KHOA")
 
 })
 
-app.listen(3000)
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, () => {
+console.log("Server running")
+})
