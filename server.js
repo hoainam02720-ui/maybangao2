@@ -1,7 +1,4 @@
-Hoàng ơi sửa giúp tao nguyên file "server.js" nha 😄
-Code cũ bị lỗi dấu ` nên Railway chạy không được.
 
-Thay nguyên file bằng code này luôn:
 
 const express = require("express")
 const multer = require("multer")
@@ -187,4 +184,3 @@ console.log("Server running")
 
 })
 
-Rồi commit lại để Railway tự deploy 😄
