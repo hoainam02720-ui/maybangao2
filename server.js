@@ -113,8 +113,5 @@ console.log("Server running")
 
 })
 
-console.log("Server running")
-
-})
 
   
