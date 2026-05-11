@@ -131,7 +131,7 @@ res.redirect(redirect)
 
 app.get("/callback", async (req,res)=>{
 
-const code=req.query.code
+const code=req.query.auth_code || req.query.code
 
 console.log("TIKTOK CODE:",code)
 
