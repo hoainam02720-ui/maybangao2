@@ -3,168 +3,104 @@ const app = express();
 
 app.use(express.json());
 
-// =====================
-// TRẠNG THÁI
-// =====================
-
 let paid = false;
 
-let machine = {
+const machine = {
   machineId: "MAY01",
   address: "185 tổ 8 ấp Đông Thạnh xã Đông Thạnh Bình Minh Vĩnh Long",
-
   slotA1: {
-    status: "EMPTY", // EMPTY / RESERVED / OPEN
+    status: "EMPTY",
     orderId: null,
     product: null,
     kg: 0
   }
 };
 
-// =====================
-// TRANG CHÍNH
-// =====================
-
+// Trang chính
 app.get("/", (req, res) => {
 
-  res.json({
-    paid,
-    machine
-  });
+  const statusColor = paid ? "green" : "red";
+  const statusText = paid ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN";
 
+  res.send(`
+  <html>
+    <head>
+      <title>NamRice Auto</title>
+    </head>
+
+    <body style="
+      background:black;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+      padding-top:50px;
+    ">
+
+      <h1 style="font-size:60px;color:yellow;">
+        NAMRICE AUTO
+      </h1>
+
+      <h2 style="
+        font-size:50px;
+        color:${statusColor};
+      ">
+        ${statusText}
+      </h2>
+
+      <p style="font-size:35px;">
+        Máy: ${machine.machineId}
+      </p>
+
+      <p style="font-size:28px;">
+        ${machine.address}
+      </p>
+
+      <div style="
+        margin-top:40px;
+        border:3px solid white;
+        padding:20px;
+        width:80%;
+        margin-left:auto;
+        margin-right:auto;
+        border-radius:20px;
+      ">
+
+        <h2 style="font-size:40px;color:cyan;">
+          Ô A1
+        </h2>
+
+        <p style="font-size:35px;">
+          Trạng thái: ${machine.slotA1.status}
+        </p>
+
+        <p style="font-size:30px;">
+          Đơn hàng: ${machine.slotA1.orderId || "Không có"}
+        </p>
+
+      </div>
+
+    </body>
+  </html>
+  `);
 });
 
-// =====================
-// ESP32 ĐỌC TRẠNG THÁI
-// =====================
-
-app.get("/machine", (req, res) => {
-
-  res.json(machine);
-
-});
-
-// =====================
-// SHIPPER ĐÃ NHẬN HÀNG
-// =====================
-
-app.get("/shipper-picked", (req, res) => {
-
-  if (machine.slotA1.status === "RESERVED") {
-
-    console.log("SHIPPER ĐÃ NHẬN HÀNG");
-
-    // mở kho
-    machine.slotA1.status = "OPEN";
-
-    console.log("MỞ KHÓA Ô A1");
-
-  }
-
-  res.send("OK");
-
-});
-
-// =====================
-// RESET Ô
-// =====================
-
-app.get("/reset", (req, res) => {
-
-  machine.slotA1 = {
-    status: "EMPTY",
-    orderId: null,
-    product: null,
-    kg: 0
-  };
-
-  console.log("RESET Ô A1");
-
-  res.send("RESET OK");
-
-});
-
-// =====================
-// WEBHOOK
-// =====================
-
+// Webhook
 app.post("/webhook", (req, res) => {
 
-  console.log("WEBHOOK:");
+  console.log("Webhook:");
   console.log(req.body);
 
-  // =====================================
-  // SEPAY
-  // =====================================
+  paid = true;
 
-  if (req.body.transferType) {
+  setTimeout(() => {
+    paid = false;
+  }, 300000);
 
-    console.log("KHÁCH CHUYỂN KHOẢN");
-
-    paid = true;
-
-    setTimeout(() => {
-      paid = false;
-    }, 300000);
-
-  }
-
-  // =====================================
-  // TIKTOK CÓ ĐƠN
-  // =====================================
-
-  if (
-    req.body.type === "ORDER_PAID" ||
-    req.body.order_status === "UNPAID"
-  ) {
-
-    console.log("CÓ ĐƠN TIKTOK");
-
-    machine.slotA1.status = "RESERVED";
-
-    machine.slotA1.orderId =
-      req.body.order_id || "TT123";
-
-    machine.slotA1.product =
-      "ST25";
-
-    machine.slotA1.kg =
-      5;
-
-    console.log("KHÓA Ô A1");
-
-  }
-
-  // =====================================
-  // SHIPPER ĐÃ NHẬN
-  // =====================================
-
-  if (
-    req.body.order_status === "PICKED_UP"
-  ) {
-
-    console.log("SHIPPER ĐÃ NHẬN ĐƠN");
-
-    machine.slotA1.status = "OPEN";
-
-    console.log("IN BILL");
-
-    console.log("MỞ KHÓA A1");
-
-  }
-
-  res.status(200).send("OK");
-
+  res.status(200).send("ok");
 });
-
-// =====================
-// CHẠY SERVER
-// =====================
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
-  console.log("NamRice Auto chạy");
-
+  console.log("Server chạy");
 });
