@@ -1,7 +1,8 @@
 const express=require("express")
-const https=require("https")
 const multer=require("multer")
+const fs=require("fs")
 const path=require("path")
+const https=require("https")
 
 const app=express()
 
@@ -9,9 +10,23 @@ app.use(express.json())
 
 
 
-// =========================
-// VIDEO STORAGE
-// =========================
+// ======================
+// TAO FOLDER UPLOAD
+// ======================
+
+if(!fs.existsSync("uploads")){
+
+fs.mkdirSync("uploads")
+
+}
+
+app.use("/uploads",express.static("uploads"))
+
+
+
+// ======================
+// MULTER VIDEO
+// ======================
 
 const storage=multer.diskStorage({
 
@@ -23,7 +38,7 @@ cb(null,"uploads/")
 
 filename:(req,file,cb)=>{
 
-cb(null,Date.now()+path.extname(file.originalname))
+cb(null,Date.now()+"-"+file.originalname)
 
 }
 
@@ -31,55 +46,25 @@ cb(null,Date.now()+path.extname(file.originalname))
 
 const upload=multer({storage})
 
-app.use("/uploads",express.static("uploads"))
 
 
-
-// =========================
-// TRANG THÁI KHÓA
-// =========================
+// ======================
+// TRANG THAI MAY
+// ======================
 
 let locked=true
 
 
 
-// =========================
-// DANH SÁCH VIDEO
-// =========================
-
-let videos=[]
-
-
-
-// =========================
-// TRANG CHÍNH
-// =========================
+// ======================
+// HOME
+// ======================
 
 app.get("/",(req,res)=>{
 
-let videoHtml=""
-
-videos.reverse().forEach(v=>{
-
-videoHtml+=`
-
-<div style="margin-top:40px">
-
-<h2>${v.title}</h2>
-
-<video width="320" controls>
-<source src="${v.url}">
-</video>
-
-</div>
-
-`
-
-})
-
 res.send(`
 
-<body style="background:black;color:white">
+<body style="background:black;color:white;font-family:sans-serif">
 
 <h1 style="color:yellow">
 NAMRICE AUTO
@@ -95,23 +80,21 @@ ${locked ? "DANG KHOA" : "DA MO KHOA"}
 
 <form action="/upload" method="post" enctype="multipart/form-data">
 
-<input type="text" name="title" placeholder="Ten video">
-
-<br><br>
-
 <input type="file" name="video">
 
 <br><br>
 
 <button type="submit">
-UPLOAD
+UPLOAD VIDEO
 </button>
 
 </form>
 
-<hr>
+<br>
 
-${videoHtml}
+<a href="/videos" style="color:cyan;font-size:25px">
+XEM VIDEO
+</a>
 
 </body>
 
@@ -121,40 +104,77 @@ ${videoHtml}
 
 
 
-// =========================
+// ======================
 // UPLOAD VIDEO
-// =========================
+// ======================
 
 app.post("/upload",upload.single("video"),(req,res)=>{
 
-const title=req.body.title
-
-const file=req.file
-
-if(!file){
+if(!req.file){
 
 return res.send("KHONG CO VIDEO")
 
 }
 
-const url="/uploads/"+file.filename
-
-videos.push({
-
-title,
-url
-
-})
-
-res.redirect("/")
+res.redirect("/videos")
 
 })
 
 
 
-// =========================
-// MỞ KHÓA
-// =========================
+// ======================
+// XEM VIDEO
+// ======================
+
+app.get("/videos",(req,res)=>{
+
+const files=fs.readdirSync("uploads")
+
+let html=`
+
+<body style="background:black;color:white;font-family:sans-serif">
+
+<h1 style="color:yellow">
+VIDEO NAMRICE
+</h1>
+
+<a href="/" style="color:cyan">
+UPLOAD THEM
+</a>
+
+<hr>
+
+`
+
+files.reverse().forEach(file=>{
+
+html+=`
+
+<div style="margin-bottom:50px">
+
+<video width="320" controls>
+
+<source src="/uploads/${file}">
+
+</video>
+
+</div>
+
+`
+
+})
+
+html+=`</body>`
+
+res.send(html)
+
+})
+
+
+
+// ======================
+// MO KHOA
+// ======================
 
 app.get("/picked",(req,res)=>{
 
@@ -166,9 +186,9 @@ res.send("DA MO KHOA")
 
 
 
-// =========================
-// KHÓA LẠI
-// =========================
+// ======================
+// KHOA LAI
+// ======================
 
 app.get("/lock",(req,res)=>{
 
@@ -180,9 +200,9 @@ res.send("DA KHOA")
 
 
 
-// =========================
+// ======================
 // SEPAY WEBHOOK
-// =========================
+// ======================
 
 app.post("/sepay",(req,res)=>{
 
@@ -198,9 +218,9 @@ res.send("OK")
 
 
 
-// =========================
+// ======================
 // TIKTOK WEBHOOK
-// =========================
+// ======================
 
 app.post("/tiktok",(req,res)=>{
 
@@ -214,9 +234,9 @@ res.send("OK")
 
 
 
-// =========================
+// ======================
 // AUTH TIKTOK
-// =========================
+// ======================
 
 app.get("/auth",(req,res)=>{
 
@@ -230,9 +250,9 @@ res.redirect(redirect)
 
 
 
-// =========================
+// ======================
 // CALLBACK TIKTOK
-// =========================
+// ======================
 
 app.get("/callback",async(req,res)=>{
 
@@ -308,9 +328,9 @@ tikTokReq.end()
 
 
 
-// =========================
+// ======================
 // SERVER
-// =========================
+// ======================
 
 app.listen(process.env.PORT || 3000,()=>{
 
