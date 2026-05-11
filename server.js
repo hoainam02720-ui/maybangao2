@@ -6,25 +6,33 @@ let orders=[]
 app.get("/",(req,res)=>{
 
 let html=orders.map(o=>`
-<div style="border:3px solid yellow;padding:20px;margin:20px;border-radius:20px">
-<div style="font-size:50px;color:cyan">ĐƠN TIKTOK</div>
-<div style="font-size:35px">Mã: ${o.id}</div>
-<div style="font-size:35px;color:lime">GẠO ST25 5KG</div>
+<div style="border:3px solid yellow;margin:20px;padding:20px">
+<div style="font-size:50px;color:cyan">
+ĐƠN TIKTOK
+</div>
+
+<div style="font-size:35px">
+${o.id}
+</div>
+
+<div style="font-size:35px;color:lime">
+GẠO ST25 5KG
+</div>
 </div>
 `).join("")
 
 res.send(`
-<body style="background:black;color:white;text-align:center;font-family:Arial">
+<body style="background:black;color:white;text-align:center">
 
 <div style="font-size:70px;color:yellow">
 NAMRICE AUTO
 </div>
 
-<div style="font-size:55px;color:red;margin-top:20px">
+<div style="font-size:55px;color:red">
 CHƯA THANH TOÁN
 </div>
 
-<div style="font-size:40px;margin-top:30px">
+<div style="font-size:40px">
 MÁY MAY01
 </div>
 
@@ -45,6 +53,7 @@ id:"TT"+Date.now()
 })
 
 res.send("OK")
+
 })
 
 app.listen(3000)
