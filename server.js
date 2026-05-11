@@ -7,6 +7,7 @@ app.get("/",(req,res)=>{
 
 let html=orders.map(o=>`
 <div style="border:3px solid yellow;margin:20px;padding:20px">
+
 <div style="font-size:50px;color:cyan">
 ĐƠN TIKTOK
 </div>
@@ -18,11 +19,12 @@ ${o.id}
 <div style="font-size:35px;color:lime">
 GẠO ST25 5KG
 </div>
+
 </div>
 `).join("")
 
 res.send(`
-<body style="background:black;color:white;text-align:center">
+<body style="background:black;color:white">
 
 <div style="font-size:70px;color:yellow">
 NAMRICE AUTO
