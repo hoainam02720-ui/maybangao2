@@ -1,17 +1,9 @@
 const express = require("express");
-const fs = require("fs");
-
 const app = express();
 
 app.use(express.json());
 
-const DATA_FILE = "data.json";
-
-// =======================
-// TẠO DATA MẶC ĐỊNH
-// =======================
-
-let systemData = {
+let data = {
   paid: false,
 
   machine: {
@@ -24,111 +16,134 @@ let systemData = {
       status: "EMPTY",
       orderId: null,
       product: null,
-      kg: 0
-    }
+      kg: 0,
+    },
   },
 
-  orders: []
+  orders: [],
 };
 
-// =======================
-// ĐỌC FILE NẾU CÓ
-// =======================
-
-if (fs.existsSync(DATA_FILE)) {
-  const raw = fs.readFileSync(DATA_FILE);
-
-  systemData = JSON.parse(raw);
-}
-
-// =======================
-// HÀM LƯU FILE
-// =======================
-
-function saveData() {
-  fs.writeFileSync(
-    DATA_FILE,
-    JSON.stringify(systemData, null, 2)
-  );
-}
-
-// =======================
-// TRANG WEB
-// =======================
-
+// WEB CHÍNH
 app.get("/", (req, res) => {
-
-  const statusColor =
-    systemData.paid ? "green" : "red";
-
-  const statusText =
-    systemData.paid
-      ? "ĐÃ THANH TOÁN"
-      : "CHƯA THANH TOÁN";
-
   res.send(`
   <html>
+  <head>
+    <title>NAMRICE AUTO</title>
 
-  <body style="
-    background:black;
-    color:white;
-    font-family:Arial;
-    text-align:center;
-    padding-top:50px;
-  ">
+    <style>
+      body{
+        background:black;
+        color:white;
+        font-family:Arial;
+        text-align:center;
+        padding:20px;
+      }
 
-    <h1 style="
-      font-size:60px;
-      color:yellow;
-    ">
-      NAMRICE AUTO
-    </h1>
+      h1{
+        color:yellow;
+        font-size:60px;
+      }
 
-    <h2 style="
-      font-size:50px;
-      color:${statusColor};
-    ">
-      ${statusText}
-    </h2>
+      .paid{
+        color:#00ff66;
+        font-size:45px;
+      }
 
-    <p style="font-size:35px;">
-      Máy:
-      ${systemData.machine.machineId}
-    </p>
+      .unpaid{
+        color:red;
+        font-size:45px;
+      }
 
-    <p style="font-size:28px;">
-      ${systemData.machine.address}
-    </p>
+      .box{
+        border:3px solid white;
+        border-radius:20px;
+        padding:20px;
+        margin-top:20px;
+      }
 
-    <div style="
-      margin-top:40px;
-      border:3px solid white;
-      padding:20px;
-      width:80%;
-      margin-left:auto;
-      margin-right:auto;
-      border-radius:20px;
-    ">
-
-      <h2 style="
-        font-size:40px;
+      .blue{
         color:cyan;
-      ">
+        font-size:40px;
+      }
+
+      .text{
+        font-size:30px;
+        margin-top:15px;
+      }
+
+      .history{
+        text-align:left;
+        font-size:22px;
+        white-space:pre-wrap;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <h1>NAMRICE AUTO</h1>
+
+    <div class="${
+      data.paid ? "paid" : "unpaid"
+    }">
+      ${
+        data.paid
+          ? "ĐÃ THANH TOÁN"
+          : "CHƯA THANH TOÁN"
+      }
+    </div>
+
+    <div class="text">
+      Máy: ${data.machine.machineId}
+    </div>
+
+    <div class="text">
+      ${data.machine.address}
+    </div>
+
+    <div class="box">
+
+      <div class="blue">
         Ô A1
-      </h2>
+      </div>
 
-      <p style="font-size:35px;">
+      <div class="text">
         Trạng thái:
-        ${systemData.machine.slotA1.status}
-      </p>
+        ${data.machine.slotA1.status}
+      </div>
 
-      <p style="font-size:30px;">
+      <div class="text">
         Đơn hàng:
         ${
-          systemData.machine.slotA1.orderId ||
+          data.machine.slotA1.orderId ||
           "Không có"
         }
-      </p>
+      </div>
+
+      <div class="text">
+        Sản phẩm:
+        ${
+          data.machine.slotA1.product ||
+          "Không có"
+        }
+      </div>
+
+      <div class="text">
+        Kg:
+        ${data.machine.slotA1.kg}
+      </div>
+
+    </div>
+
+    <div class="box">
+
+      <div class="blue">
+        LỊCH SỬ ĐƠN
+      </div>
+
+      <div class="history">
+${JSON.stringify(data.orders, null, 2)}
+      </div>
 
     </div>
 
@@ -137,72 +152,81 @@ app.get("/", (req, res) => {
   `);
 });
 
-// =======================
-// WEBHOOK
-// =======================
+// XEM DỮ LIỆU JSON
+app.get("/data", (req, res) => {
+  res.json(data);
+});
 
+// WEBHOOK SEPAY
 app.post("/webhook", (req, res) => {
-
   console.log("Webhook:");
   console.log(req.body);
 
-  systemData.paid = true;
+  data.paid = true;
 
-  // tạo đơn mới
-  const order = {
-    id: Date.now(),
-
-    amount:
-      req.body.content || "Không rõ",
-
-    time:
-      new Date().toLocaleString()
-  };
-
-  systemData.orders.push(order);
-
-  // cập nhật ô A1
-  systemData.machine.slotA1.status =
-    "RESERVED";
-
-  systemData.machine.slotA1.orderId =
-    order.id;
-
-  systemData.machine.slotA1.product =
-    "Gạo ST25";
-
-  systemData.machine.slotA1.kg = 5;
-
-  saveData();
+  data.orders.push({
+    type: "BANK",
+    amount: req.body?.content?.transferAmount || 0,
+    time: new Date(),
+    raw: req.body,
+  });
 
   setTimeout(() => {
-
-    systemData.paid = false;
-
-    saveData();
-
+    data.paid = false;
   }, 300000);
 
   res.status(200).send("ok");
 });
 
-// =======================
-// XEM DỮ LIỆU JSON
-// =======================
+// GIẢ LẬP ĐƠN TIKTOK
+app.get("/fake-tiktok", (req, res) => {
+  const orderId =
+    "TK" + Math.floor(Math.random() * 100000);
 
-app.get("/data", (req, res) => {
+  data.machine.slotA1 = {
+    status: "LOCKED",
+    orderId: orderId,
+    product: "Gạo ST25",
+    kg: 5,
+  };
 
-  res.json(systemData);
+  data.orders.push({
+    type: "TIKTOK",
+    orderId: orderId,
+    product: "Gạo ST25",
+    kg: 5,
+    status: "CHỜ SHIPPER",
+    time: new Date(),
+  });
 
+  res.send("Đã tạo đơn TikTok");
 });
 
-// =======================
+// SHIPPER ĐÃ LẤY HÀNG
+app.get("/picked", (req, res) => {
+  const orderId =
+    data.machine.slotA1.orderId;
+
+  data.orders.push({
+    type: "SYSTEM",
+    message:
+      "Shipper đã lấy hàng " + orderId,
+    time: new Date(),
+  });
+
+  data.machine.slotA1 = {
+    status: "EMPTY",
+    orderId: null,
+    product: null,
+    kg: 0,
+  };
+
+  res.send("Đã mở khóa kho");
+});
 
 const PORT =
   process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
   console.log("Server chạy");
-
 });
