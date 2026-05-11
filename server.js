@@ -8,15 +8,15 @@ app.get("/",(req,res)=>{
 let html=orders.map(o=>`
 <div style="border:3px solid yellow;padding:20px;margin:20px;border-radius:20px">
 <div style="font-size:50px;color:cyan">ĐƠN TIKTOK</div>
-<div style="font-size:35px;color:white">Mã: ${o.id}</div>
-<div style="font-size:35px;color:lime">Gạo ST25 5KG</div>
+<div style="font-size:35px">Mã: ${o.id}</div>
+<div style="font-size:35px;color:lime">GẠO ST25 5KG</div>
 </div>
 `).join("")
 
 res.send(`
 <body style="background:black;color:white;text-align:center;font-family:Arial">
 
-<div style="font-size:70px;color:yellow;font-weight:bold">
+<div style="font-size:70px;color:yellow">
 NAMRICE AUTO
 </div>
 
@@ -28,8 +28,8 @@ CHƯA THANH TOÁN
 MÁY MAY01
 </div>
 
-<div style="font-size:30px;margin-top:20px">
-185 tổ 8 ấp Đông Thạnh
+<div style="font-size:30px">
+185 TỔ 8 ẤP ĐÔNG THẠNH
 </div>
 
 ${html}
@@ -44,12 +44,7 @@ orders.push({
 id:"TT"+Date.now()
 })
 
-res.send(`
-<body style="background:black;color:lime;
-font-size:60px;text-align:center;padding-top:200px">
-ĐÃ TẠO ĐƠN TIKTOK
-</body>
-`)
+res.send("OK")
 })
 
 app.listen(3000)
