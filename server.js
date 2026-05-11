@@ -1,9 +1,11 @@
-const express = require("express")
-const app = express()
+const express=require("express")
+const app=express()
 
-let locked = true
+app.use(express.json())
 
-app.get("/", (req, res) => {
+let locked=true
+
+app.get("/",(req,res)=>{
 
 res.send(`
 <body style="background:black;color:white">
@@ -29,24 +31,40 @@ MÁY MAY01
 
 })
 
-app.get("/picked", (req, res) => {
+app.get("/picked",(req,res)=>{
 
-locked = false
+locked=false
 
 res.send("DA MO KHOA")
 
 })
 
-app.get("/lock", (req, res) => {
+app.get("/lock",(req,res)=>{
 
-locked = true
+locked=true
 
 res.send("DA KHOA")
 
 })
 
-const PORT = process.env.PORT || 3000
+app.post("/tiktok",(req,res)=>{
 
-app.listen(PORT, () => {
+console.log(req.body)
+
+locked=false
+
+res.send("OK")
+
+})
+
+app.get("/tiktok",(req,res)=>{
+
+res.send("TIKTOK WEBHOOK OK")
+
+})
+
+app.listen(process.env.PORT || 3000,()=>{
+
 console.log("Server running")
+
 })
