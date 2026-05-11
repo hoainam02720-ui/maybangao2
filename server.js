@@ -5,7 +5,7 @@ app.use(express.json());
 
 let paid = false;
 
-let machine = {
+const machine = {
   machineId: "MAY01",
   address: "185 tổ 8 ấp Đông Thạnh xã Đông Thạnh Bình Minh Vĩnh Long",
   slotA1: {
@@ -16,17 +16,63 @@ let machine = {
   }
 };
 
-let orders = [];
+const orders = [];
 
 app.get("/", (req, res) => {
 
-  let html = `
-  <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>NAMRICE AUTO</title>
-  </head>
+  const orderHtml = orders.map(o => `
+    <div style="
+      border:3px solid yellow;
+      border-radius:20px;
+      padding:25px;
+      margin-top:30px;
+      background:black;
+    ">
+      <div style="
+        color:cyan;
+        font-size:45px;
+        font-weight:bold;
+      ">
+        ĐƠN TIKTOK
+      </div>
 
+      <div style="
+        color:white;
+        font-size:35px;
+        margin-top:15px;
+      ">
+        Mã đơn: ${o.id}
+      </div>
+
+      <div style="
+        color:lime;
+        font-size:35px;
+        margin-top:15px;
+      ">
+        Sản phẩm: ${o.product}
+      </div>
+
+      <div style="
+        color:orange;
+        font-size:35px;
+        margin-top:15px;
+      ">
+        Khối lượng: ${o.kg} KG
+      </div>
+
+      <div style="
+        color:red;
+        font-size:40px;
+        margin-top:20px;
+        font-weight:bold;
+      ">
+        ĐÃ KHÓA Ô GẠO CHỜ SHIPPER
+      </div>
+    </div>
+  `).join("");
+
+  res.send(`
+  <html>
   <body style="
     background:black;
     color:white;
@@ -35,75 +81,108 @@ app.get("/", (req, res) => {
     padding:30px;
   ">
 
-    <h1 style="
+    <div style="
       color:yellow;
-      font-size:70px;
+      font-size:65px;
+      font-weight:bold;
     ">
       NAMRICE AUTO
-    </h1>
+    </div>
 
-    <h2 style="
+    <div style="
       color:${paid ? "lime" : "red"};
       font-size:55px;
+      margin-top:30px;
+      font-weight:bold;
     ">
       ${paid ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN"}
-    </h2>
+    </div>
 
-    <h3 style="font-size:45px;">
+    <div style="
+      font-size:40px;
+      margin-top:30px;
+    ">
       Máy: ${machine.machineId}
-    </h3>
+    </div>
 
-    <p style="
-      font-size:30px;
-      margin-bottom:50px;
+    <div style="
+      font-size:32px;
+      margin-top:20px;
+      color:#ddd;
     ">
       ${machine.address}
-    </p>
+    </div>
 
     <div style="
       border:4px solid white;
-      border-radius:20px;
+      border-radius:25px;
       padding:30px;
-      margin:auto;
-      width:80%;
+      margin-top:40px;
     ">
 
-      <h2 style="
+      <div style="
         color:cyan;
         font-size:55px;
+        font-weight:bold;
       ">
         Ô A1
-      </h2>
+      </div>
 
-      <p style="font-size:40px;">
-        Trạng thái:
-        ${machine.slotA1.status}
-      </p>
+      <div style="
+        font-size:40px;
+        margin-top:25px;
+      ">
+        Trạng thái: ${machine.slotA1.status}
+      </div>
 
-      <p style="font-size:35px;">
-        Đơn hàng:
-        ${machine.slotA1.orderId || "Không có"}
-      </p>
+      <div style="
+        font-size:35px;
+        margin-top:20px;
+      ">
+        Đơn hàng: ${machine.slotA1.orderId || "Không có"}
+      </div>
 
     </div>
 
-    <br><br>
+    ${orderHtml}
 
-    <h2 style="
-      color:orange;
-      font-size:55px;
+  </body>
+  </html>
+  `);
+});
+
+app.get("/fake-tiktok", (req, res) => {
+
+  const order = {
+    id: "TT" + Date.now(),
+    product: "GẠO ST25",
+    kg: 5
+  };
+
+  orders.push(order);
+
+  machine.slotA1.status = "LOCKED";
+  machine.slotA1.orderId = order.id;
+  machine.slotA1.product = order.product;
+  machine.slotA1.kg = order.kg;
+
+  res.send(`
+    <html>
+    <body style="
+      background:black;
+      color:lime;
+      font-size:60px;
+      text-align:center;
+      padding-top:150px;
+      font-family:Arial;
+      font-weight:bold;
     ">
-      LỊCH SỬ ĐƠN
-    </h2>
+      ĐÃ TẠO ĐƠN TIKTOK
+    </body>
+    </html>
+  `);
+});
 
-    ${orders.map(order => `
-      <div style="
-        border:3px solid gray;
-        margin:20px;
-        padding:20px;
-        border-radius:15px;
-      ">
-
-        <p style="font-size:35px;">
-          Mã đơn:
-          ${
+app.listen(3000, () => {
+  console.log("NAMRICE AUTO RUNNING");
+});
