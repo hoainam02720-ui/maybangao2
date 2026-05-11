@@ -1,7 +1,13 @@
 const express=require("express")
 const app=express()
 
+app.use(express.json())
+
 let orders=[]
+
+let machine={
+lock:true
+}
 
 app.get("/",(req,res)=>{
 
@@ -9,7 +15,7 @@ let html=orders.map(o=>`
 <div style="border:3px solid yellow;margin:20px;padding:20px">
 
 <div style="font-size:50px;color:cyan">
-ĐƠN TIKTOK
+${o.type}
 </div>
 
 <div style="font-size:35px">
@@ -17,7 +23,7 @@ ${o.id}
 </div>
 
 <div style="font-size:35px;color:lime">
-GẠO ST25 5KG
+${o.money}đ
 </div>
 
 </div>
@@ -30,16 +36,8 @@ res.send(`
 NAMRICE AUTO
 </div>
 
-<div style="font-size:55px;color:red">
-CHƯA THANH TOÁN
-</div>
-
-<div style="font-size:40px">
-MÁY MAY01
-</div>
-
-<div style="font-size:30px">
-185 TỔ 8 ẤP ĐÔNG THẠNH
+<div style="font-size:55px;color:lime">
+${machine.lock?"ĐANG KHÓA":"ĐÃ MỞ KHÓA"}
 </div>
 
 ${html}
@@ -48,14 +46,45 @@ ${html}
 `)
 })
 
-app.get("/fake-tiktok",(req,res)=>{
+app.get("/machine",(req,res)=>{
 
-orders.push({
-id:"TT"+Date.now()
+res.json(machine)
+
+})
+
+app.post("/sepay",(req,res)=>{
+
+let data=req.body
+
+orders.unshift({
+type:"SEPAY",
+id:data.content || "KHACH",
+money:data.transferAmount || 0
 })
 
 res.send("OK")
+})
 
+app.post("/tiktok",(req,res)=>{
+
+let data=req.body
+
+machine.lock=true
+
+orders.unshift({
+type:"TIKTOK",
+id:data.order_id || "DONMOI",
+money:data.price || 0
+})
+
+res.send("OK")
+})
+
+app.post("/picked",(req,res)=>{
+
+machine.lock=false
+
+res.send("OPEN")
 })
 
 app.listen(process.env.PORT || 3000)
