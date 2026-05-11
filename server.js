@@ -1,13 +1,17 @@
 const express=require("express")
+
 const app=express()
 
 app.use(express.json())
 
 let locked=true
 
+
+
 app.get("/",(req,res)=>{
 
 res.send(`
+
 <body style="background:black;color:white">
 
 <div style="font-size:70px;color:yellow">
@@ -27,9 +31,12 @@ MÁY MAY01
 </div>
 
 </body>
+
 `)
 
 })
+
+
 
 app.get("/picked",(req,res)=>{
 
@@ -39,6 +46,8 @@ res.send("DA MO KHOA")
 
 })
 
+
+
 app.get("/lock",(req,res)=>{
 
 locked=true
@@ -47,21 +56,45 @@ res.send("DA KHOA")
 
 })
 
-app.post("/tiktok",(req,res)=>{
 
-console.log(req.body)
-
-locked=false
-
-res.send("OK")
-
-})
 
 app.get("/tiktok",(req,res)=>{
 
 res.send("TIKTOK WEBHOOK OK")
 
 })
+
+
+
+app.post("/sepay",(req,res)=>{
+
+console.log("SEPAY OK")
+
+console.log(req.body)
+
+res.send("OK")
+
+})
+
+
+
+app.post("/tiktok",(req,res)=>{
+
+console.log("TIKTOK OK")
+
+console.log(req.body)
+
+
+
+locked=false
+
+
+
+res.send("OK")
+
+})
+
+
 
 app.listen(process.env.PORT || 3000,()=>{
 
