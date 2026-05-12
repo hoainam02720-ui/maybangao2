@@ -38,7 +38,7 @@ margin-bottom:20px;
 }
 
 h2{
-font-size:30px;
+font-size:28px;
 }
 
 input,select,button{
@@ -91,7 +91,7 @@ NAMRICE AUTO
 
 <input id="sdt" placeholder="Số điện thoại">
 
-<input id="diachi" placeholder="Địa chỉ giao">
+<input id="diachi" placeholder="Địa chỉ giao hàng">
 
 <select id="gao">
 
@@ -111,11 +111,11 @@ NAMRICE AUTO
 
 <div class="card">
 
-<h2>🛵 SHIPPER</h2>
+<h2>🛵 SHIPPER ONLINE</h2>
 
 <button onclick="batGPS()">
 
-BẬT ONLINE NHẬN ĐƠN
+BẬT GPS NHẬN ĐƠN
 
 </button>
 
@@ -311,19 +311,20 @@ localStorage.setItem(
 JSON.stringify(danhSachDon)
 )
 
-window.open(
-"https://maps.google.com",
-"_blank"
+const diachi =
+encodeURIComponent(
+danhSachDon[index].diachi
 )
 
-hienThiDon()
+location.href =
+"https://www.google.com/maps/search/?api=1&query=" + diachi
 
 }
 
 function moKho(index){
 
 danhSachDon[index].trangthai =
-"Đã lấy gạo 🌾"
+"Đã mở kho lấy gạo 🌾"
 
 localStorage.setItem(
 "donhang",
@@ -346,12 +347,13 @@ localStorage.setItem(
 JSON.stringify(danhSachDon)
 )
 
-window.open(
-"https://maps.google.com",
-"_blank"
+const diachi =
+encodeURIComponent(
+danhSachDon[index].diachi
 )
 
-hienThiDon()
+location.href =
+"https://www.google.com/maps/search/?api=1&query=" + diachi
 
 }
 
