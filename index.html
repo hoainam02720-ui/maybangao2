@@ -69,7 +69,83 @@ margin-top:20px;
 }
 </style>
 </head>
+<script>
 
+let danhSachDon = []
+
+function datGao(){
+
+let ten = document.getElementById("tenkhach").value
+let diachi = document.getElementById("diachi").value
+let gao = document.getElementById("gao").value
+
+let don = {
+ten: ten,
+diachi: diachi,
+gao: gao,
+trangthai: "chưa nhận"
+}
+
+danhSachDon.push(don)
+
+capNhatDon()
+
+alert("Đặt gạo thành công 🚚")
+
+}
+
+function capNhatDon(){
+
+let html = ""
+
+danhSachDon.forEach((don, index)=>{
+
+if(don.trangthai == "chưa nhận"){
+
+html += `
+
+<div class="order">
+
+🏠 ${don.diachi}
+
+<br><br>
+
+🍚 ${don.gao}
+
+<br><br>
+
+<button onclick="nhanDon(${index})">
+NHẬN ĐƠN
+</button>
+
+</div>
+
+`
+
+}
+
+})
+
+document.getElementById("donhang").innerHTML = html
+
+}
+
+function nhanDon(index){
+
+danhSachDon[index].trangthai = "đã nhận"
+
+capNhatDon()
+
+window.open(
+"https://maps.google.com",
+"_blank"
+)
+
+alert("Shipper đã nhận đơn 🚚")
+
+}
+
+</script>
 <body>
 
 <div class="header">
