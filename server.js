@@ -447,7 +447,7 @@ app.get('/auth', (req, res) => {
     'https://maybangao2-production.up.railway.app/callback';
 
   const authUrl =
-    `https://services.tiktokshop.com/open/authorize?app_key=${appKey}&state=namrice&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    `https://services.tiktokshop.com/open/authorize?service_id=${appKey}&state=namrice&redirect_uri=${encodeURIComponent(redirectUri)}`
 
   res.redirect(authUrl);
 });
