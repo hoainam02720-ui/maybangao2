@@ -133,31 +133,79 @@ GPS chưa bật
 ❌ Hết hàng
 </div>
 
+let danhSachDon = []
+
+function datGao(){
+
+let ten = document.getElementById("tenkhach").value
+let diachi = document.getElementById("diachi").value
+let gao = document.getElementById("gao").value
+
+let don = {
+ten: ten,
+diachi: diachi,
+gao: gao,
+trangthai: "chưa nhận"
+}
+
+danhSachDon.push(don)
+
+capNhatDon()
+
+alert("Đặt gạo thành công 🚚")
+
+}
+
+function capNhatDon(){
+
+let html = ""
+
+danhSachDon.forEach((don, index)=>{
+
+if(don.trangthai == "chưa nhận"){
+
+html += `
+
 <div class="order">
-📦 Ô B1<br>
-🍚 Jasmine 10KG<br>
-✅ Còn hàng
+
+🏠 ${don.diachi}
+
+<br><br>
+
+🍚 ${don.gao}
+
+<br><br>
+
+<button onclick="nhanDon(${index})">
+NHẬN ĐƠN
+</button>
+
 </div>
 
-</div>
+`
 
-<div class="card">
+}
 
-<h2>🚚 ĐƠN HÀNG</h2>
+})
 
-<div class="order">
+document.getElementById("donhang").innerHTML = html
 
-📍 Máy: Bình Minh
+}
 
-<br><br>
+function nhanDon(index){
 
-📦 Gạo: ST25 5KG
+danhSachDon[index].trangthai = "đã nhận"
 
-<br><br>
+capNhatDon()
 
-🧺 Ô mở: A1
+window.open(
+"https://maps.google.com",
+"_blank"
+)
 
-<br><br>
+alert("Shipper đã nhận đơn 🚚")
+
+}
 
 🏠 Giao: Cần Thơ
 
