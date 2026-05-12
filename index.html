@@ -1,93 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <title>NamRice Auto</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMRICE AUTO</title>
 
-  <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:#111;
-      color:white;
-    }
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#111827;
+    color:white;
+}
 
-    .top{
-      background:linear-gradient(45deg,#00c853,#ffd600);
-      padding:20px;
-      font-size:28px;
-      font-weight:bold;
-      text-align:center;
-      color:black;
-    }
+.header{
+    background:linear-gradient(90deg,#16a34a,#22c55e);
+    padding:20px;
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
+}
 
-    .box{
-      padding:20px;
-    }
+.container{
+    padding:20px;
+}
 
-    input,button{
-      width:100%;
-      padding:15px;
-      margin-top:10px;
-      border-radius:10px;
-      border:none;
-      font-size:18px;
-    }
+.card{
+    background:#1f2937;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
 
-    button{
-      background:#00c853;
-      color:white;
-      font-weight:bold;
-    }
+input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    margin-top:10px;
+}
 
-    .card{
-      background:#222;
-      padding:15px;
-      border-radius:15px;
-      margin-top:20px;
-    }
+button{
+    margin-top:15px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#22c55e;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+}
 
-    .ship{
-      background:#ff9800;
-    }
+.video{
+    background:#374151;
+    padding:15px;
+    border-radius:10px;
+    margin-top:10px;
+}
 
-    a{
-      color:#00e5ff;
-      text-decoration:none;
-      font-size:20px;
-    }
-  </style>
+a{
+    color:#4ade80;
+    text-decoration:none;
+}
+</style>
 </head>
 
 <body>
 
-<div class="top">
-  NAMRICE AUTO
+<div class="header">
+NAMRICE AUTO
 </div>
 
-<div class="box">
+<div class="container">
 
-  <div class="card">
-    <h2>UPLOAD VIDEO</h2>
+<div class="card">
+<h2>UPLOAD VIDEO</h2>
 
-    <input type="text" placeholder="Nhập tiêu đề video">
+<input type="text" placeholder="Nhập tiêu đề video">
 
-    <input type="file">
+<input type="file">
 
-    <button>UPLOAD VIDEO</button>
-  </div>
+<button>UPLOAD VIDEO</button>
+</div>
 
-  <div class="card ship">
-    <h2>GỌI SHIPPER</h2>
+<div class="card">
+<h2>VIDEO RANDOM</h2>
 
-    <input type="text" placeholder="Địa chỉ giao gạo">
+<div class="video">
+🎥 Video 1
+</div>
 
-    <button>GỌI XE</button>
-  </div>
+<div class="video">
+🎥 Video 2
+</div>
 
-  <div class="card">
-    <a href="/videos">XEM VIDEO</a>
-  </div>
+<div class="video">
+🎥 Video 3
+</div>
+
+</div>
+
+<div class="card">
+<h2>GỌI SHIPPER</h2>
+
+<button>GỌI XE GIAO GẠO</button>
+</div>
 
 </div>
 
