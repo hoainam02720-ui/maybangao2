@@ -15,9 +15,9 @@ color:white;
 
 .header{
 background:linear-gradient(90deg,#16a34a,#22c55e);
-padding:25px;
+padding:20px;
 text-align:center;
-font-size:38px;
+font-size:35px;
 font-weight:bold;
 }
 
@@ -27,55 +27,45 @@ padding:20px;
 
 .card{
 background:#1e293b;
-padding:25px;
-border-radius:25px;
-margin-bottom:25px;
-box-shadow:0 0 20px rgba(0,0,0,0.4);
-}
-
-h2{
-font-size:40px;
+padding:20px;
+border-radius:20px;
 margin-bottom:20px;
 }
 
-input,select{
+h2{
+font-size:30px;
+}
+
+input,button{
 width:100%;
-padding:18px;
-border:none;
-border-radius:15px;
+padding:15px;
 margin-top:15px;
-font-size:22px;
+border:none;
+border-radius:12px;
+font-size:20px;
 }
 
 button{
-width:100%;
-padding:20px;
-border:none;
-border-radius:15px;
 background:#22c55e;
 color:white;
-font-size:28px;
 font-weight:bold;
-margin-top:20px;
 }
 
-.note{
+.online{
+background:#16a34a;
+}
+
+#gps{
 margin-top:15px;
-font-size:22px;
-color:#94a3b8;
+font-size:20px;
+color:#4ade80;
 }
 
-.qr{
-background:white;
+.order{
+background:#334155;
 padding:15px;
-border-radius:20px;
-text-align:center;
-margin-top:20px;
-}
-
-img{
-width:100%;
 border-radius:15px;
+margin-top:20px;
 }
 </style>
 </head>
@@ -90,42 +80,44 @@ NAMRICE AUTO
 
 <div class="card">
 
-<h2>🚚 GỌI GIAO GẠO</h2>
+<h2>🛵 SHIPPER ĐĂNG NHẬP</h2>
 
-<input type="text" placeholder="Nhập địa chỉ lấy hàng">
+<input type="text" placeholder="Tên shipper">
 
-<input type="text" placeholder="Nhập địa chỉ giao hàng">
+<input type="text" placeholder="Số điện thoại">
 
-<input type="text" placeholder="Số điện thoại khách">
-
-<select>
-<option>🛵 Shipper giao nhanh</option>
-<option>🚚 Xe tải nhỏ</option>
-<option>🚛 Xe tải lớn</option>
-</select>
-
-<button onclick="goiXe()">
-GỌI XE NGAY
+<button class="online" onclick="batGPS()">
+BẬT ONLINE NHẬN ĐƠN
 </button>
 
-<div class="note">
-Shipper sẽ liên hệ sau khi đặt xe
+<div id="gps">
+GPS chưa bật
 </div>
 
 </div>
 
 <div class="card">
 
-<h2>💳 QUÉT MÃ THANH TOÁN</h2>
+<h2>🚚 ĐƠN HÀNG GẦN BẠN</h2>
 
-<div class="qr">
+<div class="order">
 
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=NAMRICEAUTO" />
+📍 Lấy hàng: Máy bán gạo Bình Minh
 
-</div>
+<br><br>
 
-<div class="note">
-Khách quét mã chuyển khoản để mở máy bán gạo
+🏠 Giao đến: Cần Thơ
+
+<br><br>
+
+📦 Gạo ST25 - 10kg
+
+<br><br>
+
+<button onclick="nhanDon()">
+NHẬN ĐƠN
+</button>
+
 </div>
 
 </div>
@@ -133,9 +125,34 @@ Khách quét mã chuyển khoản để mở máy bán gạo
 </div>
 
 <script>
-function goiXe(){
-alert("Đã gửi yêu cầu gọi xe 🚚")
+
+function batGPS(){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+document.getElementById("gps").innerHTML =
+"📍 GPS: " +
+pos.coords.latitude +
+" , " +
+pos.coords.longitude
+
+alert("Đã bật online nhận đơn")
+
+})
+
 }
+
+function nhanDon(){
+
+window.open(
+"https://maps.google.com",
+"_blank"
+)
+
+alert("Đã nhận đơn 🚚")
+
+}
+
 </script>
 
 </body>
