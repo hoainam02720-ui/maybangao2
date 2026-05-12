@@ -131,9 +131,13 @@ NAMRICE AUTO
 
 <select id="loaixe">
 <option>🛵 Xe máy</option>
+<option>🚗 Ô tô 4 chỗ</option>
+<option>🚙 Ô tô 7 chỗ</option>
 <option>🚚 Giao hàng</option>
 <option>🚛 Xe tải nhỏ</option>
 </select>
+
+<input id="sokm" type="number" placeholder="Số km dự kiến">
 
 <button class="orange" onclick="datXe()">
 ĐẶT XE
@@ -214,37 +218,34 @@ alert("Nhập đầy đủ thông tin")
 return
 }
 
-const don = {
-loai:"gao",
-ten,
-sdt,
-diachi,
-gao,
-trangthai:"🕒 Chờ shipper",
-hoanthanh:false
+let sotien = 0
+
+if(loaixe == "🛵 Xe máy"){
+sotien = sokm * 7000
 }
 
-danhSachDon.push(don)
-
-luuDon()
-
-alert("Đặt gạo thành công ✅")
-
-hienThiDon()
-
+if(loaixe == "🚗 Ô tô 4 chỗ"){
+if(sokm <= 2){
+sotien = 28000
+}else{
+sotien = 28000 + ((sokm - 2) * 12000)
+}
 }
 
-function datXe(){
+if(loaixe == "🚙 Ô tô 7 chỗ"){
+if(sokm <= 2){
+sotien = 35000
+}else{
+sotien = 35000 + ((sokm - 2) * 15000)
+}
+}
 
-const ten = document.getElementById("tenxe").value
-const sdt = document.getElementById("sdtxe").value
-const diemdi = document.getElementById("diemdi").value
-const diemden = document.getElementById("diemden").value
-const loaixe = document.getElementById("loaixe").value
+if(loaixe == "🚚 Giao hàng"){
+sotien = sokm * 10000
+}
 
-if(ten=="" || sdt=="" || diemdi=="" || diemden==""){
-alert("Nhập đầy đủ thông tin")
-return
+if(loaixe == "🚛 Xe tải nhỏ"){
+sotien = sokm * 18000
 }
 
 const don = {
@@ -254,6 +255,8 @@ sdt,
 diemdi,
 diemden,
 loaixe,
+sokm,
+sotien,
 trangthai:"🕒 Chờ tài xế",
 hoanthanh:false
 }
@@ -313,7 +316,7 @@ html += `
 
 <br><br>
 
-📞 ${don.sdt}
+📞 <a href="tel:${don.sdt}" style="color:#4ade80;text-decoration:none;">${don.sdt}</a>
 
 <br><br>
 
@@ -365,7 +368,7 @@ html += `
 
 <br><br>
 
-📞 ${don.sdt}
+📞 <a href="tel:${don.sdt}" style="color:#4ade80;text-decoration:none;">${don.sdt}</a>
 
 <br><br>
 
@@ -378,6 +381,14 @@ html += `
 <br><br>
 
 🚗 ${don.loaixe}
+
+<br><br>
+
+📏 Khoảng cách: ${don.sokm} km
+
+<br><br>
+
+💰 Giá tiền: ${don.sotien.toLocaleString()}đ
 
 <br><br>
 
