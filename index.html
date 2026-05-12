@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
 
 <meta charset="UTF-8">
@@ -21,12 +22,12 @@ color:white;
 background:linear-gradient(90deg,#16a34a,#22c55e);
 padding:20px;
 text-align:center;
-font-size:35px;
+font-size:32px;
 font-weight:bold;
 }
 
 .container{
-padding:20px;
+padding:15px;
 }
 
 .card{
@@ -39,7 +40,7 @@ margin-bottom:20px;
 input,select,button{
 width:100%;
 padding:15px;
-margin-top:15px;
+margin-top:12px;
 border:none;
 border-radius:12px;
 font-size:18px;
@@ -66,15 +67,15 @@ border-radius:15px;
 margin-top:20px;
 }
 
-#gps{
-margin-top:15px;
-color:#4ade80;
-}
-
 a{
 color:#4ade80;
 text-decoration:none;
-font-size:20px;
+font-size:18px;
+}
+
+#gps{
+margin-top:15px;
+color:#4ade80;
 }
 
 </style>
@@ -95,19 +96,34 @@ NAMRICE AUTO
 
 <h2>🛒 ĐẶT GẠO</h2>
 
-<input id="tengao" placeholder="Tên khách">
+<input
+id="tengao"
+placeholder="Tên khách"
+>
 
-<input id="sdtgao" placeholder="Số điện thoại">
+<input
+id="sdtgao"
+placeholder="Số điện thoại"
+>
 
-<input id="diachigao" placeholder="Địa chỉ giao gạo">
+<input
+id="diachigao"
+placeholder="Địa chỉ giao gạo"
+>
 
 <select id="loaigao">
 
-<option>ST25 5KG - 120K</option>
+<option>
+ST25 5KG - 120K
+</option>
 
-<option>ST25 10KG - 240K</option>
+<option>
+ST25 10KG - 240K
+</option>
 
-<option>Gạo thơm 5KG - 100K</option>
+<option>
+Gạo thơm 5KG - 100K
+</option>
 
 </select>
 
@@ -123,21 +139,39 @@ NAMRICE AUTO
 
 <h2>🚖 ĐẶT XE</h2>
 
-<input id="tenxe" placeholder="Tên khách">
+<input
+id="tenxe"
+placeholder="Tên khách"
+>
 
-<input id="sdtxe" placeholder="Số điện thoại">
+<input
+id="sdtxe"
+placeholder="Số điện thoại"
+>
 
-<input id="diemdi" placeholder="Điểm đón">
+<input
+id="diemdi"
+placeholder="Điểm đón"
+>
 
-<input id="diemden" placeholder="Điểm đến">
+<input
+id="diemden"
+placeholder="Điểm đến"
+>
 
 <select id="loaixe">
 
-<option>🛵 Xe máy</option>
+<option>
+🛵 Xe máy
+</option>
 
-<option>🚗 Ô tô 4 chỗ</option>
+<option>
+🚗 Ô tô 4 chỗ
+</option>
 
-<option>🚙 Ô tô 7 chỗ</option>
+<option>
+🚙 Ô tô 7 chỗ
+</option>
 
 </select>
 
@@ -177,7 +211,7 @@ GPS chưa bật
 
 <div class="card">
 
-<h2>🚚 ĐƠN HÀNG</h2>
+<h2>🚚 ĐƠN ĐANG CHỜ</h2>
 
 <div id="donhang"></div>
 
@@ -226,6 +260,12 @@ pos.coords.latitude +
 pos.coords.longitude
 
 alert("Đã bật online")
+
+},
+
+()=>{
+
+alert("Chưa bật GPS")
 
 }
 
@@ -491,7 +531,7 @@ MỞ KHO GẠO
 
 </button>
 
-<button onclick="giaoHang(${index})">
+<button onclick="giaoHang('${don.diachi}')">
 
 ĐI GIAO
 
@@ -625,7 +665,7 @@ function moKho(index){
 donhang[index].trangthai =
 "🔓 Đã mở kho"
 
-alert("Mở khóa ô gạo")
+alert("Đang mở khóa ô A1")
 
 luu()
 
@@ -633,16 +673,17 @@ hienThi()
 
 }
 
-function giaoHang(index){
+function giaoHang(diachi){
 
-let diachi =
-donhang[index].diachi
+window.open(
 
-location.href =
+"https://www.google.com/maps/dir/?api=1&destination=" +
 
-"https://www.google.com/maps/search/?api=1&query=" +
+encodeURIComponent(diachi),
 
-encodeURIComponent(diachi)
+"_blank"
+
+)
 
 }
 
@@ -664,11 +705,15 @@ hienThi()
 
 function diDiemDen(diachi){
 
-location.href =
+window.open(
 
-"https://www.google.com/maps/search/?api=1&query=" +
+"https://www.google.com/maps/dir/?api=1&destination=" +
 
-encodeURIComponent(diachi)
+encodeURIComponent(diachi),
+
+"_blank"
+
+)
 
 }
 
@@ -690,4 +735,5 @@ hienThi()
 </script>
 
 </body>
+
 </html>
