@@ -441,7 +441,7 @@ res.json(randomVideos)
 // SERVER
 // =======================
 app.get('/auth', (req, res) => {
-  const appKey = 'DAN_APP_KEY_CUA_MAY_VAO_DAY';
+  const appKey = '6jt5ub588f51q';
 
   const redirectUri =
     'https://maybangao2-production.up.railway.app/callback';
