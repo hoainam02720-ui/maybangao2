@@ -7,62 +7,75 @@
 
 <style>
 body{
-    margin:0;
-    font-family:Arial;
-    background:#111827;
-    color:white;
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
 }
 
 .header{
-    background:linear-gradient(90deg,#16a34a,#22c55e);
-    padding:20px;
-    text-align:center;
-    font-size:30px;
-    font-weight:bold;
+background:linear-gradient(90deg,#16a34a,#22c55e);
+padding:25px;
+text-align:center;
+font-size:38px;
+font-weight:bold;
 }
 
 .container{
-    padding:20px;
+padding:20px;
 }
 
 .card{
-    background:#1f2937;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 0 10px rgba(0,0,0,0.4);
+background:#1e293b;
+padding:25px;
+border-radius:25px;
+margin-bottom:25px;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
 }
 
-input{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    margin-top:10px;
+h2{
+font-size:40px;
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:18px;
+border:none;
+border-radius:15px;
+margin-top:15px;
+font-size:22px;
 }
 
 button{
-    margin-top:15px;
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    background:#22c55e;
-    color:white;
-    font-size:18px;
-    font-weight:bold;
+width:100%;
+padding:20px;
+border:none;
+border-radius:15px;
+background:#22c55e;
+color:white;
+font-size:28px;
+font-weight:bold;
+margin-top:20px;
 }
 
-.video{
-    background:#374151;
-    padding:15px;
-    border-radius:10px;
-    margin-top:10px;
+.note{
+margin-top:15px;
+font-size:22px;
+color:#94a3b8;
 }
 
-a{
-    color:#4ade80;
-    text-decoration:none;
+.qr{
+background:white;
+padding:15px;
+border-radius:20px;
+text-align:center;
+margin-top:20px;
+}
+
+img{
+width:100%;
+border-radius:15px;
 }
 </style>
 </head>
@@ -76,39 +89,54 @@ NAMRICE AUTO
 <div class="container">
 
 <div class="card">
-<h2>UPLOAD VIDEO</h2>
 
-<input type="text" placeholder="Nhập tiêu đề video">
+<h2>🚚 GỌI GIAO GẠO</h2>
 
-<input type="file">
+<input type="text" placeholder="Nhập địa chỉ lấy hàng">
 
-<button>UPLOAD VIDEO</button>
+<input type="text" placeholder="Nhập địa chỉ giao hàng">
+
+<input type="text" placeholder="Số điện thoại khách">
+
+<select>
+<option>🛵 Shipper giao nhanh</option>
+<option>🚚 Xe tải nhỏ</option>
+<option>🚛 Xe tải lớn</option>
+</select>
+
+<button onclick="goiXe()">
+GỌI XE NGAY
+</button>
+
+<div class="note">
+Shipper sẽ liên hệ sau khi đặt xe
+</div>
+
 </div>
 
 <div class="card">
-<h2>VIDEO RANDOM</h2>
 
-<div class="video">
-🎥 Video 1
-</div>
+<h2>💳 QUÉT MÃ THANH TOÁN</h2>
 
-<div class="video">
-🎥 Video 2
-</div>
+<div class="qr">
 
-<div class="video">
-🎥 Video 3
-</div>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=NAMRICEAUTO" />
 
 </div>
 
-<div class="card">
-<h2>GỌI SHIPPER</h2>
-
-<button>GỌI XE GIAO GẠO</button>
+<div class="note">
+Khách quét mã chuyển khoản để mở máy bán gạo
 </div>
 
 </div>
+
+</div>
+
+<script>
+function goiXe(){
+alert("Đã gửi yêu cầu gọi xe 🚚")
+}
+</script>
 
 </body>
 </html>
