@@ -1,95 +1,95 @@
-export default function NamRiceHome() { return ( <div className="min-h-screen bg-gradient-to-b from-green-50 to-white text-gray-800"> <header className="p-6 flex justify-between items-center shadow-sm bg-white"> <div> <h1 className="text-3xl font-bold text-green-700">NamRice</h1> <p className="text-sm text-gray-500">Bán gạo • Giao hàng • Gọi xe</p> </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NamRice Auto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<button className="bg-green-600 text-white px-4 py-2 rounded-2xl shadow">
-      Đăng nhập
-    </button>
-  </header>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#111;
+      color:white;
+    }
 
-  <section className="p-6">
-    <div className="bg-green-700 rounded-3xl p-6 text-white shadow-xl">
-      <h2 className="text-4xl font-bold mb-3">NamRice Auto</h2>
-      <p className="text-lg opacity-90 mb-5">
-        Đặt gạo • Gọi shipper • Gọi xe nội vùng
-      </p>
+    .top{
+      background:linear-gradient(45deg,#00c853,#ffd600);
+      padding:20px;
+      font-size:28px;
+      font-weight:bold;
+      text-align:center;
+      color:black;
+    }
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button className="bg-white text-green-700 rounded-2xl p-5 font-bold text-lg shadow hover:scale-105 transition">
-          🛒 Đặt Gạo
-        </button>
+    .box{
+      padding:20px;
+    }
 
-        <button className="bg-white text-green-700 rounded-2xl p-5 font-bold text-lg shadow hover:scale-105 transition">
-          🚚 Giao Hàng
-        </button>
+    input,button{
+      width:100%;
+      padding:15px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+      font-size:18px;
+    }
 
-        <button className="bg-white text-green-700 rounded-2xl p-5 font-bold text-lg shadow hover:scale-105 transition">
-          🛵 Gọi Xe
-        </button>
-      </div>
-    </div>
-  </section>
+    button{
+      background:#00c853;
+      color:white;
+      font-weight:bold;
+    }
 
-  <section className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div className="bg-white rounded-3xl shadow-lg p-6 border">
-      <h3 className="text-2xl font-bold text-green-700 mb-4">
-        Đặt Gạo Nhanh
-      </h3>
+    .card{
+      background:#222;
+      padding:15px;
+      border-radius:15px;
+      margin-top:20px;
+    }
 
-      <div className="space-y-4">
-        <input
-          className="w-full border rounded-2xl p-4"
-          placeholder="Tên khách hàng"
-        />
+    .ship{
+      background:#ff9800;
+    }
 
-        <input
-          className="w-full border rounded-2xl p-4"
-          placeholder="Số điện thoại"
-        />
+    a{
+      color:#00e5ff;
+      text-decoration:none;
+      font-size:20px;
+    }
+  </style>
+</head>
 
-        <input
-          className="w-full border rounded-2xl p-4"
-          placeholder="Địa chỉ giao hàng"
-        />
+<body>
 
-        <select className="w-full border rounded-2xl p-4">
-          <option>Gạo ST25</option>
-          <option>Gạo thơm</option>
-          <option>Gạo dẻo</option>
-        </select>
-
-        <button className="w-full bg-green-600 text-white p-4 rounded-2xl font-bold text-lg shadow-lg">
-          Thanh Toán QR
-        </button>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-3xl shadow-lg p-6 border">
-      <h3 className="text-2xl font-bold text-green-700 mb-4">
-        Dịch Vụ Shipper
-      </h3>
-
-      <div className="space-y-4">
-        <div className="p-4 bg-green-50 rounded-2xl border">
-          🚚 Giao gạo tận nơi trong bán kính 20km
-        </div>
-
-        <div className="p-4 bg-green-50 rounded-2xl border">
-          🛵 Gọi xe nội vùng nhanh chóng
-        </div>
-
-        <div className="p-4 bg-green-50 rounded-2xl border">
-          📍 Theo dõi shipper realtime
-        </div>
-
-        <div className="p-4 bg-green-50 rounded-2xl border">
-          💳 Hỗ trợ QR và tiền mặt
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer className="p-6 text-center text-gray-500 text-sm">
-    © 2026 NamRice Auto
-  </footer>
+<div class="top">
+  NAMRICE AUTO
 </div>
 
-); }
+<div class="box">
+
+  <div class="card">
+    <h2>UPLOAD VIDEO</h2>
+
+    <input type="text" placeholder="Nhập tiêu đề video">
+
+    <input type="file">
+
+    <button>UPLOAD VIDEO</button>
+  </div>
+
+  <div class="card ship">
+    <h2>GỌI SHIPPER</h2>
+
+    <input type="text" placeholder="Địa chỉ giao gạo">
+
+    <button>GỌI XE</button>
+  </div>
+
+  <div class="card">
+    <a href="/videos">XEM VIDEO</a>
+  </div>
+
+</div>
+
+</body>
+</html>
