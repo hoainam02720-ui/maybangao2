@@ -98,24 +98,58 @@ GPS chưa bật
 
 <div class="card">
 
-<h2>🚚 ĐƠN HÀNG GẦN BẠN</h2>
+<div class="card">
+
+<h2>🧺 KHO GẠO</h2>
+
+<div class="order">
+📦 Ô A1<br>
+🍚 ST25 5KG<br>
+✅ Còn hàng
+</div>
+
+<div class="order">
+📦 Ô A2<br>
+🍚 ST25 5KG<br>
+❌ Hết hàng
+</div>
+
+<div class="order">
+📦 Ô B1<br>
+🍚 Jasmine 10KG<br>
+✅ Còn hàng
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>🚚 ĐƠN HÀNG</h2>
 
 <div class="order">
 
-📍 Lấy hàng: Máy bán gạo Bình Minh
+📍 Máy: Bình Minh
 
 <br><br>
 
-🏠 Giao đến: Cần Thơ
+📦 Gạo: ST25 5KG
 
 <br><br>
 
-📦 Gạo ST25 - 10kg
+🧺 Ô mở: A1
 
 <br><br>
+
+🏠 Giao: Cần Thơ
+
+<br><br>
+
+<button onclick="moKho()">
+MỞ KHO A1
+</button>
 
 <button onclick="nhanDon()">
-NHẬN ĐƠN
+ĐI GIAO HÀNG
 </button>
 
 </div>
@@ -139,7 +173,11 @@ pos.coords.longitude
 alert("Đã bật online nhận đơn")
 
 })
+function moKho(){
 
+alert("Đang mở khóa ô A1 🔓")
+
+}
 }
 
 function nhanDon(){
