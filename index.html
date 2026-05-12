@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>NAMRICE AUTO</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -30,10 +34,6 @@ background:#1e293b;
 padding:20px;
 border-radius:20px;
 margin-bottom:20px;
-}
-
-h2{
-font-size:28px;
 }
 
 input,select,button{
@@ -68,98 +68,92 @@ margin-top:20px;
 
 #gps{
 margin-top:15px;
-font-size:18px;
 color:#4ade80;
 }
 
-.red{
-background:#dc2626;
-}
-
-.blue{
-background:#2563eb;
-}
-
-.orange{
-background:#ea580c;
+a{
+color:#4ade80;
+text-decoration:none;
+font-size:20px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="header">
+
 NAMRICE AUTO
+
 </div>
 
 <div class="container">
 
 <div class="card">
 
-<h2>🛒 KHÁCH ĐẶT GẠO</h2>
+<h2>🛒 ĐẶT GẠO</h2>
 
-<input id="ten" placeholder="Tên khách">
+<input id="tengao" placeholder="Tên khách">
 
-<input id="sdt" placeholder="Số điện thoại">
+<input id="sdtgao" placeholder="Số điện thoại">
 
-<input id="diachi" placeholder="Địa chỉ giao hàng">
+<input id="diachigao" placeholder="Địa chỉ giao gạo">
 
-<select id="gao">
+<select id="loaigao">
+
 <option>ST25 5KG - 120K</option>
+
 <option>ST25 10KG - 240K</option>
+
 <option>Gạo thơm 5KG - 100K</option>
+
 </select>
 
 <button onclick="datGao()">
+
 ĐẶT GẠO
+
 </button>
 
 </div>
 
 <div class="card">
 
-<h2>🛵 KHÁCH ĐẶT XE / GIAO HÀNG</h2>
+<h2>🚖 ĐẶT XE</h2>
 
 <input id="tenxe" placeholder="Tên khách">
 
 <input id="sdtxe" placeholder="Số điện thoại">
 
-<input id="diemdi" placeholder="Điểm đi">
+<input id="diemdi" placeholder="Điểm đón">
 
 <input id="diemden" placeholder="Điểm đến">
 
 <select id="loaixe">
+
 <option>🛵 Xe máy</option>
+
 <option>🚗 Ô tô 4 chỗ</option>
+
 <option>🚙 Ô tô 7 chỗ</option>
-<option>🚚 Giao hàng</option>
-<option>🚛 Xe tải nhỏ</option>
+
 </select>
 
-<input id="sokm" type="number" placeholder="Số km dự kiến">
+<button onclick="tinhTien()">
 
-<button class="orange" onclick="datXe()">
-ĐẶT XE
+💰 TÍNH GIÁ
+
 </button>
 
-</div>
+<div id="ketqua"></div>
 
-<div class="card">
+<button onclick="datXe()">
 
-<h2>🧺 KHO GẠO</h2>
+🚖 ĐẶT XE
 
-<div class="order">
-📦 Ô A1 - ST25 5KG - ✅ Còn hàng
-</div>
-
-<div class="order">
-📦 Ô A2 - ST25 10KG - ✅ Còn hàng
-</div>
-
-<div class="order">
-📦 Ô B1 - Gạo thơm 5KG - ✅ Còn hàng
-</div>
+</button>
 
 </div>
 
@@ -167,19 +161,23 @@ NAMRICE AUTO
 
 <h2>🛵 SHIPPER ONLINE</h2>
 
-<button class="blue" onclick="batGPS()">
+<button onclick="batGPS()">
+
 BẬT GPS NHẬN ĐƠN
+
 </button>
 
 <div id="gps">
+
 GPS chưa bật
+
 </div>
 
 </div>
 
 <div class="card">
 
-<h2>🚚 ĐƠN HÀNG ĐANG CHỜ</h2>
+<h2>🚚 ĐƠN HÀNG</h2>
 
 <div id="donhang"></div>
 
@@ -187,7 +185,7 @@ GPS chưa bật
 
 <div class="card">
 
-<h2>📜 LỊCH SỬ ĐƠN HÀNG</h2>
+<h2>📜 LỊCH SỬ</h2>
 
 <div id="lichsu"></div>
 
@@ -197,77 +195,17 @@ GPS chưa bật
 
 <script>
 
-let danhSachDon = JSON.parse(localStorage.getItem("donhang")) || []
+let donhang =
+JSON.parse(
+localStorage.getItem("donhang")
+) || []
 
-function luuDon(){
+function luu(){
+
 localStorage.setItem(
 "donhang",
-JSON.stringify(danhSachDon)
+JSON.stringify(donhang)
 )
-}
-
-function datGao(){
-
-const ten = document.getElementById("ten").value
-const sdt = document.getElementById("sdt").value
-const diachi = document.getElementById("diachi").value
-const gao = document.getElementById("gao").value
-
-if(ten=="" || sdt=="" || diachi==""){
-alert("Nhập đầy đủ thông tin")
-return
-}
-
-let sotien = 0
-
-if(loaixe == "🛵 Xe máy"){
-sotien = sokm * 7000
-}
-
-if(loaixe == "🚗 Ô tô 4 chỗ"){
-if(sokm <= 2){
-sotien = 28000
-}else{
-sotien = 28000 + ((sokm - 2) * 12000)
-}
-}
-
-if(loaixe == "🚙 Ô tô 7 chỗ"){
-if(sokm <= 2){
-sotien = 35000
-}else{
-sotien = 35000 + ((sokm - 2) * 15000)
-}
-}
-
-if(loaixe == "🚚 Giao hàng"){
-sotien = sokm * 10000
-}
-
-if(loaixe == "🚛 Xe tải nhỏ"){
-sotien = sokm * 18000
-}
-
-const don = {
-loai:"xe",
-ten,
-sdt,
-diemdi,
-diemden,
-loaixe,
-sokm,
-sotien,
-trangthai:"🕒 Chờ tài xế",
-hoanthanh:false
-}
-
-danhSachDon.push(don)
-
-luuDon()
-
-alert("Đặt xe thành công 🚚")
-
-hienThiDon()
 
 }
 
@@ -277,32 +215,237 @@ navigator.geolocation.getCurrentPosition(
 
 (pos)=>{
 
-const lat = pos.coords.latitude
-const lon = pos.coords.longitude
-
 document.getElementById("gps").innerHTML =
-"📍 GPS: " + lat + " , " + lon
 
-alert("Đã bật online nhận đơn")
+"📍 GPS: " +
 
-},
+pos.coords.latitude +
 
-()=>{
-alert("Chưa bật GPS")
+" , " +
+
+pos.coords.longitude
+
+alert("Đã bật online")
+
 }
 
 )
 
 }
 
-function hienThiDon(){
+function datGao(){
+
+const ten =
+document.getElementById("tengao").value
+
+const sdt =
+document.getElementById("sdtgao").value
+
+const diachi =
+document.getElementById("diachigao").value
+
+const gao =
+document.getElementById("loaigao").value
+
+if(
+ten == "" ||
+sdt == "" ||
+diachi == ""
+){
+
+alert("Nhập đầy đủ thông tin")
+
+return
+
+}
+
+donhang.push({
+
+loai:"gao",
+
+ten,
+
+sdt,
+
+diachi,
+
+gao,
+
+trangthai:"🕒 Chờ shipper",
+
+hoanthanh:false
+
+})
+
+luu()
+
+hienThi()
+
+alert("Đặt gạo thành công")
+
+}
+
+function tinhTien(){
+
+const diemdi =
+document.getElementById("diemdi").value
+
+const diemden =
+document.getElementById("diemden").value
+
+const loaixe =
+document.getElementById("loaixe").value
+
+if(
+diemdi == "" ||
+diemden == ""
+){
+
+alert("Nhập điểm đi và điểm đến")
+
+return
+
+}
+
+const km =
+Math.floor(Math.random()*12)+1
+
+let tien = 0
+
+if(loaixe == "🛵 Xe máy"){
+
+tien = km * 7000
+
+}
+
+if(loaixe == "🚗 Ô tô 4 chỗ"){
+
+if(km <= 2){
+
+tien = 28000
+
+}else{
+
+tien =
+28000 + ((km - 2) * 12000)
+
+}
+
+}
+
+if(loaixe == "🚙 Ô tô 7 chỗ"){
+
+if(km <= 2){
+
+tien = 35000
+
+}else{
+
+tien =
+35000 + ((km - 2) * 15000)
+
+}
+
+}
+
+window.kmTam = km
+window.tienTam = tien
+
+document.getElementById("ketqua").innerHTML =
+
+`
+
+<br>
+
+📏 Khoảng cách:
+<b>${km} km</b>
+
+<br><br>
+
+💰 Giá tiền:
+<b>${tien.toLocaleString()}đ</b>
+
+`
+
+}
+
+function datXe(){
+
+const ten =
+document.getElementById("tenxe").value
+
+const sdt =
+document.getElementById("sdtxe").value
+
+const diemdi =
+document.getElementById("diemdi").value
+
+const diemden =
+document.getElementById("diemden").value
+
+const loaixe =
+document.getElementById("loaixe").value
+
+if(
+ten == "" ||
+sdt == "" ||
+diemdi == "" ||
+diemden == ""
+){
+
+alert("Nhập đầy đủ thông tin")
+
+return
+
+}
+
+if(!window.kmTam){
+
+alert("Bấm tính giá trước")
+
+return
+
+}
+
+donhang.push({
+
+loai:"xe",
+
+ten,
+
+sdt,
+
+diemdi,
+
+diemden,
+
+loaixe,
+
+km:window.kmTam,
+
+tien:window.tienTam,
+
+trangthai:"🕒 Chờ tài xế",
+
+hoanthanh:false
+
+})
+
+luu()
+
+hienThi()
+
+alert("Đặt xe thành công")
+
+}
+
+function hienThi(){
 
 let html = ""
+
 let lichsu = ""
 
-
-
-danhSachDon.forEach((don,index)=>{
+donhang.forEach((don,index)=>{
 
 if(don.hoanthanh == false){
 
@@ -316,7 +459,11 @@ html += `
 
 <br><br>
 
-📞 <a href="tel:${don.sdt}" style="color:#4ade80;text-decoration:none;">${don.sdt}</a>
+<a href="tel:${don.sdt}">
+
+📞 ${don.sdt}
+
+</a>
 
 <br><br>
 
@@ -333,23 +480,27 @@ html += `
 <br><br>
 
 <button onclick="nhanDon(${index})">
-NHẬN ĐƠN
-</button>
 
-<button class="orange" onclick="daDen(${index})">
-ĐÃ ĐẾN MÁY
+NHẬN ĐƠN
+
 </button>
 
 <button onclick="moKho(${index})">
+
 MỞ KHO GẠO
+
 </button>
 
-<button class="blue" onclick="giaoHang(${index})">
+<button onclick="giaoHang(${index})">
+
 ĐI GIAO
+
 </button>
 
-<button class="red" onclick="giaoXong(${index})">
+<button onclick="hoanThanh(${index})">
+
 ĐÃ GIAO XONG
+
 </button>
 
 </div>
@@ -368,15 +519,19 @@ html += `
 
 <br><br>
 
-📞 <a href="tel:${don.sdt}" style="color:#4ade80;text-decoration:none;">${don.sdt}</a>
+<a href="tel:${don.sdt}">
+
+📞 ${don.sdt}
+
+</a>
 
 <br><br>
 
-📍 Điểm đi: ${don.diemdi}
+📍 ${don.diemdi}
 
 <br><br>
 
-🏁 Điểm đến: ${don.diemden}
+🏁 ${don.diemden}
 
 <br><br>
 
@@ -384,11 +539,11 @@ html += `
 
 <br><br>
 
-📏 Khoảng cách: ${don.sokm} km
+📏 ${don.km} km
 
 <br><br>
 
-💰 Giá tiền: ${don.sotien.toLocaleString()}đ
+💰 ${don.tien.toLocaleString()}đ
 
 <br><br>
 
@@ -396,20 +551,28 @@ html += `
 
 <br><br>
 
-<button onclick="nhanDonXe(${index})">
-NHẬN CUỐC XE
+<button onclick="nhanDon(${index})">
+
+NHẬN CUỐC
+
 </button>
 
-<button class="orange" onclick="daDenXe(${index})">
-ĐÃ ĐẾN ĐÓN KHÁCH
+<button onclick="daDen(${index})">
+
+ĐÃ ĐẾN
+
 </button>
 
-<button class="blue" onclick="diDiemDen(${index})">
+<button onclick="diDiemDen('${don.diemden}')">
+
 ĐI ĐIỂM ĐẾN
+
 </button>
 
-<button class="red" onclick="hoanThanhXe(${index})">
-HOÀN THÀNH CHUYẾN
+<button onclick="hoanThanh(${index})">
+
+HOÀN THÀNH
+
 </button>
 
 </div>
@@ -428,7 +591,7 @@ lichsu += `
 
 <br><br>
 
-📌 ${don.trangthai}
+${don.trangthai}
 
 </div>
 
@@ -438,139 +601,91 @@ lichsu += `
 
 })
 
+document.getElementById("donhang").innerHTML =
+html
 
-document.getElementById("donhang").innerHTML = html
-
-document.getElementById("lichsu").innerHTML = lichsu
+document.getElementById("lichsu").innerHTML =
+lichsu
 
 }
 
 function nhanDon(index){
 
-danhSachDon[index].trangthai =
-"🚚 Đang đến máy lấy gạo"
+donhang[index].trangthai =
+"🚚 Đang đến"
 
-luuDon()
+luu()
+
+hienThi()
+
+}
+
+function moKho(index){
+
+donhang[index].trangthai =
+"🔓 Đã mở kho"
+
+alert("Mở khóa ô gạo")
+
+luu()
+
+hienThi()
+
+}
+
+function giaoHang(index){
+
+let diachi =
+donhang[index].diachi
 
 location.href =
+
 "https://www.google.com/maps/search/?api=1&query=" +
-encodeURIComponent(danhSachDon[index].diachi)
+
+encodeURIComponent(diachi)
 
 }
 
 function daDen(index){
 
 alert(
-"📞 Gọi khách: " + danhSachDon[index].sdt
+"Gọi khách: " +
+donhang[index].sdt
 )
 
-danhSachDon[index].trangthai =
-"📍 Đã đến máy bán gạo"
+donhang[index].trangthai =
+"📍 Đã đến"
 
-luuDon()
+luu()
 
-hienThiDon()
-
-}
-
-function moKho(index){
-
-danhSachDon[index].trangthai =
-"🔓 Đã mở kho lấy gạo"
-
-alert("Đang mở khóa ô A1 🔓")
-
-luuDon()
-
-hienThiDon()
+hienThi()
 
 }
 
-function giaoHang(index){
-
-danhSachDon[index].trangthai =
-"🛵 Đang giao hàng"
-
-luuDon()
+function diDiemDen(diachi){
 
 location.href =
+
 "https://www.google.com/maps/search/?api=1&query=" +
-encodeURIComponent(danhSachDon[index].diachi)
+
+encodeURIComponent(diachi)
 
 }
 
-function giaoXong(index){
+function hoanThanh(index){
 
-danhSachDon[index].trangthai =
-"✅ Giao gạo thành công"
+donhang[index].trangthai =
+"✅ Hoàn thành"
 
-danhSachDon[index].hoanthanh = true
+donhang[index].hoanthanh = true
 
-luuDon()
+luu()
 
-alert("Đã giao hàng xong")
-
-hienThiDon()
+hienThi()
 
 }
 
-function nhanDonXe(index){
-
-danhSachDon[index].trangthai =
-"🚕 Đang đến đón khách"
-
-luuDon()
-
-location.href =
-"https://www.google.com/maps/search/?api=1&query=" +
-encodeURIComponent(danhSachDon[index].diemdi)
-
-}
-
-function daDenXe(index){
-
-alert(
-"📞 Gọi khách: " + danhSachDon[index].sdt
-)
-
-danhSachDon[index].trangthai =
-"📍 Đã đến điểm đón"
-
-luuDon()
-
-hienThiDon()
-
-}
-
-function diDiemDen(index){
-
-danhSachDon[index].trangthai =
-"🚗 Đang chở khách"
-
-luuDon()
-
-location.href =
-"https://www.google.com/maps/search/?api=1&query=" +
-encodeURIComponent(danhSachDon[index].diemden)
-
-}
-
-function hoanThanhXe(index){
-
-danhSachDon[index].trangthai =
-"✅ Hoàn thành chuyến xe"
-
-danhSachDon[index].hoanthanh = true
-
-luuDon()
-
-alert("Đã hoàn thành chuyến xe")
-
-hienThiDon()
-
-}
-
-hienThiDon()
+hienThi()
 
 </script>
 
