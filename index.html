@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>NAMRICE AUTO</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -36,7 +41,7 @@ h2{
 font-size:30px;
 }
 
-input,button{
+input,select,button{
 width:100%;
 padding:15px;
 margin-top:15px;
@@ -51,8 +56,11 @@ color:white;
 font-weight:bold;
 }
 
-.online{
-background:#16a34a;
+.order{
+background:#334155;
+padding:15px;
+border-radius:15px;
+margin-top:20px;
 }
 
 #gps{
@@ -61,243 +69,69 @@ font-size:20px;
 color:#4ade80;
 }
 
-.order{
-background:#334155;
-padding:15px;
-border-radius:15px;
-margin-top:20px;
-}
 </style>
+
 </head>
-<script>
 
-let danhSachDon = []
-
-<button onclick="datGao()">
-ĐẶT GẠO
-</button>{
-
-let ten = document.getElementById("tenkhach").value
-let diachi = document.getElementById("diachi").value
-let gao = document.getElementById("gao").value
-
-let don = {
-ten: ten,
-diachi: diachi,
-gao: gao,
-trangthai: "chưa nhận"
-}
-
-danhSachDon.push(don)
-
-capNhatDon()
-
-alert("Đặt gạo thành công 🚚")
-
-}
-
-function capNhatDon(){
-
-let html = ""
-
-danhSachDon.forEach((don, index)=>{
-
-if(don.trangthai == "chưa nhận"){
-
-html += `
-
-<div class="order">
-
-🏠 ${don.diachi}
-
-<br><br>
-
-🍚 ${don.gao}
-
-<br><br>
-
-<button onclick="nhanDon(${index})">
-NHẬN ĐƠN
-</button>
-
-</div>
-
-`
-
-}
-
-})
-
-document.getElementById("donhang").innerHTML = html
-
-}
-
-function nhanDon(index){
-
-danhSachDon[index].trangthai = "đã nhận"
-
-capNhatDon()
-
-window.open(
-"https://maps.google.com",
-"_blank"
-)
-
-alert("Shipper đã nhận đơn 🚚")
-
-}
-
-</script>
 <body>
 
 <div class="header">
+
 NAMRICE AUTO
+
 </div>
 
 <div class="container">
 
 <div class="card">
-<div class="card">
 
 <h2>🛒 KHÁCH ĐẶT GẠO</h2>
 
-<input id="tenkhach" placeholder="Tên khách">
+<input id="ten" placeholder="Tên khách">
 
-<input id="sdtkhach" placeholder="Số điện thoại">
+<input id="sdt" placeholder="Số điện thoại">
 
-<input id="diachi" placeholder="Địa chỉ giao đến">
+<input id="diachi" placeholder="Địa chỉ giao">
 
 <select id="gao">
+
 <option>ST25 5KG - 120K</option>
-<option>Gạo thơm 5KG - 100K</option>
+
+<option>ST25 10KG - 240K</option>
+
 </select>
 
 <button onclick="datGao()">
+
 ĐẶT GẠO
+
 </button>
 
 </div>
-<h2>🛵 SHIPPER ĐĂNG NHẬP</h2>
 
-<input type="text" placeholder="Tên shipper">
+<div class="card">
 
-<input type="text" placeholder="Số điện thoại">
+<h2>🛵 SHIPPER</h2>
 
-<button class="online" onclick="batGPS()">
+<button onclick="batGPS()">
+
 BẬT ONLINE NHẬN ĐƠN
+
 </button>
 
 <div id="gps">
+
 GPS chưa bật
+
 </div>
 
 </div>
 
 <div class="card">
 
-<div class="card">
+<h2>🚚 ĐƠN HÀNG</h2>
 
-<h2>🧺 KHO GẠO</h2>
-
-<div class="order">
-📦 Ô A1<br>
-🍚 ST25 5KG<br>
-✅ Còn hàng
-</div>
-
-<div class="order">
-📦 Ô A2<br>
-🍚 ST25 5KG<br>
-❌ Hết hàng
-</div>
-
-let danhSachDon = []
-
-function datGao(){
-
-let ten = document.getElementById("tenkhach").value
-let diachi = document.getElementById("diachi").value
-let gao = document.getElementById("gao").value
-
-let don = {
-ten: ten,
-diachi: diachi,
-gao: gao,
-trangthai: "chưa nhận"
-}
-
-danhSachDon.push(don)
-
-capNhatDon()
-
-alert("Đặt gạo thành công 🚚")
-
-}
-
-function capNhatDon(){
-
-let html = ""
-
-danhSachDon.forEach((don, index)=>{
-
-if(don.trangthai == "chưa nhận"){
-
-html += `
-
-<div class="order">
-
-🏠 ${don.diachi}
-
-<br><br>
-
-🍚 ${don.gao}
-
-<br><br>
-
-<button onclick="nhanDon(${index})">
-NHẬN ĐƠN
-</button>
-
-</div>
-
-`
-
-}
-
-})
-
-document.getElementById("donhang").innerHTML = html
-
-}
-
-function nhanDon(index){
-
-danhSachDon[index].trangthai = "đã nhận"
-
-capNhatDon()
-
-window.open(
-"https://maps.google.com",
-"_blank"
-)
-
-alert("Shipper đã nhận đơn 🚚")
-
-}
-
-🏠 Giao: Cần Thơ
-
-<br><br>
-
-<button onclick="moKho()">
-MỞ KHO A1
-</button>
-
-<button onclick="nhanDon()">
-ĐI GIAO HÀNG
-</button>
-
-</div>
+<div id="donhang"></div>
 
 </div>
 
@@ -305,88 +139,242 @@ MỞ KHO A1
 
 <script>
 
+let danhSachDon = JSON.parse(
+localStorage.getItem("donhang")
+) || []
+
+function datGao(){
+
+const ten =
+document.getElementById("ten").value
+
+const sdt =
+document.getElementById("sdt").value
+
+const diachi =
+document.getElementById("diachi").value
+
+const gao =
+document.getElementById("gao").value
+
+if(
+ten == "" ||
+sdt == "" ||
+diachi == ""
+){
+
+alert("Nhập đầy đủ thông tin")
+
+return
+
+}
+
+const don = {
+
+ten: ten,
+
+sdt: sdt,
+
+diachi: diachi,
+
+gao: gao,
+
+trangthai: "Chờ shipper"
+
+}
+
+danhSachDon.push(don)
+
+localStorage.setItem(
+"donhang",
+JSON.stringify(danhSachDon)
+)
+
+alert("Đặt gạo thành công ✅")
+
+document.getElementById("ten").value = ""
+
+document.getElementById("sdt").value = ""
+
+document.getElementById("diachi").value = ""
+
+hienThiDon()
+
+}
+
 function batGPS(){
 
-navigator.geolocation.getCurrentPosition(function(pos){
+navigator.geolocation.getCurrentPosition(
+
+(pos)=>{
 
 document.getElementById("gps").innerHTML =
+
 "📍 GPS: " +
+
 pos.coords.latitude +
+
 " , " +
+
 pos.coords.longitude
 
-alert("Đã bật online nhận đơn")
+alert("Đã bật online")
+
+},
+
+()=>{
+
+alert("Chưa bật GPS")
+
+}
+
+)
+
+}
+
+function hienThiDon(){
+
+const ds = JSON.parse(
+localStorage.getItem("donhang")
+) || []
+
+let html = ""
+
+ds.forEach((don,index)=>{
+
+html += `
+
+<div class="order">
+
+👤 ${don.ten}
+
+<br><br>
+
+📞 ${don.sdt}
+
+<br><br>
+
+🏠 ${don.diachi}
+
+<br><br>
+
+📦 ${don.gao}
+
+<br><br>
+
+📌 ${don.trangthai}
+
+<br><br>
+
+<button onclick="nhanDon(${index})">
+
+NHẬN ĐƠN
+
+</button>
+
+<button onclick="moKho(${index})">
+
+MỞ KHO GẠO
+
+</button>
+
+<button onclick="giaoHang(${index})">
+
+ĐI GIAO
+
+</button>
+
+<button onclick="giaoXong(${index})">
+
+ĐÃ GIAO XONG
+
+</button>
+
+</div>
+
+`
 
 })
-function moKho(){
 
-alert("Đang mở khóa ô A1 🔓")
+document.getElementById("donhang").innerHTML =
+html
 
 }
-}
 
-function nhanDon(){
+function nhanDon(index){
+
+danhSachDon[index].trangthai =
+"Đang đến máy lấy gạo 🚚"
+
+localStorage.setItem(
+"donhang",
+JSON.stringify(danhSachDon)
+)
 
 window.open(
 "https://maps.google.com",
 "_blank"
 )
 
-alert("Đã nhận đơn 🚚")
+hienThiDon()
 
 }
+
+function moKho(index){
+
+danhSachDon[index].trangthai =
+"Đã lấy gạo 🌾"
+
+localStorage.setItem(
+"donhang",
+JSON.stringify(danhSachDon)
+)
+
+alert("Đang mở khóa ô A1 🔓")
+
+hienThiDon()
+
+}
+
+function giaoHang(index){
+
+danhSachDon[index].trangthai =
+"Đang giao hàng 🛵"
+
+localStorage.setItem(
+"donhang",
+JSON.stringify(danhSachDon)
+)
+
+window.open(
+"https://maps.google.com",
+"_blank"
+)
+
+hienThiDon()
+
+}
+
+function giaoXong(index){
+
+danhSachDon[index].trangthai =
+"Giao thành công ✅"
+
+localStorage.setItem(
+"donhang",
+JSON.stringify(danhSachDon)
+)
+
+alert("Đã giao hàng xong")
+
+hienThiDon()
+
+}
+
+hienThiDon()
 
 </script>
-function datGao(){
 
-let ten = document.getElementById("tenkhach").value
-
-let sdt = document.getElementById("sdtkhach").value
-
-let diachi = document.getElementById("diachi").value
-
-let gao = document.getElementById("gao").value
-
-alert(
-"Đã tạo đơn giao gạo 🚚\n\n" +
-"Khách: " + ten + "\n" +
-"SĐT: " + sdt + "\n" +
-"Giao đến: " + diachi + "\n" +
-"Đơn: " + gao
-)
-function datGao(){
-
-fetch("/datgao",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body: JSON.stringify({
-
-ten: document.getElementById("ten").value,
-
-sdt: document.getElementById("sdt").value,
-
-diachi: document.getElementById("diachi").value,
-
-gao: document.getElementById("gao").value
-
-})
-
-})
-
-.then(res => res.json())
-
-.then(data => {
-
-alert("Đặt gạo thành công ✅")
-
-})
-
-}
-}
 </body>
+
 </html>
