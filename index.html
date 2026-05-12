@@ -354,7 +354,39 @@ alert(
 "Giao đến: " + diachi + "\n" +
 "Đơn: " + gao
 )
+function datGao(){
 
+fetch("/datgao",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+
+ten: document.getElementById("ten").value,
+
+sdt: document.getElementById("sdt").value,
+
+diachi: document.getElementById("diachi").value,
+
+gao: document.getElementById("gao").value
+
+})
+
+})
+
+.then(res => res.json())
+
+.then(data => {
+
+alert("Đặt gạo thành công ✅")
+
+})
+
+}
 }
 </body>
 </html>
