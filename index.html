@@ -79,7 +79,26 @@ NAMRICE AUTO
 <div class="container">
 
 <div class="card">
+<div class="card">
 
+<h2>🛒 KHÁCH ĐẶT GẠO</h2>
+
+<input id="tenkhach" placeholder="Tên khách">
+
+<input id="sdtkhach" placeholder="Số điện thoại">
+
+<input id="diachi" placeholder="Địa chỉ giao đến">
+
+<select id="gao">
+<option>ST25 5KG - 120K</option>
+<option>Gạo thơm 5KG - 100K</option>
+</select>
+
+<button onclick="datGao()">
+ĐẶT GẠO
+</button>
+
+</div>
 <h2>🛵 SHIPPER ĐĂNG NHẬP</h2>
 
 <input type="text" placeholder="Tên shipper">
@@ -192,6 +211,24 @@ alert("Đã nhận đơn 🚚")
 }
 
 </script>
+function datGao(){
 
+let ten = document.getElementById("tenkhach").value
+
+let sdt = document.getElementById("sdtkhach").value
+
+let diachi = document.getElementById("diachi").value
+
+let gao = document.getElementById("gao").value
+
+alert(
+"Đã tạo đơn giao gạo 🚚\n\n" +
+"Khách: " + ten + "\n" +
+"SĐT: " + sdt + "\n" +
+"Giao đến: " + diachi + "\n" +
+"Đơn: " + gao
+)
+
+}
 </body>
 </html>
