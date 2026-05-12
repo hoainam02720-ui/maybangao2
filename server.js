@@ -440,7 +440,23 @@ res.json(randomVideos)
 // =======================
 // SERVER
 // =======================
+app.get('/auth', (req, res) => {
+  const appKey = 'DAN_APP_KEY_CUA_MAY_VAO_DAY';
 
+  const redirectUri =
+    'https://maybangao2-production.up.railway.app/callback';
+
+  const authUrl =
+    `https://services.tiktokshop.com/open/authorize?app_key=${appKey}&state=namrice&redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+  res.redirect(authUrl);
+});
+
+app.get('/callback', (req, res) => {
+  const code = req.query.code;
+
+  res.send('TikTok authorization success: ' + code);
+});
 app.listen(process.env.PORT || 3000, () => {
 
 console.log("Server running")
