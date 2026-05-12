@@ -1,150 +1,95 @@
-<!DOCTYPE html>
-<html lang="vi">
+export default function NamRiceHome() { return ( <div className="min-h-screen bg-gradient-to-b from-green-50 to-white text-gray-800"> <header className="p-6 flex justify-between items-center shadow-sm bg-white"> <div> <h1 className="text-3xl font-bold text-green-700">NamRice</h1> <p className="text-sm text-gray-500">Bán gạo • Giao hàng • Gọi xe</p> </div>
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<button className="bg-green-600 text-white px-4 py-2 rounded-2xl shadow">
+      Đăng nhập
+    </button>
+  </header>
 
-<title>Máy Bán Gạo Online</title>
+  <section className="p-6">
+    <div className="bg-green-700 rounded-3xl p-6 text-white shadow-xl">
+      <h2 className="text-4xl font-bold mb-3">NamRice Auto</h2>
+      <p className="text-lg opacity-90 mb-5">
+        Đặt gạo • Gọi shipper • Gọi xe nội vùng
+      </p>
 
-<style>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button className="bg-white text-green-700 rounded-2xl p-5 font-bold text-lg shadow hover:scale-105 transition">
+          🛒 Đặt Gạo
+        </button>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
+        <button className="bg-white text-green-700 rounded-2xl p-5 font-bold text-lg shadow hover:scale-105 transition">
+          🚚 Giao Hàng
+        </button>
 
-body{
-background:#f4f4f4;
-}
+        <button className="bg-white text-green-700 rounded-2xl p-5 font-bold text-lg shadow hover:scale-105 transition">
+          🛵 Gọi Xe
+        </button>
+      </div>
+    </div>
+  </section>
 
-.header{
-background:linear-gradient(135deg,#0f9b0f,#38ef7d);
-color:white;
-padding:30px;
-text-align:center;
-}
+  <section className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="bg-white rounded-3xl shadow-lg p-6 border">
+      <h3 className="text-2xl font-bold text-green-700 mb-4">
+        Đặt Gạo Nhanh
+      </h3>
 
-.container{
-max-width:500px;
-margin:auto;
-padding:20px;
-}
+      <div className="space-y-4">
+        <input
+          className="w-full border rounded-2xl p-4"
+          placeholder="Tên khách hàng"
+        />
 
-.card{
-background:white;
-padding:20px;
-border-radius:20px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
+        <input
+          className="w-full border rounded-2xl p-4"
+          placeholder="Số điện thoại"
+        />
 
-.card img{
-width:100%;
-border-radius:15px;
-}
+        <input
+          className="w-full border rounded-2xl p-4"
+          placeholder="Địa chỉ giao hàng"
+        />
 
-h2{
-margin-top:15px;
-color:green;
-}
+        <select className="w-full border rounded-2xl p-4">
+          <option>Gạo ST25</option>
+          <option>Gạo thơm</option>
+          <option>Gạo dẻo</option>
+        </select>
 
-.price{
-font-size:28px;
-font-weight:bold;
-margin:15px 0;
-}
+        <button className="w-full bg-green-600 text-white p-4 rounded-2xl font-bold text-lg shadow-lg">
+          Thanh Toán QR
+        </button>
+      </div>
+    </div>
 
-input,textarea{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:10px;
-border:1px solid #ccc;
-}
+    <div className="bg-white rounded-3xl shadow-lg p-6 border">
+      <h3 className="text-2xl font-bold text-green-700 mb-4">
+        Dịch Vụ Shipper
+      </h3>
 
-button{
-width:100%;
-padding:14px;
-margin-top:15px;
-border:none;
-border-radius:12px;
-color:white;
-font-size:18px;
-}
+      <div className="space-y-4">
+        <div className="p-4 bg-green-50 rounded-2xl border">
+          🚚 Giao gạo tận nơi trong bán kính 20km
+        </div>
 
-.qr{
-background:green;
-}
+        <div className="p-4 bg-green-50 rounded-2xl border">
+          🛵 Gọi xe nội vùng nhanh chóng
+        </div>
 
-.send{
-background:red;
-}
+        <div className="p-4 bg-green-50 rounded-2xl border">
+          📍 Theo dõi shipper realtime
+        </div>
 
-.footer{
-text-align:center;
-padding:20px;
-margin-top:30px;
-}
+        <div className="p-4 bg-green-50 rounded-2xl border">
+          💳 Hỗ trợ QR và tiền mặt
+        </div>
+      </div>
+    </div>
+  </section>
 
-</style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-<h1>🌾 Máy Bán Gạo Online</h1>
-
-<p>Gạo sạch Vĩnh Long</p>
-
+  <footer className="p-6 text-center text-gray-500 text-sm">
+    © 2026 NamRice Auto
+  </footer>
 </div>
 
-<div class="container">
-
-<div class="card">
-
-<img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1200&auto=format&fit=crop">
-
-<h2>Gạo ST25</h2>
-
-<p>Gạo thơm dẻo cao cấp.</p>
-
-<div class="price">120.000đ</div>
-
-<form action="https://formspree.io/f/mvzlvwpn" method="POST">
-
-<input type="hidden" name="sanpham" value="Gạo ST25">
-
-<input type="text" name="ten" placeholder="Tên khách hàng" required>
-
-<input type="text" name="sdt" placeholder="Số điện thoại" required>
-
-<textarea name="diachi" placeholder="Địa chỉ giao hàng" required></textarea>
-
-<a href="https://img.vietqr.io/image/sacombank-070122688893-compact2.png?amount=120000&addInfo=Mua%20gao%20ST25&accountName=TRAN%20HOAI%20NAM" target="_blank">
-
-<button type="button" class="qr">
-Thanh toán QR
-</button>
-
-</a>
-
-<button type="submit" class="send">
-Gửi đơn hàng
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-<div class="footer">
-© Trần Hoài Nam
-</div>
-
-</body>
-</html>
+); }
