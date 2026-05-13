@@ -1,271 +1,109 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-<meta charset="utf-8">
-
-<title>NamRice Auto</title>
-
-<!-- =========================
-LEAFLET MAP
-========================= -->
-
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#f5f5f5;
-}
-
 /* =========================
-KHUNG TRÊN
+GIÁ TỪNG LOẠI XE
 ========================= */
 
-.top{
+let vehiclePrices = {
 
-padding:15px;
-background:white;
+"xe_may":7000,
 
-}
+"oto_4_cho":12000,
+
+"oto_7_cho":15000,
+
+"giao_gao":7000
+
+};
 
 /* =========================
-Ô NHẬP
+LOẠI XE ĐANG CHỌN
 ========================= */
 
-input{
+let selectedVehicle = "xe_may";
 
-padding:10px;
-width:220px;
-margin:5px;
+/* =========================
+ĐỔI LOẠI XE
+========================= */
+
+function selectVehicle(type){
+
+selectedVehicle = type;
+
+alert("Đã chọn: " + type);
 
 }
 
 /* =========================
-NÚT BẤM
+GPS REALTIME
 ========================= */
 
-button{
+let userMarker;
 
-padding:10px 20px;
-margin:5px;
-cursor:pointer;
+/* =========================
+THEO DÕI GPS LIÊN TỤC
+========================= */
+
+navigator.geolocation.watchPosition(
+
+function(position){
+
+let lat =
+position.coords.latitude;
+
+let lng =
+position.coords.longitude;
+
+/* =========================
+XOÁ MARKER CŨ
+========================= */
+
+if(userMarker){
+
+map.removeLayer(userMarker);
 
 }
 
 /* =========================
-MAP
+TẠO MŨI TÊN
 ========================= */
 
-#map{
+let arrowIcon = L.divIcon({
 
-width:100%;
-height:70vh;
+html:'⬆️',
 
-}
+className:'',
+
+iconSize:[30,30]
+
+});
 
 /* =========================
-KẾT QUẢ
+HIỆN VỊ TRÍ HIỆN TẠI
 ========================= */
 
-#result{
+userMarker =
 
-padding:10px;
-font-size:20px;
-font-weight:bold;
-
-}
-
-/* =========================
-THÔNG TIN
-========================= */
-
-.info{
-
-padding:10px;
-background:white;
-margin-top:10px;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<!-- =========================
-KHUNG NHẬP THÔNG TIN
-========================= -->
-
-<div class="top">
-
-<h2>NamRice Auto</h2>
-
-<!-- ĐIỂM ĐI -->
-
-<input
-id="from"
-placeholder="Điểm đi"
->
-
-<!-- ĐIỂM ĐẾN -->
-
-<input
-id="to"
-placeholder="Điểm đến"
->
-
-<br>
-
-<!-- NÚT TÍNH -->
-
-<button onclick="calculate()">
-
-TÍNH KHOẢNG CÁCH
-
-</button>
-
-<!-- NÚT LẤY GPS -->
-
-<button onclick="getLocation()">
-
-LẤY GPS HIỆN TẠI
-
-</button>
-
-</div>
-
-<!-- =========================
-HIỆN KẾT QUẢ
-========================= -->
-
-<div id="result">
-
-Khoảng cách: 0 km
-
-</div>
-
-<!-- =========================
-THÔNG TIN ĐƠN HÀNG
-========================= -->
-
-<div class="info">
-
-<h3>Thông tin đơn hàng</h3>
-
-<p id="money">
-
-Tiền ship: 0đ
-
-</p>
-
-<p id="payment">
-
-Thanh toán:
-Chưa chọn
-
-</p>
-
-<!-- =========================
-NÚT QR
-========================= -->
-
-<button onclick="payQR()">
-
-THANH TOÁN QR
-
-</button>
-
-<!-- =========================
-NÚT TIỀN MẶT
-========================= -->
-
-<button onclick="cashPayment()">
-
-TIỀN MẶT
-
-</button>
-
-<br><br>
-
-<!-- =========================
-NÚT GỌI
-========================= -->
-
-<a href="tel:0909123456">
-
-<button>
-
-GỌI SHIPPER
-
-</button>
-
-</a>
-
-<!-- =========================
-NÚT SMS
-========================= -->
-
-<a href="sms:0909123456">
-
-<button>
-
-NHẮN TIN
-
-</button>
-
-</a>
-
-</div>
-
-<!-- =========================
-MAP
-========================= -->
-
-<div id="map"></div>
-
-<script>
-
-/* =========================
-TẠO MAP
-========================= */
-
-let map =
-L.map('map')
-.setView([10.0452,105.7469],8);
-
-/* =========================
-LOAD MAP OPENSTREETMAP
-========================= */
-
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+L.marker(
+[lat,lng],
 {
-maxZoom:19
+icon:arrowIcon
 }
 ).addTo(map);
 
 /* =========================
-BIẾN LƯU ROUTE
+MAP ĐI THEO MÌNH
 ========================= */
 
-let routeLine;
+map.setView([lat,lng]);
+
+}
+
+);
 
 /* =========================
-HÀM TÍNH KHOẢNG CÁCH
+TÍNH KHOẢNG CÁCH
 ========================= */
 
 async function calculate(){
-
-/* =========================
-LẤY ĐỊA CHỈ
-========================= */
 
 let from =
 document.getElementById("from").value
@@ -276,7 +114,7 @@ document.getElementById("to").value
 + ", Việt Nam";
 
 /* =========================
-TÌM TOẠ ĐỘ ĐIỂM ĐI
+TÌM TOẠ ĐỘ
 ========================= */
 
 let fromData =
@@ -288,10 +126,6 @@ await fetch(
 let fromJson =
 await fromData.json();
 
-/* =========================
-TÌM TOẠ ĐỘ ĐIỂM ĐẾN
-========================= */
-
 let toData =
 await fetch(
 'https://nominatim.openstreetmap.org/search?format=json&q='
@@ -302,7 +136,7 @@ let toJson =
 await toData.json();
 
 /* =========================
-KIỂM TRA ĐỊA ĐIỂM
+KIỂM TRA
 ========================= */
 
 if(fromJson.length==0 || toJson.length==0){
@@ -313,10 +147,6 @@ return;
 
 }
 
-/* =========================
-LẤY LAT LNG
-========================= */
-
 let lat1 = fromJson[0].lat;
 let lon1 = fromJson[0].lon;
 
@@ -324,17 +154,7 @@ let lat2 = toJson[0].lat;
 let lon2 = toJson[0].lon;
 
 /* =========================
-XOÁ ROUTE CŨ
-========================= */
-
-if(routeLine){
-
-map.removeLayer(routeLine);
-
-}
-
-/* =========================
-API TÍNH ĐƯỜNG ĐI
+ROUTING
 ========================= */
 
 let routeData =
@@ -348,28 +168,28 @@ let routeJson =
 await routeData.json();
 
 /* =========================
-LẤY TOẠ ĐỘ ĐƯỜNG
-========================= */
-
-let coords =
-routeJson.routes[0].geometry.coordinates;
-
-/* =========================
-LẤY KHOẢNG CÁCH
+KHOẢNG CÁCH
 ========================= */
 
 let distance =
 routeJson.routes[0].distance / 1000;
 
 /* =========================
-TÍNH TIỀN SHIP
+LẤY GIÁ XE
 ========================= */
 
-let shipPrice =
-distance * 7000;
+let pricePerKm =
+vehiclePrices[selectedVehicle];
 
 /* =========================
-HIỆN KHOẢNG CÁCH
+TÍNH TIỀN
+========================= */
+
+let totalPrice =
+distance * pricePerKm;
+
+/* =========================
+HIỆN KẾT QUẢ
 ========================= */
 
 document.getElementById("result")
@@ -377,25 +197,34 @@ document.getElementById("result")
 
 "Khoảng cách: "
 + distance.toFixed(2)
-+ " km";
-
-/* =========================
-HIỆN TIỀN SHIP
-========================= */
-
-document.getElementById("money")
-.innerHTML =
-
-"Tiền ship: "
-+ shipPrice.toFixed(0)
++ " km"
++ "<br>"
++ "Loại xe: "
++ selectedVehicle
++ "<br>"
++ "Giá ship: "
++ totalPrice.toFixed(0)
 + "đ";
 
 /* =========================
-CHUYỂN LAT LNG
+TOẠ ĐỘ ROUTE
 ========================= */
+
+let coords =
+routeJson.routes[0].geometry.coordinates;
 
 let latlngs =
 coords.map(c => [c[1],c[0]]);
+
+/* =========================
+XOÁ ROUTE CŨ
+========================= */
+
+if(routeLine){
+
+map.removeLayer(routeLine);
+
+}
 
 /* =========================
 VẼ ĐƯỜNG
@@ -410,82 +239,9 @@ weight:5
 }).addTo(map);
 
 /* =========================
-HIỆN 2 ĐIỂM
-========================= */
-
-L.marker([lat1,lon1]).addTo(map);
-
-L.marker([lat2,lon2]).addTo(map);
-
-/* =========================
-ZOOM VỪA ĐƯỜNG
+ZOOM
 ========================= */
 
 map.fitBounds(routeLine.getBounds());
 
 }
-
-/* =========================
-GPS HIỆN TẠI
-========================= */
-
-function getLocation(){
-
-navigator.geolocation.getCurrentPosition(
-
-function(position){
-
-let lat =
-position.coords.latitude;
-
-let lng =
-position.coords.longitude;
-
-L.marker([lat,lng])
-.addTo(map);
-
-map.setView([lat,lng],15);
-
-alert("Đã lấy GPS hiện tại");
-
-}
-
-);
-
-}
-
-/* =========================
-THANH TOÁN QR
-========================= */
-
-function payQR(){
-
-document.getElementById("payment")
-.innerHTML =
-
-"Thanh toán: QR";
-
-alert("Hiện QR ngân hàng");
-
-}
-
-/* =========================
-THANH TOÁN TIỀN MẶT
-========================= */
-
-function cashPayment(){
-
-document.getElementById("payment")
-.innerHTML =
-
-"Thanh toán: Tiền mặt";
-
-alert("Khách trả tiền mặt");
-
-}
-
-</script>
-
-</body>
-
-</html>
