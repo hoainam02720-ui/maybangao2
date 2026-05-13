@@ -1,739 +1,185 @@
-<!DOCTYPE html>
-<html lang="vi">
+<!-- ========================= -->
+<!-- APP KHÁCH NAMRICE -->
+<!-- CHỨC NĂNG ĐẶT XE -->
+<!-- ========================= -->
 
-<head>
+<div class="khach-dat-xe">
 
-<meta charset="UTF-8">
+  <!-- TIÊU ĐỀ -->
+  <h2>ĐẶT XE NAMRICE</h2>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ========================= -->
+  <!-- NHẬP ĐIỂM ĐÓN -->
+  <!-- pickup_address -->
+  <!-- ========================= -->
 
-<title>NAMRICE AUTO</title>
+  <input
+    id="diem_don"
+    placeholder="Nhập điểm đón"
+  >
 
-<style>
+  <!-- ========================= -->
+  <!-- NHẬP ĐIỂM ĐẾN -->
+  <!-- dropoff_address -->
+  <!-- ========================= -->
 
-body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
-}
+  <input
+    id="diem_den"
+    placeholder="Nhập điểm đến"
+  >
 
-.header{
-background:linear-gradient(90deg,#16a34a,#22c55e);
-padding:20px;
-text-align:center;
-font-size:32px;
-font-weight:bold;
-}
+  <!-- ========================= -->
+  <!-- CHỌN LOẠI XE -->
+  <!-- vehicle_type -->
+  <!-- ========================= -->
 
-.container{
-padding:15px;
-}
+  <select id="loai_xe">
 
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
-}
+    <!-- XE MÁY -->
+    <option value="7000">
+      Xe máy
+    </option>
 
-input,select,button{
-width:100%;
-padding:15px;
-margin-top:12px;
-border:none;
-border-radius:12px;
-font-size:18px;
-box-sizing:border-box;
-}
+    <!-- Ô TÔ 4 CHỖ -->
+    <option value="12000">
+      Ô tô 4 chỗ
+    </option>
 
-button{
-background:#22c55e;
-color:white;
-font-weight:bold;
-}
+    <!-- Ô TÔ 7 CHỖ -->
+    <option value="15000">
+      Ô tô 7 chỗ
+    </option>
 
-.order{
-background:#334155;
-padding:15px;
-border-radius:15px;
-margin-top:20px;
-}
+  </select>
 
-.history{
-background:#14532d;
-padding:15px;
-border-radius:15px;
-margin-top:20px;
-}
+  <!-- ========================= -->
+  <!-- NÚT TÍNH GIÁ -->
+  <!-- TINH_GIA_CUOC -->
+  <!-- ========================= -->
 
-a{
-color:#4ade80;
-text-decoration:none;
-font-size:18px;
-}
+  <button onclick="tinhGiaCuoc()">
 
-#gps{
-margin-top:15px;
-color:#4ade80;
-}
+    TÍNH GIÁ
 
-</style>
+  </button>
 
-</head>
+  <!-- ========================= -->
+  <!-- HIỆN KHOẢNG CÁCH -->
+  <!-- distance_km -->
+  <!-- ========================= -->
 
-<body>
+  <div id="hien_khoang_cach"></div>
 
-<div class="header">
+  <!-- ========================= -->
+  <!-- HIỆN GIÁ TIỀN -->
+  <!-- price_total -->
+  <!-- ========================= -->
 
-NAMRICE AUTO
+  <div id="hien_gia_tien"></div>
 
 </div>
 
-<div class="container">
-
-<div class="card">
-
-<h2>🛒 ĐẶT GẠO</h2>
-
-<input
-id="tengao"
-placeholder="Tên khách"
->
-
-<input
-id="sdtgao"
-placeholder="Số điện thoại"
->
-
-<input
-id="diachigao"
-placeholder="Địa chỉ giao gạo"
->
-
-<select id="loaigao">
-
-<option>
-ST25 5KG - 120K
-</option>
-
-<option>
-ST25 10KG - 240K
-</option>
-
-<option>
-Gạo thơm 5KG - 100K
-</option>
-
-</select>
-
-<button onclick="datGao()">
-
-ĐẶT GẠO
-
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>🚖 ĐẶT XE</h2>
-
-<input
-id="tenxe"
-placeholder="Tên khách"
->
-
-<input
-id="sdtxe"
-placeholder="Số điện thoại"
->
-
-<input
-id="diemdi"
-placeholder="Điểm đón"
->
-
-<input
-id="diemden"
-placeholder="Điểm đến"
->
-
-<select id="loaixe">
-
-<option>
-🛵 Xe máy
-</option>
-
-<option>
-🚗 Ô tô 4 chỗ
-</option>
-
-<option>
-🚙 Ô tô 7 chỗ
-</option>
-
-</select>
-
-<button onclick="tinhTien()">
-
-💰 TÍNH GIÁ
-
-</button>
-
-<div id="ketqua"></div>
-
-<button onclick="datXe()">
-
-🚖 ĐẶT XE
-
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>🛵 SHIPPER ONLINE</h2>
-
-<button onclick="batGPS()">
-
-BẬT GPS NHẬN ĐƠN
-
-</button>
-
-<div id="gps">
-
-GPS chưa bật
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h2>🚚 ĐƠN ĐANG CHỜ</h2>
-
-<div id="donhang"></div>
-
-</div>
-
-<div class="card">
-
-<h2>📜 LỊCH SỬ</h2>
-
-<div id="lichsu"></div>
-
-</div>
-
-</div>
+<!-- ========================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================= -->
 
 <script>
 
-let donhang =
-JSON.parse(
-localStorage.getItem("donhang")
-) || []
+  // =========================
+  // CHỨC NĂNG:
+  // TÍNH GIÁ CƯỚC
+  // =========================
 
-function luu(){
+  async function tinhGiaCuoc() {
 
-localStorage.setItem(
-"donhang",
-JSON.stringify(donhang)
-)
+    // =========================
+    // LẤY ĐIỂM ĐÓN
+    // pickup_address
+    // =========================
 
-}
+    const diemDon =
+      document.getElementById("diem_don").value;
 
-function batGPS(){
+    // =========================
+    // LẤY ĐIỂM ĐẾN
+    // dropoff_address
+    // =========================
 
-navigator.geolocation.getCurrentPosition(
+    const diemDen =
+      document.getElementById("diem_den").value;
 
-(pos)=>{
+    // =========================
+    // LẤY LOẠI XE
+    // vehicle_type
+    // =========================
 
-document.getElementById("gps").innerHTML =
+    const giaMoiKm =
+      Number(
+        document.getElementById("loai_xe").value
+      );
 
-"📍 GPS: " +
+    // =========================
+    // TEST GIẢ KHOẢNG CÁCH
+    // distance_km
+    // SAU NÀY ĐỔI GPS THẬT
+    // =========================
 
-pos.coords.latitude +
+    const khoangCach = 7.2;
 
-" , " +
+    // =========================
+    // TÍNH GIÁ TIỀN
+    // price_total
+    // =========================
 
-pos.coords.longitude
+    const tongTien =
+      khoangCach * giaMoiKm;
 
-alert("Đã bật online")
+    // =========================
+    // HIỆN KHOẢNG CÁCH
+    // =========================
 
-},
+    document.getElementById(
+      "hien_khoang_cach"
+    ).innerHTML = `
 
-()=>{
+      Khoảng cách:
+      ${khoangCach} km
 
-alert("Chưa bật GPS")
+    `;
 
-}
+    // =========================
+    // HIỆN GIÁ TIỀN
+    // =========================
 
-)
+    document.getElementById(
+      "hien_gia_tien"
+    ).innerHTML = `
 
-}
+      Giá tiền:
+      ${tongTien.toLocaleString()}đ
 
-function datGao(){
+    `;
 
-const ten =
-document.getElementById("tengao").value
+    // =========================
+    // GỬI DỮ LIỆU LÊN SERVER
+    // KHACH_DAT_XE
+    // =========================
 
-const sdt =
-document.getElementById("sdtgao").value
+    console.log({
 
-const diachi =
-document.getElementById("diachigao").value
+      pickup_address: diemDon,
 
-const gao =
-document.getElementById("loaigao").value
+      dropoff_address: diemDen,
 
-if(
-ten == "" ||
-sdt == "" ||
-diachi == ""
-){
+      vehicle_type:
+        document.getElementById("loai_xe").value,
 
-alert("Nhập đầy đủ thông tin")
+      distance_km: khoangCach,
 
-return
+      price_total: tongTien
 
-}
+    });
 
-donhang.push({
-
-loai:"gao",
-
-ten,
-
-sdt,
-
-diachi,
-
-gao,
-
-trangthai:"🕒 Chờ shipper",
-
-hoanthanh:false
-
-})
-
-luu()
-
-hienThi()
-
-alert("Đặt gạo thành công")
-
-}
-
-function tinhTien(){
-
-const diemdi =
-document.getElementById("diemdi").value
-
-const diemden =
-document.getElementById("diemden").value
-
-const loaixe =
-document.getElementById("loaixe").value
-
-if(
-diemdi == "" ||
-diemden == ""
-){
-
-alert("Nhập điểm đi và điểm đến")
-
-return
-
-}
-
-const km =
-Math.floor(Math.random()*12)+1
-
-let tien = 0
-
-if(loaixe == "🛵 Xe máy"){
-
-tien = km * 7000
-
-}
-
-if(loaixe == "🚗 Ô tô 4 chỗ"){
-
-if(km <= 2){
-
-tien = 28000
-
-}else{
-
-tien =
-28000 + ((km - 2) * 12000)
-
-}
-
-}
-
-if(loaixe == "🚙 Ô tô 7 chỗ"){
-
-if(km <= 2){
-
-tien = 35000
-
-}else{
-
-tien =
-35000 + ((km - 2) * 15000)
-
-}
-
-}
-
-window.kmTam = km
-window.tienTam = tien
-
-document.getElementById("ketqua").innerHTML =
-
-`
-
-<br>
-
-📏 Khoảng cách:
-<b>${km} km</b>
-
-<br><br>
-
-💰 Giá tiền:
-<b>${tien.toLocaleString()}đ</b>
-
-`
-
-}
-
-function datXe(){
-
-const ten =
-document.getElementById("tenxe").value
-
-const sdt =
-document.getElementById("sdtxe").value
-
-const diemdi =
-document.getElementById("diemdi").value
-
-const diemden =
-document.getElementById("diemden").value
-
-const loaixe =
-document.getElementById("loaixe").value
-
-if(
-ten == "" ||
-sdt == "" ||
-diemdi == "" ||
-diemden == ""
-){
-
-alert("Nhập đầy đủ thông tin")
-
-return
-
-}
-
-if(!window.kmTam){
-
-alert("Bấm tính giá trước")
-
-return
-
-}
-
-donhang.push({
-
-loai:"xe",
-
-ten,
-
-sdt,
-
-diemdi,
-
-diemden,
-
-loaixe,
-
-km:window.kmTam,
-
-tien:window.tienTam,
-
-trangthai:"🕒 Chờ tài xế",
-
-hoanthanh:false
-
-})
-
-luu()
-
-hienThi()
-
-alert("Đặt xe thành công")
-
-}
-
-function hienThi(){
-
-let html = ""
-
-let lichsu = ""
-
-donhang.forEach((don,index)=>{
-
-if(don.hoanthanh == false){
-
-if(don.loai == "gao"){
-
-html += `
-
-<div class="order">
-
-👤 ${don.ten}
-
-<br><br>
-
-<a href="tel:${don.sdt}">
-
-📞 ${don.sdt}
-
-</a>
-
-<br><br>
-
-🏠 ${don.diachi}
-
-<br><br>
-
-🍚 ${don.gao}
-
-<br><br>
-
-📌 ${don.trangthai}
-
-<br><br>
-
-<button onclick="nhanDon(${index})">
-
-NHẬN ĐƠN
-
-</button>
-
-<button onclick="moKho(${index})">
-
-MỞ KHO GẠO
-
-</button>
-
-<button onclick="giaoHang('${don.diachi}')">
-
-ĐI GIAO
-
-</button>
-
-<button onclick="hoanThanh(${index})">
-
-ĐÃ GIAO XONG
-
-</button>
-
-</div>
-
-`
-
-}
-
-if(don.loai == "xe"){
-
-html += `
-
-<div class="order">
-
-👤 ${don.ten}
-
-<br><br>
-
-<a href="tel:${don.sdt}">
-
-📞 ${don.sdt}
-
-</a>
-
-<br><br>
-
-📍 ${don.diemdi}
-
-<br><br>
-
-🏁 ${don.diemden}
-
-<br><br>
-
-🚗 ${don.loaixe}
-
-<br><br>
-
-📏 ${don.km} km
-
-<br><br>
-
-💰 ${don.tien.toLocaleString()}đ
-
-<br><br>
-
-📌 ${don.trangthai}
-
-<br><br>
-
-<button onclick="nhanDon(${index})">
-
-NHẬN CUỐC
-
-</button>
-
-<button onclick="daDen(${index})">
-
-ĐÃ ĐẾN
-
-</button>
-
-<button onclick="diDiemDen('${don.diemden}')">
-
-ĐI ĐIỂM ĐẾN
-
-</button>
-
-<button onclick="hoanThanh(${index})">
-
-HOÀN THÀNH
-
-</button>
-
-</div>
-
-`
-
-}
-
-}else{
-
-lichsu += `
-
-<div class="history">
-
-✅ ${don.ten}
-
-<br><br>
-
-${don.trangthai}
-
-</div>
-
-`
-
-}
-
-})
-
-document.getElementById("donhang").innerHTML =
-html
-
-document.getElementById("lichsu").innerHTML =
-lichsu
-
-}
-
-function nhanDon(index){
-
-donhang[index].trangthai =
-"🚚 Đang đến"
-
-luu()
-
-hienThi()
-
-}
-
-function moKho(index){
-
-donhang[index].trangthai =
-"🔓 Đã mở kho"
-
-alert("Đang mở khóa ô A1")
-
-luu()
-
-hienThi()
-
-}
-
-function giaoHang(diachi){
-
-window.open(
-
-"https://www.google.com/maps/dir/?api=1&destination=" +
-
-encodeURIComponent(diachi),
-
-"_blank"
-
-)
-
-}
-
-function daDen(index){
-
-alert(
-"Gọi khách: " +
-donhang[index].sdt
-)
-
-donhang[index].trangthai =
-"📍 Đã đến"
-
-luu()
-
-hienThi()
-
-}
-
-function diDiemDen(diachi){
-
-window.open(
-
-"https://www.google.com/maps/dir/?api=1&destination=" +
-
-encodeURIComponent(diachi),
-
-"_blank"
-
-)
-
-}
-
-function hoanThanh(index){
-
-donhang[index].trangthai =
-"✅ Hoàn thành"
-
-donhang[index].hoanthanh = true
-
-luu()
-
-hienThi()
-
-}
-
-hienThi()
+  }
 
 </script>
-
-</body>
-
-</html>
