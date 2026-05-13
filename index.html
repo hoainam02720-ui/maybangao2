@@ -1,185 +1,159 @@
-<!-- ========================= -->
-<!-- APP KHÁCH NAMRICE -->
-<!-- CHỨC NĂNG ĐẶT XE -->
-<!-- ========================= -->
+<!DOCTYPE html>
+<html>
 
-<div class="khach-dat-xe">
+<head>
+  <meta charset="utf-8">
+  <title>NamRice Maps Test</title>
 
-  <!-- TIÊU ĐỀ -->
-  <h2>ĐẶT XE NAMRICE</h2>
+  <style>
 
-  <!-- ========================= -->
-  <!-- NHẬP ĐIỂM ĐÓN -->
-  <!-- pickup_address -->
-  <!-- ========================= -->
+    body{
+      margin:0;
+      font-family:Arial;
+    }
+
+    #map{
+      width:100%;
+      height:500px;
+    }
+
+    .box{
+      padding:10px;
+      background:#f2f2f2;
+    }
+
+    input{
+      width:250px;
+      padding:10px;
+      margin:5px;
+    }
+
+    button{
+      padding:10px 20px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="box">
 
   <input
-    id="diem_don"
-    placeholder="Nhập điểm đón"
+    id="from"
+    placeholder="Điểm bắt đầu"
   >
-
-  <!-- ========================= -->
-  <!-- NHẬP ĐIỂM ĐẾN -->
-  <!-- dropoff_address -->
-  <!-- ========================= -->
 
   <input
-    id="diem_den"
-    placeholder="Nhập điểm đến"
+    id="to"
+    placeholder="Điểm kết thúc"
   >
 
-  <!-- ========================= -->
-  <!-- CHỌN LOẠI XE -->
-  <!-- vehicle_type -->
-  <!-- ========================= -->
+  <button onclick="tinhKhoangCach()">
 
-  <select id="loai_xe">
-
-    <!-- XE MÁY -->
-    <option value="7000">
-      Xe máy
-    </option>
-
-    <!-- Ô TÔ 4 CHỖ -->
-    <option value="12000">
-      Ô tô 4 chỗ
-    </option>
-
-    <!-- Ô TÔ 7 CHỖ -->
-    <option value="15000">
-      Ô tô 7 chỗ
-    </option>
-
-  </select>
-
-  <!-- ========================= -->
-  <!-- NÚT TÍNH GIÁ -->
-  <!-- TINH_GIA_CUOC -->
-  <!-- ========================= -->
-
-  <button onclick="tinhGiaCuoc()">
-
-    TÍNH GIÁ
+    TÍNH KHOẢNG CÁCH
 
   </button>
 
-  <!-- ========================= -->
-  <!-- HIỆN KHOẢNG CÁCH -->
-  <!-- distance_km -->
-  <!-- ========================= -->
-
-  <div id="hien_khoang_cach"></div>
-
-  <!-- ========================= -->
-  <!-- HIỆN GIÁ TIỀN -->
-  <!-- price_total -->
-  <!-- ========================= -->
-
-  <div id="hien_gia_tien"></div>
+  <h2 id="ketqua"></h2>
 
 </div>
 
-<!-- ========================= -->
-<!-- JAVASCRIPT -->
-<!-- ========================= -->
+<div id="map"></div>
 
 <script>
 
-  // =========================
-  // CHỨC NĂNG:
-  // TÍNH GIÁ CƯỚC
-  // =========================
+let map;
 
-  async function tinhGiaCuoc() {
+let directionsService;
 
-    // =========================
-    // LẤY ĐIỂM ĐÓN
-    // pickup_address
-    // =========================
+let directionsRenderer;
 
-    const diemDon =
-      document.getElementById("diem_don").value;
+function initMap(){
 
-    // =========================
-    // LẤY ĐIỂM ĐẾN
-    // dropoff_address
-    // =========================
+  map = new google.maps.Map(
+    document.getElementById("map"),
+    {
+      center:{
+        lat:10.0452,
+        lng:105.7469
+      },
+      zoom:13
+    }
+  );
 
-    const diemDen =
-      document.getElementById("diem_den").value;
+  directionsService =
+    new google.maps.DirectionsService();
 
-    // =========================
-    // LẤY LOẠI XE
-    // vehicle_type
-    // =========================
+  directionsRenderer =
+    new google.maps.DirectionsRenderer();
 
-    const giaMoiKm =
-      Number(
-        document.getElementById("loai_xe").value
-      );
+  directionsRenderer.setMap(map);
 
-    // =========================
-    // TEST GIẢ KHOẢNG CÁCH
-    // distance_km
-    // SAU NÀY ĐỔI GPS THẬT
-    // =========================
+}
 
-    const khoangCach = 7.2;
+function tinhKhoangCach(){
 
-    // =========================
-    // TÍNH GIÁ TIỀN
-    // price_total
-    // =========================
+  const from =
+    document.getElementById("from").value;
 
-    const tongTien =
-      khoangCach * giaMoiKm;
+  const to =
+    document.getElementById("to").value;
 
-    // =========================
-    // HIỆN KHOẢNG CÁCH
-    // =========================
+  directionsService.route(
 
-    document.getElementById(
-      "hien_khoang_cach"
-    ).innerHTML = `
+    {
+      origin:from,
 
-      Khoảng cách:
-      ${khoangCach} km
+      destination:to,
 
-    `;
+      travelMode:
+        google.maps.TravelMode.DRIVING
 
-    // =========================
-    // HIỆN GIÁ TIỀN
-    // =========================
+    },
 
-    document.getElementById(
-      "hien_gia_tien"
-    ).innerHTML = `
+    function(response,status){
 
-      Giá tiền:
-      ${tongTien.toLocaleString()}đ
+      if(status === "OK"){
 
-    `;
+        directionsRenderer.setDirections(response);
 
-    // =========================
-    // GỬI DỮ LIỆU LÊN SERVER
-    // KHACH_DAT_XE
-    // =========================
+        const route =
+          response.routes[0].legs[0];
 
-    console.log({
+        document.getElementById("ketqua")
+        .innerHTML =
 
-      pickup_address: diemDon,
+          "Khoảng cách: " +
+          route.distance.text +
 
-      dropoff_address: diemDen,
+          " | Thời gian: " +
 
-      vehicle_type:
-        document.getElementById("loai_xe").value,
+          route.duration.text;
 
-      distance_km: khoangCach,
+      }
 
-      price_total: tongTien
+      else{
 
-    });
+        alert(
+          "Lỗi: " + status
+        );
 
-  }
+      }
+
+    }
+
+  );
+
+}
 
 </script>
+
+<script async defer
+
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMeXJNHIH36FqBIPQaC_Q_j5dKwFLsGbA&callback=initMap">
+
+</script>
+
+</body>
+</html>
