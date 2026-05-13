@@ -15,76 +15,155 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 
 body{
+
 margin:0;
 font-family:Arial;
-background:#f0f2f5;
+background:#e9f5ec;
+
 }
 
+/* =========================
+TOP
+========================= */
+
 .top{
-background:white;
-padding:15px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
+
+background:linear-gradient(
+90deg,
+#00994d,
+#00cc66
+);
+
+padding:20px;
+color:white;
+box-shadow:0 2px 10px rgba(0,0,0,0.2);
+
 }
 
 .title{
-font-size:30px;
+
+font-size:34px;
 font-weight:bold;
-color:green;
 margin-bottom:10px;
+
 }
 
-input,select,button{
+.subtitle{
 
-padding:12px;
-margin:5px;
 font-size:16px;
-border-radius:10px;
-border:1px solid #ccc;
+opacity:0.9;
 
 }
+
+/* =========================
+CARD
+========================= */
+
+.card{
+
+background:white;
+margin:15px;
+padding:15px;
+border-radius:20px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+
+}
+
+/* =========================
+INPUT
+========================= */
+
+input,select{
+
+width:95%;
+padding:14px;
+margin-top:10px;
+border-radius:12px;
+border:1px solid #ccc;
+font-size:16px;
+
+}
+
+/* =========================
+BUTTON
+========================= */
 
 button{
 
-background:#0080ff;
-color:white;
-font-weight:bold;
+padding:14px 20px;
 border:none;
+border-radius:14px;
+font-size:16px;
+font-weight:bold;
+margin-top:10px;
+cursor:pointer;
 
 }
+
+/* =========================
+BUTTON GREEN
+========================= */
+
+.green{
+
+background:#00b359;
+color:white;
+
+}
+
+/* =========================
+BUTTON BLUE
+========================= */
+
+.blue{
+
+background:#007bff;
+color:white;
+
+}
+
+/* =========================
+BUTTON ORANGE
+========================= */
+
+.orange{
+
+background:#ff8800;
+color:white;
+
+}
+
+/* =========================
+MAP
+========================= */
 
 #map{
-height:60vh;
+
+height:55vh;
 width:100%;
+
 }
+
+/* =========================
+RESULT
+========================= */
 
 #result{
 
-padding:15px;
-background:white;
 font-size:22px;
 font-weight:bold;
-
-}
-
-.info{
-
-padding:15px;
-background:white;
 margin-top:10px;
+color:#222;
 
 }
 
-#orders{
-
-padding:15px;
-background:white;
-margin-top:10px;
-
-}
+/* =========================
+ORDER
+========================= */
 
 .orderItem{
 
-padding:10px;
+padding:12px;
 border-bottom:1px solid #ddd;
 
 }
@@ -95,112 +174,23 @@ border-bottom:1px solid #ddd;
 
 <body>
 
+<!-- =========================
+TOP
+========================= -->
+
 <div class="top">
 
 <div class="title">
 
-NamRice Auto
+🌾 NamRice Auto
 
 </div>
 
-<!-- =========================
-SĐT
-========================= -->
+<div class="subtitle">
 
-<input
-id="phone"
-placeholder="Số điện thoại khách">
-
-<br>
-
-<!-- =========================
-CHẾ ĐỘ
-========================= -->
-
-<select id="mode"
-onchange="updateMode()">
-
-<option value="ride">
-
-ĐẶT XE
-
-</option>
-
-<option value="rice">
-
-ĐẶT GẠO
-
-</option>
-
-</select>
-
-<!-- =========================
-LOẠI XE
-========================= -->
-
-<select id="vehicle">
-
-<option value="xe_may">
-
-Xe máy
-
-</option>
-
-<option value="oto_4">
-
-Ô tô 4 chỗ
-
-</option>
-
-<option value="oto_7">
-
-Ô tô 7 chỗ
-
-</option>
-
-</select>
-
-<br>
-
-<!-- =========================
-ĐIỂM ĐÓN
-========================= -->
-
-<input
-id="from"
-placeholder="Điểm đón">
-
-<!-- =========================
-ĐIỂM ĐẾN
-========================= -->
-
-<input
-id="to"
-placeholder="Điểm đến / nhận gạo">
-
-<br>
-
-<button onclick="shareLocation()">
-
-CHIA SẺ VỊ TRÍ
-
-</button>
-
-<button onclick="calculate()">
-
-ĐẶT NGAY
-
-</button>
+Đặt xe • Giao gạo • GPS realtime
 
 </div>
-
-<!-- =========================
-KẾT QUẢ
-========================= -->
-
-<div id="result">
-
-Khoảng cách: 0 km
 
 </div>
 
@@ -208,54 +198,158 @@ Khoảng cách: 0 km
 THÔNG TIN
 ========================= -->
 
-<div class="info">
+<div class="card">
 
-<p id="money">
+<input
+id="phone"
+placeholder="📞 Số điện thoại khách">
 
-Tiền ship: 0đ
+<select
+id="mode"
+onchange="updateMode()">
 
-</p>
+<option value="rice">
 
-<p id="payment">
+🌾 Đặt giao gạo
 
-Thanh toán:
-Chưa chọn
+</option>
 
-</p>
+<option value="ride">
 
-<button onclick="payQR()">
+🛵 Đặt xe
 
-THANH TOÁN QR
+</option>
+
+</select>
+
+<select
+id="vehicle">
+
+<option value="xe_may">
+
+🛵 Xe máy
+
+</option>
+
+<option value="oto_4">
+
+🚗 Ô tô 4 chỗ
+
+</option>
+
+<option value="oto_7">
+
+🚙 Ô tô 7 chỗ
+
+</option>
+
+</select>
+
+<!-- =========================
+ĐIỂM ĐÓN
+========================= -->
+
+<div id="fromBox">
+
+<input
+id="from"
+placeholder="📍 Điểm đón">
+
+<button
+class="blue"
+onclick="shareLocation()">
+
+📡 Chia sẻ vị trí trực tiếp
 
 </button>
 
-<button onclick="cashPayment()">
+</div>
+
+<!-- =========================
+ĐIỂM NHẬN
+========================= -->
+
+<input
+id="to"
+placeholder="🏠 Điểm đến / nhận gạo">
+
+<button
+class="green"
+onclick="calculate()">
+
+✅ ĐẶT NGAY
+
+</button>
+
+<div id="result">
+
+Khoảng cách: 0 km
+
+</div>
+
+</div>
+
+<!-- =========================
+THANH TOÁN
+========================= -->
+
+<div class="card">
+
+<h3>
+
+💳 Thanh toán
+
+</h3>
+
+<button
+class="green"
+onclick="payQR()">
+
+QR BANKING
+
+</button>
+
+<button
+class="orange"
+onclick="cashPayment()">
 
 TIỀN MẶT
 
 </button>
 
-<br><br>
+<p id="payment">
 
-<a id="callBtn" href="#">
+Chưa chọn
 
-<button>
+</p>
 
-GỌI KHÁCH
+</div>
+
+<!-- =========================
+GỌI SHIPPER
+========================= -->
+
+<div class="card">
+
+<h3>
+
+📞 Liên hệ shipper
+
+</h3>
+
+<button
+class="blue"
+onclick="callShipper()">
+
+GỌI MIỄN PHÍ
 
 </button>
 
-</a>
+<p>
 
-<a id="smsBtn" href="#">
+Shipper nhận đơn mới kết nối cuộc gọi
 
-<button>
-
-NHẮN TIN
-
-</button>
-
-</a>
+</p>
 
 </div>
 
@@ -263,13 +357,15 @@ NHẮN TIN
 ĐƠN HÀNG
 ========================= -->
 
-<div id="orders">
+<div class="card">
 
 <h3>
 
-Đơn hàng đã lưu
+📦 Đơn đã lưu
 
 </h3>
+
+<div id="orders"></div>
 
 </div>
 
@@ -282,12 +378,12 @@ MAP
 <script>
 
 /* =========================
-TẠO MAP
+MAP
 ========================= */
 
 let map =
 L.map('map')
-.setView([10.0305,105.7689],13);
+.setView([10.0305,105.7689],14);
 
 /* =========================
 OPENSTREETMAP
@@ -305,6 +401,7 @@ maxZoom:19
 
 /* =========================
 MÁY GẠO
+A4 CẦN THƠ
 ========================= */
 
 let riceMachineLat = 10.0305;
@@ -315,9 +412,7 @@ MARKER MÁY GẠO
 ========================= */
 
 L.marker(
-
 [riceMachineLat,riceMachineLng]
-
 )
 
 .addTo(map)
@@ -349,7 +444,7 @@ ROUTE
 let routeLine;
 
 /* =========================
-CHẤM GPS KHÁCH
+CHẤM GPS
 ========================= */
 
 let liveDot;
@@ -368,11 +463,15 @@ position.coords.latitude;
 let lng =
 position.coords.longitude;
 
+/* XOÁ CHẤM CŨ */
+
 if(liveDot){
 
 map.removeLayer(liveDot);
 
 }
+
+/* CHẤM XANH */
 
 liveDot =
 L.circleMarker(
@@ -398,8 +497,7 @@ fillOpacity:1
 );
 
 /* =========================
-ẨN ĐIỂM ĐÓN
-KHI ĐẶT GẠO
+ẨN HIỆN ĐIỂM ĐÓN
 ========================= */
 
 function updateMode(){
@@ -409,22 +507,22 @@ document.getElementById("mode").value;
 
 if(mode=="rice"){
 
-document.getElementById("from")
+document.getElementById("fromBox")
 .style.display = "none";
 
 }
 
 else{
 
-document.getElementById("from")
-.style.display = "inline-block";
+document.getElementById("fromBox")
+.style.display = "block";
 
 }
 
 }
 
 /* =========================
-CHIA SẺ VỊ TRÍ
+CHIA SẺ GPS
 ========================= */
 
 function shareLocation(){
@@ -441,10 +539,9 @@ position.coords.longitude;
 
 document.getElementById("from")
 .value =
-
 lat + "," + lng;
 
-map.setView([lat,lng],15);
+map.setView([lat,lng],16);
 
 alert("Đã chia sẻ vị trí");
 
@@ -463,7 +560,7 @@ function payQR(){
 document.getElementById("payment")
 .innerHTML =
 
-"Thanh toán: QR";
+"💳 Thanh toán QR";
 
 }
 
@@ -476,7 +573,21 @@ function cashPayment(){
 document.getElementById("payment")
 .innerHTML =
 
-"Thanh toán: Tiền mặt";
+"💵 Thanh toán tiền mặt";
+
+}
+
+/* =========================
+GỌI SHIPPER
+========================= */
+
+function callShipper(){
+
+alert(
+
+"📞 Đang chờ shipper nhận đơn..."
+
+);
 
 }
 
@@ -487,27 +598,21 @@ document.getElementById("payment")
 async function calculate(){
 
 /* =========================
-SĐT
-========================= */
-
-let phone =
-document.getElementById("phone").value;
-
-document.getElementById("callBtn")
-.href = "tel:" + phone;
-
-document.getElementById("smsBtn")
-.href = "sms:" + phone;
-
-/* =========================
-CHẾ ĐỘ
+MODE
 ========================= */
 
 let mode =
 document.getElementById("mode").value;
 
 /* =========================
-LOẠI XE
+PHONE
+========================= */
+
+let phone =
+document.getElementById("phone").value;
+
+/* =========================
+VEHICLE
 ========================= */
 
 let vehicle =
@@ -527,17 +632,8 @@ prices[vehicle];
 let from;
 
 /* =========================
-ĐIỂM ĐẾN
-========================= */
-
-let to =
-document.getElementById("to").value
-+ ", Việt Nam";
-
-/* =========================
-NẾU ĐẶT GẠO
-THÌ ĐIỂM ĐI
-LÀ MÁY GẠO
+NẾU GIAO GẠO
+THÌ TỪ MÁY GẠO
 ========================= */
 
 if(mode=="rice"){
@@ -561,15 +657,21 @@ document.getElementById("from").value
 }
 
 /* =========================
-TÌM TOẠ ĐỘ
+ĐIỂM ĐẾN
+========================= */
+
+let to =
+document.getElementById("to").value
++ ", Việt Nam";
+
+/* =========================
+GEOCODE
 ========================= */
 
 let fromData =
 await fetch(
-
 'https://nominatim.openstreetmap.org/search?format=json&q='
 + encodeURIComponent(from)
-
 );
 
 let fromJson =
@@ -577,14 +679,16 @@ await fromData.json();
 
 let toData =
 await fetch(
-
 'https://nominatim.openstreetmap.org/search?format=json&q='
 + encodeURIComponent(to)
-
 );
 
 let toJson =
 await toData.json();
+
+/* =========================
+KIỂM TRA
+========================= */
 
 if(fromJson.length==0 || toJson.length==0){
 
@@ -595,7 +699,7 @@ return;
 }
 
 /* =========================
-TOẠ ĐỘ
+LAT LNG
 ========================= */
 
 let lat1 =
@@ -625,14 +729,14 @@ let routeJson =
 await routeData.json();
 
 /* =========================
-KHOẢNG CÁCH
+DISTANCE
 ========================= */
 
 let distance =
 routeJson.routes[0].distance / 1000;
 
 /* =========================
-TIỀN SHIP
+TOTAL
 ========================= */
 
 let total =
@@ -654,17 +758,6 @@ document.getElementById("result")
 + "đ";
 
 /* =========================
-HIỆN TIỀN
-========================= */
-
-document.getElementById("money")
-.innerHTML =
-
-"Tiền ship: "
-+ total.toFixed(0)
-+ "đ";
-
-/* =========================
 ROUTE
 ========================= */
 
@@ -675,18 +768,26 @@ routeJson.routes[0]
 let latlngs =
 coords.map(c => [c[1],c[0]]);
 
+/* =========================
+XOÁ ROUTE CŨ
+========================= */
+
 if(routeLine){
 
 map.removeLayer(routeLine);
 
 }
 
+/* =========================
+VẼ ROUTE
+========================= */
+
 routeLine =
 L.polyline(latlngs,{
 
-color:'blue',
+color:'green',
 
-weight:6
+weight:7
 
 }).addTo(map);
 
@@ -698,7 +799,7 @@ L.marker([lat1,lon1])
 
 .addTo(map)
 
-.bindPopup("Điểm đi");
+.bindPopup("📍 Điểm đi");
 
 /* =========================
 MARKER ĐIỂM ĐẾN
@@ -708,7 +809,7 @@ L.marker([lat2,lon2])
 
 .addTo(map)
 
-.bindPopup("Khách hàng");
+.bindPopup("🏠 Điểm đến");
 
 /* =========================
 ZOOM
@@ -728,9 +829,15 @@ let orderHTML =
 
 <div class="orderItem">
 
-📦 ${mode=="rice" ? "Đặt gạo" : "Đặt xe"}
+<b>
 
-<br>
+${mode=="rice"
+? "🌾 Đặt giao gạo"
+: "🛵 Đặt xe"}
+
+</b>
+
+<br><br>
 
 📞 ${phone}
 
