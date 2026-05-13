@@ -20,6 +20,7 @@ font-family:Arial;
 .top{
 padding:10px;
 background:white;
+position:relative;
 z-index:1000;
 }
 
@@ -35,6 +36,12 @@ padding:10px;
 #map{
 height:85vh;
 width:100%;
+}
+
+#result{
+padding:10px;
+font-size:20px;
+font-weight:bold;
 }
 
 </style>
@@ -54,101 +61,93 @@ placeholder="Điểm đến">
 TÍNH KHOẢNG CÁCH
 </button>
 
-<h2 id="distance"></h2>
-
 </div>
+
+<div id="result"></div>
 
 <div id="map"></div>
 
 <script>
 
-var map = L.map('map').setView([10.0452,105.7469],13);
+let map = L.map('map').setView([10.0452,105.7469],8);
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 {
-attribution:'© OpenStreetMap'
+maxZoom:19
 }
 ).addTo(map);
 
-var routeLine;
+let routeLine;
 
 async function calculate(){
 
 let from =
-document.getElementById("from").value;
+document.getElementById("from").value + ", Việt Nam";
 
 let to =
-document.getElementById("to").value;
+document.getElementById("to").value + ", Việt Nam";
 
-let res1 =
-await fetch(
+let fromData = await fetch(
 'https://nominatim.openstreetmap.org/search?format=json&q='
-+ from
++ encodeURIComponent(from)
 );
 
-let data1 = await res1.json();
+let fromJson = await fromData.json();
 
-let res2 =
-await fetch(
+let toData = await fetch(
 'https://nominatim.openstreetmap.org/search?format=json&q='
-+ to
++ encodeURIComponent(to)
 );
 
-let data2 = await res2.json();
+let toJson = await toData.json();
 
-if(data1.length==0 || data2.length==0){
+if(fromJson.length==0 || toJson.length==0){
+
 alert("Không tìm thấy địa điểm");
 return;
+
 }
 
-let lat1 = data1[0].lat;
-let lon1 = data1[0].lon;
+let lat1 = fromJson[0].lat;
+let lon1 = fromJson[0].lon;
 
-let lat2 = data2[0].lat;
-let lon2 = data2[0].lon;
+let lat2 = toJson[0].lat;
+let lon2 = toJson[0].lon;
 
-let route =
-await fetch(
+if(routeLine){
+
+map.removeLayer(routeLine);
+
+}
+
+let routeData = await fetch(
 `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`
 );
 
-let routeData =
-await route.json();
+let routeJson = await routeData.json();
 
 let coords =
-routeData.routes[0].geometry.coordinates;
+routeJson.routes[0].geometry.coordinates;
 
 let distance =
-routeData.routes[0].distance / 1000;
+routeJson.routes[0].distance / 1000;
 
-let routeCoords =
-coords.map(c => [c[1], c[0]]);
+document.getElementById("result").innerHTML =
+"Khoảng cách: " + distance.toFixed(2) + " km";
 
-if(routeLine){
-map.removeLayer(routeLine);
-}
+let latlngs = coords.map(c => [c[1],c[0]]);
 
-routeLine =
-L.polyline(
-routeCoords,
-{
+routeLine = L.polyline(latlngs,{
 color:'blue',
 weight:5
-}
-).addTo(map);
+}).addTo(map);
 
 L.marker([lat1,lon1]).addTo(map);
 
 L.marker([lat2,lon2]).addTo(map);
 
 map.fitBounds(routeLine.getBounds());
-
-document.getElementById("distance")
-.innerHTML =
-"Khoảng cách: "
-+ distance.toFixed(2)
-+ " km";
 
 }
 
