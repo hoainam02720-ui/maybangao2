@@ -8,7 +8,7 @@
 <title>NamRice Auto</title>
 
 <!-- =========================
-LEAFLET MAP
+LEAFLET
 ========================= -->
 
 <link rel="stylesheet"
@@ -19,14 +19,12 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 
 body{
+
 margin:0;
 font-family:Arial;
 background:#f0f2f5;
-}
 
-/* =========================
-KHUNG TRÊN
-========================= */
+}
 
 .top{
 
@@ -36,54 +34,33 @@ box-shadow:0 2px 10px rgba(0,0,0,0.1);
 
 }
 
-/* =========================
-TITLE
-========================= */
-
 .title{
 
-font-size:28px;
+font-size:30px;
 font-weight:bold;
-color:#008000;
+color:green;
 margin-bottom:10px;
 
 }
 
-/* =========================
-INPUT
-========================= */
-
-input,select{
+input,select,button{
 
 padding:12px;
 margin:5px;
-width:220px;
+font-size:16px;
 border-radius:10px;
 border:1px solid #ccc;
-font-size:16px;
 
 }
-
-/* =========================
-BUTTON
-========================= */
 
 button{
 
-padding:12px 20px;
-margin:5px;
-border:none;
-border-radius:10px;
 background:#0080ff;
 color:white;
-font-size:16px;
 font-weight:bold;
+border:none;
 
 }
-
-/* =========================
-MAP
-========================= */
 
 #map{
 
@@ -92,40 +69,19 @@ width:100%;
 
 }
 
-/* =========================
-RESULT
-========================= */
-
 #result{
 
 padding:15px;
 background:white;
 font-size:22px;
 font-weight:bold;
-color:#222;
 
 }
-
-/* =========================
-INFO
-========================= */
 
 .info{
 
 padding:15px;
 background:white;
-margin-top:10px;
-
-}
-
-/* =========================
-LABEL
-========================= */
-
-.label{
-
-font-size:18px;
-font-weight:bold;
 margin-top:10px;
 
 }
@@ -149,7 +105,7 @@ NamRice Auto
 </div>
 
 <!-- =========================
-SĐT KHÁCH
+SĐT
 ========================= -->
 
 <input
@@ -159,15 +115,27 @@ placeholder="Số điện thoại khách">
 <br>
 
 <!-- =========================
-ĐỊA CHỈ KHÁCH
+CHỌN CHẾ ĐỘ
 ========================= -->
 
-<input
-id="to"
-placeholder="Địa chỉ khách">
+<select id="mode">
+
+<option value="ride">
+
+ĐẶT XE
+
+</option>
+
+<option value="rice">
+
+ĐẶT GẠO
+
+</option>
+
+</select>
 
 <!-- =========================
-LOẠI XE
+CHỌN XE
 ========================= -->
 
 <select id="vehicle">
@@ -190,32 +158,44 @@ Xe máy
 
 </option>
 
-<option value="gao">
-
-Giao gạo
-
-</option>
-
 </select>
 
 <br>
 
-<button onclick="calculate()">
+<!-- =========================
+ĐIỂM ĐÓN
+========================= -->
 
-ĐẶT XE / GIAO GẠO
+<input
+id="from"
+placeholder="Điểm đón">
+
+<!-- =========================
+ĐIỂM ĐẾN
+========================= -->
+
+<input
+id="to"
+placeholder="Điểm đến">
+
+<br>
+
+<button onclick="shareLocation()">
+
+CHIA SẺ VỊ TRÍ
 
 </button>
 
-<button onclick="getLocation()">
+<button onclick="calculate()">
 
-GPS HIỆN TẠI
+TÍNH SHIP
 
 </button>
 
 </div>
 
 <!-- =========================
-RESULT
+KẾT QUẢ
 ========================= -->
 
 <div id="result">
@@ -229,12 +209,6 @@ THÔNG TIN
 ========================= -->
 
 <div class="info">
-
-<div class="label">
-
-Thông tin đơn
-
-</div>
 
 <p id="money">
 
@@ -302,7 +276,7 @@ L.map('map')
 .setView([10.0305,105.7689],13);
 
 /* =========================
-OPENSTREETMAP
+MAP OPENSTREETMAP
 ========================= */
 
 L.tileLayer(
@@ -316,7 +290,7 @@ maxZoom:19
 ).addTo(map);
 
 /* =========================
-MÁY GẠO NAMRICE
+MÁY GẠO
 ĐƯỜNG A4 CẦN THƠ
 ========================= */
 
@@ -327,11 +301,13 @@ let riceMachineLng = 105.7689;
 ICON MÁY GẠO
 ========================= */
 
-let riceIcon = L.divIcon({
+let riceIcon =
+L.divIcon({
 
 html:"🌾",
 
 iconSize:[40,40],
+
 className:""
 
 });
@@ -341,10 +317,13 @@ MARKER MÁY GẠO
 ========================= */
 
 L.marker(
+
 [riceMachineLat,riceMachineLng],
+
 {
 icon:riceIcon
 }
+
 )
 
 .addTo(map)
@@ -365,9 +344,7 @@ xe_may:7000,
 
 oto_4:12000,
 
-oto_7:15000,
-
-gao:7000
+oto_7:15000
 
 };
 
@@ -378,14 +355,10 @@ ROUTE
 let routeLine;
 
 /* =========================
-GPS MARKER
-========================= */
-
-let userMarker;
-
-/* =========================
 GPS REALTIME
 ========================= */
+
+let liveDot;
 
 navigator.geolocation.watchPosition(
 
@@ -397,50 +370,44 @@ position.coords.latitude;
 let lng =
 position.coords.longitude;
 
-/* XOÁ GPS CŨ */
+/* XOÁ CHẤM CŨ */
 
-if(userMarker){
+if(liveDot){
 
-map.removeLayer(userMarker);
+map.removeLayer(liveDot);
 
 }
 
-/* MŨI TÊN */
+/* CHẤM XANH */
 
-let arrowIcon =
-L.divIcon({
+liveDot =
+L.circleMarker(
 
-html:"🛵",
-
-iconSize:[40,40],
-
-className:""
-
-});
-
-/* MARKER */
-
-userMarker =
-L.marker(
 [lat,lng],
+
 {
-icon:arrowIcon
+
+radius:10,
+
+color:'blue',
+
+fillColor:'blue',
+
+fillOpacity:1
+
 }
+
 ).addTo(map);
-
-/* MAP ĐI THEO */
-
-map.setView([lat,lng]);
 
 }
 
 );
 
 /* =========================
-GPS
+CHIA SẺ VỊ TRÍ
 ========================= */
 
-function getLocation(){
+function shareLocation(){
 
 navigator.geolocation.getCurrentPosition(
 
@@ -452,13 +419,48 @@ position.coords.latitude;
 let lng =
 position.coords.longitude;
 
+document.getElementById("from")
+.value =
+
+lat + "," + lng;
+
 map.setView([lat,lng],15);
 
-alert("Đã lấy GPS");
+alert("Đã chia sẻ vị trí");
 
 }
 
 );
+
+}
+
+/* =========================
+QR
+========================= */
+
+function payQR(){
+
+document.getElementById("payment")
+.innerHTML =
+
+"Thanh toán: QR";
+
+alert("Hiện QR ngân hàng");
+
+}
+
+/* =========================
+TIỀN MẶT
+========================= */
+
+function cashPayment(){
+
+document.getElementById("payment")
+.innerHTML =
+
+"Thanh toán: Tiền mặt";
+
+alert("Khách trả tiền mặt");
 
 }
 
@@ -469,33 +471,24 @@ TÍNH SHIP
 async function calculate(){
 
 /* =========================
-SỐ ĐIỆN THOẠI
+SĐT
 ========================= */
 
 let phone =
 document.getElementById("phone").value;
 
-/* =========================
-GẮN GỌI ĐIỆN
-========================= */
-
 document.getElementById("callBtn")
 .href = "tel:" + phone;
-
-/* =========================
-GẮN SMS
-========================= */
 
 document.getElementById("smsBtn")
 .href = "sms:" + phone;
 
 /* =========================
-ĐỊA CHỈ KHÁCH
+CHẾ ĐỘ
 ========================= */
 
-let to =
-document.getElementById("to").value
-+ ", Việt Nam";
+let mode =
+document.getElementById("mode").value;
 
 /* =========================
 LOẠI XE
@@ -512,20 +505,58 @@ let pricePerKm =
 prices[vehicle];
 
 /* =========================
-NẾU GIAO GẠO
-THÌ ĐIỂM ĐI
-LÀ MÁY GẠO
+ĐIỂM ĐI
 ========================= */
 
-let lat1 =
-riceMachineLat;
-
-let lon1 =
-riceMachineLng;
+let from;
 
 /* =========================
-TÌM TOẠ ĐỘ KHÁCH
+ĐIỂM ĐẾN
 ========================= */
+
+let to =
+document.getElementById("to").value
++ ", Việt Nam";
+
+/* =========================
+NẾU ĐẶT GẠO
+THÌ LẤY MÁY GẠO
+========================= */
+
+if(mode=="rice"){
+
+from =
+"Đường A4 Cần Thơ, Việt Nam";
+
+}
+
+/* =========================
+NẾU ĐẶT XE
+THÌ LẤY ĐIỂM ĐÓN
+========================= */
+
+if(mode=="ride"){
+
+from =
+document.getElementById("from").value
++ ", Việt Nam";
+
+}
+
+/* =========================
+TÌM TOẠ ĐỘ
+========================= */
+
+let fromData =
+await fetch(
+
+'https://nominatim.openstreetmap.org/search?format=json&q='
++ encodeURIComponent(from)
+
+);
+
+let fromJson =
+await fromData.json();
 
 let toData =
 await fetch(
@@ -542,17 +573,23 @@ await toData.json();
 KIỂM TRA
 ========================= */
 
-if(toJson.length==0){
+if(fromJson.length==0 || toJson.length==0){
 
-alert("Không tìm thấy địa chỉ");
+alert("Không tìm thấy địa điểm");
 
 return;
 
 }
 
 /* =========================
-TOẠ ĐỘ KHÁCH
+TOẠ ĐỘ
 ========================= */
+
+let lat1 =
+fromJson[0].lat;
+
+let lon1 =
+fromJson[0].lon;
 
 let lat2 =
 toJson[0].lat;
@@ -561,7 +598,7 @@ let lon2 =
 toJson[0].lon;
 
 /* =========================
-API ROUTE
+ROUTING
 ========================= */
 
 let routeData =
@@ -653,14 +690,24 @@ weight:6
 }).addTo(map);
 
 /* =========================
-MARKER KHÁCH
+MARKER ĐIỂM ĐI
+========================= */
+
+L.marker([lat1,lon1])
+
+.addTo(map)
+
+.bindPopup("Điểm đi");
+
+/* =========================
+MARKER ĐIỂM ĐẾN
 ========================= */
 
 L.marker([lat2,lon2])
 
 .addTo(map)
 
-.bindPopup("Khách hàng");
+.bindPopup("Điểm đến");
 
 /* =========================
 ZOOM
@@ -669,36 +716,6 @@ ZOOM
 map.fitBounds(
 routeLine.getBounds()
 );
-
-}
-
-/* =========================
-QR
-========================= */
-
-function payQR(){
-
-document.getElementById("payment")
-.innerHTML =
-
-"Thanh toán: QR";
-
-alert("Hiện QR ngân hàng");
-
-}
-
-/* =========================
-TIỀN MẶT
-========================= */
-
-function cashPayment(){
-
-document.getElementById("payment")
-.innerHTML =
-
-"Thanh toán: Tiền mặt";
-
-alert("Khách trả tiền mặt");
 
 }
 
