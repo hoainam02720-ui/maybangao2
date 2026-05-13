@@ -1,4 +1,55 @@
-<h2 id="result"></h2>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NamRice Map</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+}
+
+.top{
+padding:10px;
+background:white;
+z-index:1000;
+}
+
+input{
+padding:10px;
+width:180px;
+}
+
+button{
+padding:10px;
+}
+
+#map{
+height:85vh;
+width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+
+<input id="from" placeholder="Điểm đi">
+
+<input id="to" placeholder="Điểm đến">
+
+<button onclick="calculate()">
+TÍNH KHOẢNG CÁCH
+</button>
+
+<h2 id="distance"></h2>
 
 </div>
 
@@ -6,101 +57,87 @@
 
 <script>
 
-var map = L.map('map')
-.setView([10.0452,105.7469], 11);
+var map = L.map('map').setView([10.0452,105.7469],13);
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 {
-maxZoom:19
+attribution:'© OpenStreetMap'
 }
 ).addTo(map);
 
-let marker1;
-let marker2;
-let line;
-
-async function geocode(place){
-
-const url =
-'https://nominatim.openstreetmap.org/search?format=json&q='
-+ encodeURIComponent(place);
-
-const response = await fetch(url);
-
-const data = await response.json();
-
-if(data.length == 0){
-
-alert("Không tìm thấy địa điểm");
-
-return null;
-}
-
-return [
-parseFloat(data[0].lat),
-parseFloat(data[0].lon)
-];
-
-}
+var marker1;
+var marker2;
+var routeLine;
 
 async function calculate(){
 
-const from =
+let from =
 document.getElementById("from").value;
 
-const to =
+let to =
 document.getElementById("to").value;
 
-const p1 = await geocode(from);
-
-const p2 = await geocode(to);
-
-if(!p1 || !p2) return;
-
-if(marker1) map.removeLayer(marker1);
-
-if(marker2) map.removeLayer(marker2);
-
-if(line) map.removeLayer(line);
-
-marker1 = L.marker(p1).addTo(map);
-
-marker2 = L.marker(p2).addTo(map);
-
-const routeUrl =
-`https://router.project-osrm.org/route/v1/driving/`
-+ `${p1[1]},${p1[0]};${p2[1]},${p2[0]}`
-+ `?overview=full&geometries=geojson`;
-
-const routeResponse =
-await fetch(routeUrl);
-
-const routeData =
-await routeResponse.json();
-
-const route =
-routeData.routes[0];
-
-const coords =
-route.geometry.coordinates.map(
-c => [c[1], c[0]]
+let res1 =
+await fetch(
+'https://nominatim.openstreetmap.org/search?format=json&q='
++ from
 );
 
-line = L.polyline(coords,{
-color:'blue',
-weight:5
-}).addTo(map);
+let data1 = await res1.json();
 
-map.fitBounds(line.getBounds());
+let res2 =
+await fetch(
+'https://nominatim.openstreetmap.org/search?format=json&q='
++ to
+);
 
-const distance =
-(route.distance / 1000).toFixed(2);
+let data2 = await res2.json();
 
-document.getElementById("result")
+if(data1.length==0 || data2.length==0){
+alert("Không tìm thấy địa điểm");
+return;
+}
+
+let lat1 = parseFloat(data1[0].lat);
+let lon1 = parseFloat(data1[0].lon);
+
+let lat2 = parseFloat(data2[0].lat);
+let lon2 = parseFloat(data2[0].lon);
+
+if(marker1) map.removeLayer(marker1);
+if(marker2) map.removeLayer(marker2);
+if(routeLine) map.removeLayer(routeLine);
+
+marker1 =
+L.marker([lat1,lon1]).addTo(map);
+
+marker2 =
+L.marker([lat2,lon2]).addTo(map);
+
+routeLine =
+L.polyline(
+[
+[lat1,lon1],
+[lat2,lon2]
+],
+{
+color:'blue'
+}
+).addTo(map);
+
+map.fitBounds(routeLine.getBounds());
+
+let distance =
+map.distance(
+[lat1,lon1],
+[lat2,lon2]
+)/1000;
+
+document.getElementById("distance")
 .innerHTML =
-"Khoảng cách thực tế: "
-+ distance
+"Khoảng cách: "
++ distance.toFixed(2)
 + " km";
 
 }
