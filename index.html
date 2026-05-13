@@ -1,55 +1,111 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>NamRice Map</title>
+<h2 id="result"></h2>
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<div id="map"></div>
 
-<style>
+<script>
 
-body{
-margin:0;
-font-family:Arial;
+var map = L.map('map')
+.setView([10.0452,105.7469], 11);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+maxZoom:19
+}
+).addTo(map);
+
+let marker1;
+let marker2;
+let line;
+
+async function geocode(place){
+
+const url =
+'https://nominatim.openstreetmap.org/search?format=json&q='
++ encodeURIComponent(place);
+
+const response = await fetch(url);
+
+const data = await response.json();
+
+if(data.length == 0){
+
+alert("Không tìm thấy địa điểm");
+
+return null;
 }
 
-.top{
-padding:10px;
-background:white;
-position:relative;
-z-index:1000;
+return [
+parseFloat(data[0].lat),
+parseFloat(data[0].lon)
+];
+
 }
 
-input{
-padding:10px;
-width:180px;
+async function calculate(){
+
+const from =
+document.getElementById("from").value;
+
+const to =
+document.getElementById("to").value;
+
+const p1 = await geocode(from);
+
+const p2 = await geocode(to);
+
+if(!p1 || !p2) return;
+
+if(marker1) map.removeLayer(marker1);
+
+if(marker2) map.removeLayer(marker2);
+
+if(line) map.removeLayer(line);
+
+marker1 = L.marker(p1).addTo(map);
+
+marker2 = L.marker(p2).addTo(map);
+
+const routeUrl =
+`https://router.project-osrm.org/route/v1/driving/`
++ `${p1[1]},${p1[0]};${p2[1]},${p2[0]}`
++ `?overview=full&geometries=geojson`;
+
+const routeResponse =
+await fetch(routeUrl);
+
+const routeData =
+await routeResponse.json();
+
+const route =
+routeData.routes[0];
+
+const coords =
+route.geometry.coordinates.map(
+c => [c[1], c[0]]
+);
+
+line = L.polyline(coords,{
+color:'blue',
+weight:5
+}).addTo(map);
+
+map.fitBounds(line.getBounds());
+
+const distance =
+(route.distance / 1000).toFixed(2);
+
+document.getElementById("result")
+.innerHTML =
+"Khoảng cách thực tế: "
++ distance
++ " km";
+
 }
 
-button{
-padding:10px;
-}
+</script>
 
-#map{
-height:85vh;
-width:100%;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="top">
-
-<input id="from"
-placeholder="Điểm đi">
-
-<input id="to"
-placeholder="Điểm đến">
-
-<button onclick="calculate()">
-TÍNH KHOẢNG CÁCH
-</button>
+</body>
+</html>
