@@ -3,7 +3,12 @@
 
 <head>
 <meta charset="utf-8">
-<title>NamRice Map</title>
+
+<title>NamRice Auto</title>
+
+<!-- =========================
+LEAFLET MAP
+========================= -->
 
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -15,61 +20,229 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 body{
 margin:0;
 font-family:Arial;
+background:#f5f5f5;
 }
+
+/* =========================
+KHUNG TRÊN
+========================= */
 
 .top{
-padding:10px;
+
+padding:15px;
 background:white;
-position:relative;
-z-index:1000;
+
 }
+
+/* =========================
+Ô NHẬP
+========================= */
 
 input{
+
 padding:10px;
-width:180px;
+width:220px;
+margin:5px;
+
 }
+
+/* =========================
+NÚT BẤM
+========================= */
 
 button{
-padding:10px;
+
+padding:10px 20px;
+margin:5px;
+cursor:pointer;
+
 }
+
+/* =========================
+MAP
+========================= */
 
 #map{
-height:85vh;
+
 width:100%;
+height:70vh;
+
 }
 
+/* =========================
+KẾT QUẢ
+========================= */
+
 #result{
+
 padding:10px;
 font-size:20px;
 font-weight:bold;
+
+}
+
+/* =========================
+THÔNG TIN
+========================= */
+
+.info{
+
+padding:10px;
+background:white;
+margin-top:10px;
+
 }
 
 </style>
+
 </head>
 
 <body>
 
+<!-- =========================
+KHUNG NHẬP THÔNG TIN
+========================= -->
+
 <div class="top">
 
-<input id="from"
-placeholder="Điểm đi">
+<h2>NamRice Auto</h2>
 
-<input id="to"
-placeholder="Điểm đến">
+<!-- ĐIỂM ĐI -->
+
+<input
+id="from"
+placeholder="Điểm đi"
+>
+
+<!-- ĐIỂM ĐẾN -->
+
+<input
+id="to"
+placeholder="Điểm đến"
+>
+
+<br>
+
+<!-- NÚT TÍNH -->
 
 <button onclick="calculate()">
+
 TÍNH KHOẢNG CÁCH
+
+</button>
+
+<!-- NÚT LẤY GPS -->
+
+<button onclick="getLocation()">
+
+LẤY GPS HIỆN TẠI
+
 </button>
 
 </div>
 
-<div id="result"></div>
+<!-- =========================
+HIỆN KẾT QUẢ
+========================= -->
+
+<div id="result">
+
+Khoảng cách: 0 km
+
+</div>
+
+<!-- =========================
+THÔNG TIN ĐƠN HÀNG
+========================= -->
+
+<div class="info">
+
+<h3>Thông tin đơn hàng</h3>
+
+<p id="money">
+
+Tiền ship: 0đ
+
+</p>
+
+<p id="payment">
+
+Thanh toán:
+Chưa chọn
+
+</p>
+
+<!-- =========================
+NÚT QR
+========================= -->
+
+<button onclick="payQR()">
+
+THANH TOÁN QR
+
+</button>
+
+<!-- =========================
+NÚT TIỀN MẶT
+========================= -->
+
+<button onclick="cashPayment()">
+
+TIỀN MẶT
+
+</button>
+
+<br><br>
+
+<!-- =========================
+NÚT GỌI
+========================= -->
+
+<a href="tel:0909123456">
+
+<button>
+
+GỌI SHIPPER
+
+</button>
+
+</a>
+
+<!-- =========================
+NÚT SMS
+========================= -->
+
+<a href="sms:0909123456">
+
+<button>
+
+NHẮN TIN
+
+</button>
+
+</a>
+
+</div>
+
+<!-- =========================
+MAP
+========================= -->
 
 <div id="map"></div>
 
 <script>
 
-let map = L.map('map').setView([10.0452,105.7469],8);
+/* =========================
+TẠO MAP
+========================= */
+
+let map =
+L.map('map')
+.setView([10.0452,105.7469],8);
+
+/* =========================
+LOAD MAP OPENSTREETMAP
+========================= */
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -78,36 +251,71 @@ maxZoom:19
 }
 ).addTo(map);
 
+/* =========================
+BIẾN LƯU ROUTE
+========================= */
+
 let routeLine;
+
+/* =========================
+HÀM TÍNH KHOẢNG CÁCH
+========================= */
 
 async function calculate(){
 
+/* =========================
+LẤY ĐỊA CHỈ
+========================= */
+
 let from =
-document.getElementById("from").value + ", Việt Nam";
+document.getElementById("from").value
++ ", Việt Nam";
 
 let to =
-document.getElementById("to").value + ", Việt Nam";
+document.getElementById("to").value
++ ", Việt Nam";
 
-let fromData = await fetch(
+/* =========================
+TÌM TOẠ ĐỘ ĐIỂM ĐI
+========================= */
+
+let fromData =
+await fetch(
 'https://nominatim.openstreetmap.org/search?format=json&q='
 + encodeURIComponent(from)
 );
 
-let fromJson = await fromData.json();
+let fromJson =
+await fromData.json();
 
-let toData = await fetch(
+/* =========================
+TÌM TOẠ ĐỘ ĐIỂM ĐẾN
+========================= */
+
+let toData =
+await fetch(
 'https://nominatim.openstreetmap.org/search?format=json&q='
 + encodeURIComponent(to)
 );
 
-let toJson = await toData.json();
+let toJson =
+await toData.json();
+
+/* =========================
+KIỂM TRA ĐỊA ĐIỂM
+========================= */
 
 if(fromJson.length==0 || toJson.length==0){
 
 alert("Không tìm thấy địa điểm");
+
 return;
 
 }
+
+/* =========================
+LẤY LAT LNG
+========================= */
 
 let lat1 = fromJson[0].lat;
 let lon1 = fromJson[0].lon;
@@ -115,43 +323,169 @@ let lon1 = fromJson[0].lon;
 let lat2 = toJson[0].lat;
 let lon2 = toJson[0].lon;
 
+/* =========================
+XOÁ ROUTE CŨ
+========================= */
+
 if(routeLine){
 
 map.removeLayer(routeLine);
 
 }
 
-let routeData = await fetch(
+/* =========================
+API TÍNH ĐƯỜNG ĐI
+========================= */
+
+let routeData =
+await fetch(
+
 `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`
+
 );
 
-let routeJson = await routeData.json();
+let routeJson =
+await routeData.json();
+
+/* =========================
+LẤY TOẠ ĐỘ ĐƯỜNG
+========================= */
 
 let coords =
 routeJson.routes[0].geometry.coordinates;
 
+/* =========================
+LẤY KHOẢNG CÁCH
+========================= */
+
 let distance =
 routeJson.routes[0].distance / 1000;
 
-document.getElementById("result").innerHTML =
-"Khoảng cách: " + distance.toFixed(2) + " km";
+/* =========================
+TÍNH TIỀN SHIP
+========================= */
 
-let latlngs = coords.map(c => [c[1],c[0]]);
+let shipPrice =
+distance * 7000;
 
-routeLine = L.polyline(latlngs,{
+/* =========================
+HIỆN KHOẢNG CÁCH
+========================= */
+
+document.getElementById("result")
+.innerHTML =
+
+"Khoảng cách: "
++ distance.toFixed(2)
++ " km";
+
+/* =========================
+HIỆN TIỀN SHIP
+========================= */
+
+document.getElementById("money")
+.innerHTML =
+
+"Tiền ship: "
++ shipPrice.toFixed(0)
++ "đ";
+
+/* =========================
+CHUYỂN LAT LNG
+========================= */
+
+let latlngs =
+coords.map(c => [c[1],c[0]]);
+
+/* =========================
+VẼ ĐƯỜNG
+========================= */
+
+routeLine =
+L.polyline(latlngs,{
+
 color:'blue',
 weight:5
+
 }).addTo(map);
+
+/* =========================
+HIỆN 2 ĐIỂM
+========================= */
 
 L.marker([lat1,lon1]).addTo(map);
 
 L.marker([lat2,lon2]).addTo(map);
 
+/* =========================
+ZOOM VỪA ĐƯỜNG
+========================= */
+
 map.fitBounds(routeLine.getBounds());
+
+}
+
+/* =========================
+GPS HIỆN TẠI
+========================= */
+
+function getLocation(){
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+let lat =
+position.coords.latitude;
+
+let lng =
+position.coords.longitude;
+
+L.marker([lat,lng])
+.addTo(map);
+
+map.setView([lat,lng],15);
+
+alert("Đã lấy GPS hiện tại");
+
+}
+
+);
+
+}
+
+/* =========================
+THANH TOÁN QR
+========================= */
+
+function payQR(){
+
+document.getElementById("payment")
+.innerHTML =
+
+"Thanh toán: QR";
+
+alert("Hiện QR ngân hàng");
+
+}
+
+/* =========================
+THANH TOÁN TIỀN MẶT
+========================= */
+
+function cashPayment(){
+
+document.getElementById("payment")
+.innerHTML =
+
+"Thanh toán: Tiền mặt";
+
+alert("Khách trả tiền mặt");
 
 }
 
 </script>
 
 </body>
+
 </html>
