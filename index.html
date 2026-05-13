@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta charset="utf-8">
 <title>NamRice Map</title>
@@ -10,6 +11,7 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -34,6 +36,7 @@ padding:10px;
 height:85vh;
 width:100%;
 }
+
 </style>
 </head>
 
@@ -41,9 +44,11 @@ width:100%;
 
 <div class="top">
 
-<input id="from" placeholder="Điểm đi">
+<input id="from"
+placeholder="Điểm đi">
 
-<input id="to" placeholder="Điểm đến">
+<input id="to"
+placeholder="Điểm đến">
 
 <button onclick="calculate()">
 TÍNH KHOẢNG CÁCH
@@ -66,8 +71,6 @@ attribution:'© OpenStreetMap'
 }
 ).addTo(map);
 
-var marker1;
-var marker2;
 var routeLine;
 
 async function calculate(){
@@ -99,40 +102,47 @@ alert("Không tìm thấy địa điểm");
 return;
 }
 
-let lat1 = parseFloat(data1[0].lat);
-let lon1 = parseFloat(data1[0].lon);
+let lat1 = data1[0].lat;
+let lon1 = data1[0].lon;
 
-let lat2 = parseFloat(data2[0].lat);
-let lon2 = parseFloat(data2[0].lon);
+let lat2 = data2[0].lat;
+let lon2 = data2[0].lon;
 
-if(marker1) map.removeLayer(marker1);
-if(marker2) map.removeLayer(marker2);
-if(routeLine) map.removeLayer(routeLine);
+let route =
+await fetch(
+`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`
+);
 
-marker1 =
-L.marker([lat1,lon1]).addTo(map);
+let routeData =
+await route.json();
 
-marker2 =
-L.marker([lat2,lon2]).addTo(map);
+let coords =
+routeData.routes[0].geometry.coordinates;
+
+let distance =
+routeData.routes[0].distance / 1000;
+
+let routeCoords =
+coords.map(c => [c[1], c[0]]);
+
+if(routeLine){
+map.removeLayer(routeLine);
+}
 
 routeLine =
 L.polyline(
-[
-[lat1,lon1],
-[lat2,lon2]
-],
+routeCoords,
 {
-color:'blue'
+color:'blue',
+weight:5
 }
 ).addTo(map);
 
-map.fitBounds(routeLine.getBounds());
+L.marker([lat1,lon1]).addTo(map);
 
-let distance =
-map.distance(
-[lat1,lon1],
-[lat2,lon2]
-)/1000;
+L.marker([lat2,lon2]).addTo(map);
+
+map.fitBounds(routeLine.getBounds());
 
 document.getElementById("distance")
 .innerHTML =
