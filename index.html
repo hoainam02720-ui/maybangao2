@@ -1,159 +1,86 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="utf-8">
-  <title>NamRice Maps Test</title>
+  <meta charset="utf-8" />
+  <title>NamRice Map</title>
+
+  <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <style>
-
     body{
       margin:0;
       font-family:Arial;
     }
 
     #map{
+      height:90vh;
       width:100%;
-      height:500px;
     }
 
-    .box{
+    .top{
       padding:10px;
-      background:#f2f2f2;
+      background:#fff;
     }
 
     input{
-      width:250px;
-      padding:10px;
-      margin:5px;
+      padding:8px;
+      width:180px;
     }
 
     button{
-      padding:10px 20px;
+      padding:8px 15px;
     }
-
   </style>
 </head>
-
 <body>
 
-<div class="box">
+<div class="top">
+  <input id="from" placeholder="Điểm đi">
+  <input id="to" placeholder="Điểm đến">
+  <button onclick="calculate()">TÍNH KHOẢNG CÁCH</button>
 
-  <input
-    id="from"
-    placeholder="Điểm bắt đầu"
-  >
-
-  <input
-    id="to"
-    placeholder="Điểm kết thúc"
-  >
-
-  <button onclick="tinhKhoangCach()">
-
-    TÍNH KHOẢNG CÁCH
-
-  </button>
-
-  <h2 id="ketqua"></h2>
-
+  <h3 id="result"></h3>
 </div>
 
 <div id="map"></div>
 
 <script>
 
-let map;
+const map = L.map('map').setView([10.0452,105.7469], 10);
 
-let directionsService;
+L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+  attribution:'© OpenStreetMap'
+}).addTo(map);
 
-let directionsRenderer;
+let marker1, marker2, line;
 
-function initMap(){
+async function geocode(place){
 
-  map = new google.maps.Map(
-    document.getElementById("map"),
-    {
-      center:{
-        lat:10.0452,
-        lng:105.7469
-      },
-      zoom:13
-    }
-  );
+  const url =
+  `https://nominatim.openstreetmap.org/search?format=json&q=${place}`;
 
-  directionsService =
-    new google.maps.DirectionsService();
+  const res = await fetch(url);
 
-  directionsRenderer =
-    new google.maps.DirectionsRenderer();
+  const data = await res.json();
 
-  directionsRenderer.setMap(map);
-
+  return [
+    parseFloat(data[0].lat),
+    parseFloat(data[0].lon)
+  ];
 }
 
-function tinhKhoangCach(){
+async function calculate(){
 
-  const from =
-    document.getElementById("from").value;
+  const from = document.getElementById("from").value;
+  const to = document.getElementById("to").value;
 
-  const to =
-    document.getElementById("to").value;
+  const p1 = await geocode(from);
+  const p2 = await geocode(to);
 
-  directionsService.route(
-
-    {
-      origin:from,
-
-      destination:to,
-
-      travelMode:
-        google.maps.TravelMode.DRIVING
-
-    },
-
-    function(response,status){
-
-      if(status === "OK"){
-
-        directionsRenderer.setDirections(response);
-
-        const route =
-          response.routes[0].legs[0];
-
-        document.getElementById("ketqua")
-        .innerHTML =
-
-          "Khoảng cách: " +
-          route.distance.text +
-
-          " | Thời gian: " +
-
-          route.duration.text;
-
-      }
-
-      else{
-
-        alert(
-          "Lỗi: " + status
-        );
-
-      }
-
-    }
-
-  );
-
-}
-
-</script>
-
-<script async defer
-
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMeXJNHIH36FqBIPQaC_Q_j5dKwFLsGbA&callback=initMap">
-
-</script>
-
-</body>
-</html>
+  if(marker1) map.removeLayer(marker1);
+  if(marker2)
