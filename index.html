@@ -7,10 +7,6 @@
 
 <title>NamRice Auto</title>
 
-<!-- =========================
-LEAFLET
-========================= -->
-
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
@@ -19,28 +15,22 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 
 body{
-
 margin:0;
 font-family:Arial;
 background:#f0f2f5;
-
 }
 
 .top{
-
 background:white;
 padding:15px;
 box-shadow:0 2px 10px rgba(0,0,0,0.1);
-
 }
 
 .title{
-
 font-size:30px;
 font-weight:bold;
 color:green;
 margin-bottom:10px;
-
 }
 
 input,select,button{
@@ -63,10 +53,8 @@ border:none;
 }
 
 #map{
-
-height:65vh;
+height:60vh;
 width:100%;
-
 }
 
 #result{
@@ -86,15 +74,26 @@ margin-top:10px;
 
 }
 
+#orders{
+
+padding:15px;
+background:white;
+margin-top:10px;
+
+}
+
+.orderItem{
+
+padding:10px;
+border-bottom:1px solid #ddd;
+
+}
+
 </style>
 
 </head>
 
 <body>
-
-<!-- =========================
-TOP
-========================= -->
 
 <div class="top">
 
@@ -115,10 +114,11 @@ placeholder="Số điện thoại khách">
 <br>
 
 <!-- =========================
-CHỌN CHẾ ĐỘ
+CHẾ ĐỘ
 ========================= -->
 
-<select id="mode">
+<select id="mode"
+onchange="updateMode()">
 
 <option value="ride">
 
@@ -135,7 +135,7 @@ CHỌN CHẾ ĐỘ
 </select>
 
 <!-- =========================
-CHỌN XE
+LOẠI XE
 ========================= -->
 
 <select id="vehicle">
@@ -176,7 +176,7 @@ placeholder="Điểm đón">
 
 <input
 id="to"
-placeholder="Điểm đến">
+placeholder="Điểm đến / nhận gạo">
 
 <br>
 
@@ -188,7 +188,7 @@ CHIA SẺ VỊ TRÍ
 
 <button onclick="calculate()">
 
-TÍNH SHIP
+ĐẶT NGAY
 
 </button>
 
@@ -260,6 +260,20 @@ NHẮN TIN
 </div>
 
 <!-- =========================
+ĐƠN HÀNG
+========================= -->
+
+<div id="orders">
+
+<h3>
+
+Đơn hàng đã lưu
+
+</h3>
+
+</div>
+
+<!-- =========================
 MAP
 ========================= -->
 
@@ -276,7 +290,7 @@ L.map('map')
 .setView([10.0305,105.7689],13);
 
 /* =========================
-MAP OPENSTREETMAP
+OPENSTREETMAP
 ========================= */
 
 L.tileLayer(
@@ -291,26 +305,10 @@ maxZoom:19
 
 /* =========================
 MÁY GẠO
-ĐƯỜNG A4 CẦN THƠ
 ========================= */
 
 let riceMachineLat = 10.0305;
 let riceMachineLng = 105.7689;
-
-/* =========================
-ICON MÁY GẠO
-========================= */
-
-let riceIcon =
-L.divIcon({
-
-html:"🌾",
-
-iconSize:[40,40],
-
-className:""
-
-});
 
 /* =========================
 MARKER MÁY GẠO
@@ -318,11 +316,7 @@ MARKER MÁY GẠO
 
 L.marker(
 
-[riceMachineLat,riceMachineLng],
-
-{
-icon:riceIcon
-}
+[riceMachineLat,riceMachineLng]
 
 )
 
@@ -330,7 +324,7 @@ icon:riceIcon
 
 .bindPopup(
 
-"Máy bán gạo NamRice<br>Đường A4 Cần Thơ"
+"🌾 Máy bán gạo NamRice<br>Đường A4 Cần Thơ"
 
 );
 
@@ -355,10 +349,14 @@ ROUTE
 let routeLine;
 
 /* =========================
-GPS REALTIME
+CHẤM GPS KHÁCH
 ========================= */
 
 let liveDot;
+
+/* =========================
+GPS REALTIME
+========================= */
 
 navigator.geolocation.watchPosition(
 
@@ -370,15 +368,11 @@ position.coords.latitude;
 let lng =
 position.coords.longitude;
 
-/* XOÁ CHẤM CŨ */
-
 if(liveDot){
 
 map.removeLayer(liveDot);
 
 }
-
-/* CHẤM XANH */
 
 liveDot =
 L.circleMarker(
@@ -402,6 +396,32 @@ fillOpacity:1
 }
 
 );
+
+/* =========================
+ẨN ĐIỂM ĐÓN
+KHI ĐẶT GẠO
+========================= */
+
+function updateMode(){
+
+let mode =
+document.getElementById("mode").value;
+
+if(mode=="rice"){
+
+document.getElementById("from")
+.style.display = "none";
+
+}
+
+else{
+
+document.getElementById("from")
+.style.display = "inline-block";
+
+}
+
+}
 
 /* =========================
 CHIA SẺ VỊ TRÍ
@@ -445,8 +465,6 @@ document.getElementById("payment")
 
 "Thanh toán: QR";
 
-alert("Hiện QR ngân hàng");
-
 }
 
 /* =========================
@@ -460,12 +478,10 @@ document.getElementById("payment")
 
 "Thanh toán: Tiền mặt";
 
-alert("Khách trả tiền mặt");
-
 }
 
 /* =========================
-TÍNH SHIP
+ĐẶT ĐƠN
 ========================= */
 
 async function calculate(){
@@ -520,7 +536,8 @@ document.getElementById("to").value
 
 /* =========================
 NẾU ĐẶT GẠO
-THÌ LẤY MÁY GẠO
+THÌ ĐIỂM ĐI
+LÀ MÁY GẠO
 ========================= */
 
 if(mode=="rice"){
@@ -568,10 +585,6 @@ await fetch(
 
 let toJson =
 await toData.json();
-
-/* =========================
-KIỂM TRA
-========================= */
 
 if(fromJson.length==0 || toJson.length==0){
 
@@ -652,33 +665,21 @@ document.getElementById("money")
 + "đ";
 
 /* =========================
-LẤY ROUTE
+ROUTE
 ========================= */
 
 let coords =
 routeJson.routes[0]
 .geometry.coordinates;
 
-/* =========================
-LAT LNG
-========================= */
-
 let latlngs =
 coords.map(c => [c[1],c[0]]);
-
-/* =========================
-XOÁ ROUTE CŨ
-========================= */
 
 if(routeLine){
 
 map.removeLayer(routeLine);
 
 }
-
-/* =========================
-VẼ ROUTE
-========================= */
 
 routeLine =
 L.polyline(latlngs,{
@@ -707,7 +708,7 @@ L.marker([lat2,lon2])
 
 .addTo(map)
 
-.bindPopup("Điểm đến");
+.bindPopup("Khách hàng");
 
 /* =========================
 ZOOM
@@ -716,6 +717,37 @@ ZOOM
 map.fitBounds(
 routeLine.getBounds()
 );
+
+/* =========================
+LƯU ĐƠN
+========================= */
+
+let orderHTML =
+
+`
+
+<div class="orderItem">
+
+📦 ${mode=="rice" ? "Đặt gạo" : "Đặt xe"}
+
+<br>
+
+📞 ${phone}
+
+<br>
+
+📍 ${document.getElementById("to").value}
+
+<br>
+
+💰 ${total.toFixed(0)}đ
+
+</div>
+
+`;
+
+document.getElementById("orders")
+.innerHTML += orderHTML;
 
 }
 
