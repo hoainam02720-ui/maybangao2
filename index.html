@@ -1,86 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>NamRice Map</title>
+<meta charset="utf-8">
+<title>NamRice Map</title>
 
-  <link rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <style>
-    body{
-      margin:0;
-      font-family:Arial;
-    }
+<style>
+body{
+margin:0;
+font-family:Arial;
+}
 
-    #map{
-      height:90vh;
-      width:100%;
-    }
+.top{
+padding:10px;
+background:white;
+z-index:999;
+position:relative;
+}
 
-    .top{
-      padding:10px;
-      background:#fff;
-    }
+#map{
+height:85vh;
+width:100%;
+}
 
-    input{
-      padding:8px;
-      width:180px;
-    }
+input{
+padding:8px;
+}
 
-    button{
-      padding:8px 15px;
-    }
-  </style>
+button{
+padding:8px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="top">
-  <input id="from" placeholder="Điểm đi">
-  <input id="to" placeholder="Điểm đến">
-  <button onclick="calculate()">TÍNH KHOẢNG CÁCH</button>
+<input id="from" placeholder="Điểm đi">
+<input id="to" placeholder="Điểm đến">
+<button onclick="calculate()">TÍNH KHOẢNG CÁCH</button>
 
-  <h3 id="result"></h3>
+<h3 id="result"></h3>
 </div>
 
 <div id="map"></div>
 
 <script>
 
-const map = L.map('map').setView([10.0452,105.7469], 10);
+var map = L.map('map').setView([10.0452,105.7469], 10);
 
 L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 {
-  attribution:'© OpenStreetMap'
-}).addTo(map);
+maxZoom:19,
+attribution:'© OpenStreetMap'
+}
+).addTo(map);
 
-let marker1, marker2, line;
+let marker1;
+let marker2;
+let line;
 
 async function geocode(place){
 
-  const url =
-  `https://nominatim.openstreetmap.org/search?format=json&q=${place}`;
+const response = await fetch(
+'https://nominatim.openstreetmap.org/search?format=json&q='
++ encodeURIComponent(place)
+);
 
-  const res = await fetch(url);
+const data = await response.json();
 
-  const data = await res.json();
+if(data.length == 0){
+alert("Không tìm thấy địa điểm");
+return null;
+}
 
-  return [
-    parseFloat(data[0].lat),
-    parseFloat(data[0].lon)
-  ];
+return [
+parseFloat(data[0].lat),
+parseFloat(data[0].lon)
+];
 }
 
 async function calculate(){
 
-  const from = document.getElementById("from").value;
-  const to = document.getElementById("to").value;
+const from =
+document.getElementById("from").value;
 
-  const p1 = await geocode(from);
-  const p2 = await geocode(to);
+const to =
+document.getElementById("to").value;
 
-  if(marker1) map.removeLayer(marker1);
-  if(marker2)
+const p1 = await geocode(from);
+const p2 = await geocode(to);
+
+if(!p1 || !p2) return;
+
+if(marker1) map.removeLayer(marker1);
+if(marker2) map.removeLayer(marker2);
+if(line) map.removeLayer(line);
+
+marker1 = L.marker(p1).addTo(map);
+marker2 = L.marker(p2).addTo(map);
+
+line = L.polyline([p1,p2]).addTo(map);
+
+map.fitBounds(line.getBounds());
+
+const distance =
+map.distance(p1,p2)/1000;
+
+document.getElementById("result").innerHTML =
+"Khoảng cách: "
++ distance.toFixed(2)
++ " km";
+
+}
+
+</script>
+
+</body>
+</html>
