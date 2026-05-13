@@ -10,6 +10,7 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -18,8 +19,17 @@ font-family:Arial;
 .top{
 padding:10px;
 background:white;
-z-index:999;
 position:relative;
+z-index:1000;
+}
+
+input{
+padding:10px;
+width:180px;
+}
+
+button{
+padding:10px;
 }
 
 #map{
@@ -27,99 +37,19 @@ height:85vh;
 width:100%;
 }
 
-input{
-padding:8px;
-}
-
-button{
-padding:8px;
-}
 </style>
 </head>
 
 <body>
 
 <div class="top">
-<input id="from" placeholder="Điểm đi">
-<input id="to" placeholder="Điểm đến">
-<button onclick="calculate()">TÍNH KHOẢNG CÁCH</button>
 
-<h3 id="result"></h3>
-</div>
+<input id="from"
+placeholder="Điểm đi">
 
-<div id="map"></div>
+<input id="to"
+placeholder="Điểm đến">
 
-<script>
-
-var map = L.map('map').setView([10.0452,105.7469], 10);
-
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-maxZoom:19,
-attribution:'© OpenStreetMap'
-}
-).addTo(map);
-
-let marker1;
-let marker2;
-let line;
-
-async function geocode(place){
-
-const response = await fetch(
-'https://nominatim.openstreetmap.org/search?format=json&q='
-+ encodeURIComponent(place)
-);
-
-const data = await response.json();
-
-if(data.length == 0){
-alert("Không tìm thấy địa điểm");
-return null;
-}
-
-return [
-parseFloat(data[0].lat),
-parseFloat(data[0].lon)
-];
-}
-
-async function calculate(){
-
-const from =
-document.getElementById("from").value;
-
-const to =
-document.getElementById("to").value;
-
-const p1 = await geocode(from);
-const p2 = await geocode(to);
-
-if(!p1 || !p2) return;
-
-if(marker1) map.removeLayer(marker1);
-if(marker2) map.removeLayer(marker2);
-if(line) map.removeLayer(line);
-
-marker1 = L.marker(p1).addTo(map);
-marker2 = L.marker(p2).addTo(map);
-
-line = L.polyline([p1,p2]).addTo(map);
-
-map.fitBounds(line.getBounds());
-
-const distance =
-map.distance(p1,p2)/1000;
-
-document.getElementById("result").innerHTML =
-"Khoảng cách: "
-+ distance.toFixed(2)
-+ " km";
-
-}
-
-</script>
-
-</body>
-</html>
+<button onclick="calculate()">
+TÍNH KHOẢNG CÁCH
+</button>
