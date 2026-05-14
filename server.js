@@ -1,6 +1,13 @@
 const express = require("express")
 const path = require("path")
 
+const express = require("express")
+const path = require("path")
+
+const fetch = (...args) =>
+  import('node-fetch').then(({default: fetch}) => fetch(...args))
+
+const app = express()
 const app = express()
 
 app.use(express.static(__dirname))
