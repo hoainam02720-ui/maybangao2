@@ -38,8 +38,8 @@ body{
 background:
 linear-gradient(
 180deg,
-#eef4f1,
-#dfe8ee
+#edf3f0,
+#dce5ea
 );
 
 color:#222;
@@ -136,6 +136,7 @@ font-size:16px;
 textarea{
 
 height:100px;
+
 resize:none;
 
 }
@@ -242,12 +243,6 @@ border-left:
 
 }
 
-.order h3{
-
-margin-bottom:10px;
-
-}
-
 .badge{
 
 display:inline-block;
@@ -322,6 +317,14 @@ height:90px;
 
 }
 
+.sliderdone{
+
+width:100%;
+
+margin-top:20px;
+
+}
+
 </style>
 
 </head>
@@ -342,12 +345,12 @@ height:90px;
 
 <div class="container">
 
-<!-- DAT GAO -->
+<!-- DAT DON -->
 
 <div class="card">
 
 <div class="title">
-🛒 Đặt gạo
+🛒 Đặt đơn
 </div>
 
 <input
@@ -378,6 +381,38 @@ value="5"
 placeholder="Số kg"
 />
 
+<select id="loaixe">
+
+<option value="xemay">
+🛵 Xe máy - 8k/km
+</option>
+
+<option value="4cho">
+🚗 Xe 4 chỗ - 13k/km
+</option>
+
+<option value="6cho">
+🚙 Xe 6 chỗ - 14k/km
+</option>
+
+<option value="500kg">
+📦 Xe tải 500kg - 13k/km
+</option>
+
+<option value="1tan">
+🚛 Xe tải 1 tấn - 14k/km
+</option>
+
+<option value="2_5tan">
+🚚 Xe tải 2.5 tấn - 16k/km
+</option>
+
+<option value="3_5tan">
+🚛 Xe tải 3.5 tấn - 18k/km
+</option>
+
+</select>
+
 <input
 id="diachi"
 placeholder="📍 Địa chỉ giao hàng"
@@ -403,7 +438,7 @@ placeholder="📝 Ghi chú cho shipper..."
 class="btn green"
 onclick="taodon()"
 >
-🛒 ĐẶT GẠO NGAY
+🛒 ĐẶT NGAY
 </button>
 
 <div
@@ -417,7 +452,7 @@ Chưa có đơn hàng
 
 </div>
 
-<!-- SHIPPER -->
+<!-- DON SHIPPER -->
 
 <div class="card">
 
@@ -427,22 +462,16 @@ Chưa có đơn hàng
 
 <div class="order">
 
-<h3>
 📦 Đơn mới NamRice
-</h3>
+
+<br><br>
 
 📍 Máy bán gạo NamRice
+
 <br><br>
 
 💰 Giá trị:
 <b id="giadonthi">0đ</b>
-
-<br><br>
-
-🚚 Phí ship:
-15.000đ
-
-<br>
 
 <div class="badge">
 ⏳ Đang chờ nhận
@@ -540,10 +569,12 @@ class="status"
 
 📈 Hôm nay:
 7 chuyến
+
 <br>
 
 💵 Hoa hồng:
 15%
+
 <br>
 
 🏦 Phí hệ thống:
@@ -603,6 +634,10 @@ class="btn green"
 
 let tong = 0
 
+let khoangcach = 5
+
+let currentMode = "maygao"
+
 const map =
 L.map('map').setView(
 [10.0452,105.7469],
@@ -613,30 +648,18 @@ L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 ).addTo(map)
 
-let currentLat = 10.0452
-let currentLon = 105.7469
+navigator.geolocation.watchPosition((pos)=>{
 
-navigator.geolocation.getCurrentPosition((pos)=>{
-
-currentLat =
+const lat =
 pos.coords.latitude
 
-currentLon =
+const lon =
 pos.coords.longitude
 
-L.marker([
-currentLat,
-currentLon
-]).addTo(map)
-
-.bindPopup(
-"📍 Vị trí shipper"
+map.setView(
+[lat,lon],
+15
 )
-
-map.setView([
-currentLat,
-currentLon
-],15)
 
 })
 
@@ -647,18 +670,52 @@ Number(
 document.getElementById("kg").value
 )
 
-const gia =
+const giaGao =
 Number(
 document.getElementById("loaigao").value
 )
 
-const tiengao =
-kg * gia
+const xe =
+document.getElementById("loaixe").value
 
-const ship = 15000
+let giaKm = 0
+
+if(xe == "xemay"){
+giaKm = 8000
+}
+
+if(xe == "4cho"){
+giaKm = 13000
+}
+
+if(xe == "6cho"){
+giaKm = 14000
+}
+
+if(xe == "500kg"){
+giaKm = 13000
+}
+
+if(xe == "1tan"){
+giaKm = 14000
+}
+
+if(xe == "2_5tan"){
+giaKm = 16000
+}
+
+if(xe == "3_5tan"){
+giaKm = 18000
+}
+
+const tienShip =
+khoangcach * giaKm
+
+const tienGao =
+kg * giaGao
 
 tong =
-tiengao + ship
+tienShip + tienGao
 
 document.getElementById(
 "giadonthi"
@@ -670,19 +727,31 @@ document.getElementById(
 ).innerHTML =
 
 `
-🌾 Tiền gạo:
+📏 Khoảng cách:
 <b>
-${tiengao.toLocaleString()}đ
+${khoangcach} km
 </b>
 
 <br><br>
 
-🚚 Phí ship:
-15.000đ
+🚚 Giá xe:
+<b>
+${giaKm.toLocaleString()}đ/km
+</b>
 
 <br><br>
 
-💰 Tổng thanh toán
+🌾 Tiền gạo:
+<b>
+${tienGao.toLocaleString()}đ
+</b>
+
+<br><br>
+
+🛵 Phí ship:
+<b>
+${tienShip.toLocaleString()}đ
+</b>
 
 <div class="money">
 ${tong.toLocaleString()}đ
@@ -697,20 +766,23 @@ ${tong.toLocaleString()}đ
 
 function nhandon(){
 
+currentMode = "maygao"
+
+window.open(
+"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
+)
+
 document.getElementById(
 "shipstatus"
 ).innerHTML =
 
 `
 📥 Đã nhận đơn
+
 <br><br>
 
-🗺️ Đang tới máy bán gạo
+🗺️ Đang dẫn đường tới máy bán gạo
 `
-
-window.open(
-"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
-)
 
 }
 
@@ -722,6 +794,7 @@ document.getElementById(
 
 `
 📍 Đã tới máy bán gạo
+
 <br><br>
 
 🌾 Chờ lấy gạo
@@ -739,9 +812,11 @@ document.getElementById(
 
 `
 🌾 Đang lấy gạo
+
 <br><br>
 
 🔓 ESP32 đã mở khóa
+
 <br><br>
 
 📦 Gạo đang rơi xuống
@@ -750,6 +825,8 @@ document.getElementById(
 }
 
 function giaohang(){
+
+currentMode = "khach"
 
 const diachi =
 document.getElementById(
@@ -770,31 +847,38 @@ document.getElementById(
 
 `
 🚚 Đang giao hàng
+
 <br><br>
 
-🗺️ Google Maps đang dẫn đường realtime
+🗺️ Google Maps đang dẫn đường realtime tới khách
 `
 
 }
 
-function hoanthanh(){
+function mobando(){
 
+if(currentMode == "maygao"){
+
+window.open(
+"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
+)
+
+}else{
+
+const diachi =
 document.getElementById(
-"shipstatus"
-).innerHTML =
+"diachi"
+).value
 
-`
-✅ Giao thành công
-<br><br>
+window.open(
 
-💵 Thu khách
+"https://www.google.com/maps/dir/?api=1&destination="
 
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
++ encodeURIComponent(diachi)
 
-🏦 Tiền đã cộng vào ví shipper
-`
+)
+
+}
 
 }
 
@@ -810,30 +894,59 @@ window.location.href =
 
 }
 
-function mobando(){
+function hoanthanh(){
 
-const diachi =
 document.getElementById(
-"diachi"
-).value
+"shipstatus"
+).innerHTML =
 
-if(diachi == ""){
+`
+✅ Kéo thanh để hoàn thành
 
-alert(
-"Nhập địa chỉ trước"
-)
+<br><br>
 
-return
+💵 Tổng tiền cần thu:
+
+<div class="money">
+${tong.toLocaleString()}đ
+</div>
+
+<input
+class="sliderdone"
+type="range"
+min="0"
+max="100"
+value="0"
+oninput="checkdone(this.value)"
+>
+
+`
 
 }
 
-window.open(
+function checkdone(v){
 
-"https://www.google.com/maps/search/?api=1&query="
+if(v >= 100){
 
-+ encodeURIComponent(diachi)
+document.getElementById(
+"shipstatus"
+).innerHTML =
 
-)
+`
+✅ Giao thành công
+
+<br><br>
+
+💰 Đã thu khách:
+
+<div class="money">
+${tong.toLocaleString()}đ
+</div>
+
+🏦 Tiền đã cộng vào ví shipper
+`
+
+}
 
 }
 
