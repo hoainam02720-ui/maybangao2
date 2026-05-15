@@ -1,287 +1,225 @@
-// =========================
-// NAMRICE AUTO SERVER
-// =========================
-
 const express = require("express")
-
 const app = express()
 
 app.use(express.json())
-
 app.use(express.static(__dirname))
 
-app.get("/", (req, res) => {
+let donhang = []
 
-  res.sendFile(__dirname + "/index.html")
+let shipperWallet = 245000
+
+// TRANG CHU
+
+app.get("/", (req,res)=>{
+
+res.sendFile(__dirname + "/index.html")
+
 })
 
-// =========================
-// DU LIEU
-// =========================
-
-let coLenhMo = false
-
-let donHang = []
-
-let shipper = []
-
-// =========================
 // TAO DON
-// =========================
 
-app.post("/taodon", (req, res) => {
+app.post("/taodon",(req,res)=>{
 
-  const data = req.body
+const data = req.body
 
-  const id =
-    "NR" + Date.now()
+const id = Date.now()
 
-  data.id = id
+const don = {
 
-  data.trangThai =
-    "CHO_SHIPPER"
+id:id,
 
-  donHang.push(data)
+type:data.type,
 
-  console.log("TAO DON")
+phone:data.phone,
 
-  console.log(data)
+pickup:data.pickup,
 
-  res.json({
-    success: true,
-    id
-  })
+destination:data.destination,
+
+rice:data.rice,
+
+kg:data.kg,
+
+vehicle:data.vehicle,
+
+distance:data.distance,
+
+total:data.total,
+
+status:"dangcho"
+
+}
+
+donhang.push(don)
+
+res.json({
+
+ok:true,
+don:don
+
 })
 
-// =========================
-// DANH SACH DON
-// =========================
-
-app.get("/donhang", (req, res) => {
-
-  res.json(donHang)
 })
 
-// =========================
-// SHIPPER NHAN DON
-// =========================
+// LAY DON
 
-app.post("/nhandon", (req, res) => {
+app.get("/donhang",(req,res)=>{
 
-  const id = req.body.id
+const doncho = donhang.filter(
+d => d.status == "dangcho"
+)
 
-  const tenShipper =
-    req.body.shipper
+res.json(doncho)
 
-  const don = donHang.find(
-    x => x.id == id
-  )
-
-  if (don) {
-
-    don.shipper =
-      tenShipper
-
-    don.trangThai =
-      "DANG_DI_LAY_GAO"
-  }
-
-  res.json({
-    success: true
-  })
 })
 
-// =========================
-// SHIPPER DEN NOI
-// =========================
+// NHAN DON
 
-app.post("/dadennhan", (req, res) => {
+app.post("/nhandon/:id",(req,res)=>{
 
-  const id = req.body.id
+const id = Number(req.params.id)
 
-  const don = donHang.find(
-    x => x.id == id
-  )
+const don = donhang.find(
+d => d.id == id
+)
 
-  if (don) {
+if(!don){
 
-    don.trangThai =
-      "DA_DEN_NOI_LAY_GAO"
-  }
-
-  res.json({
-    success: true
-  })
+return res.json({
+ok:false
 })
 
-// =========================
-// MO MAY LAY GAO
-// =========================
+}
 
-app.post("/molaygao", (req, res) => {
+don.status = "danhan"
 
-  const id = req.body.id
-
-  const don = donHang.find(
-    x => x.id == id
-  )
-
-  if (don) {
-
-    coLenhMo = true
-
-    don.trangThai =
-      "DANG_LAY_GAO"
-  }
-
-  res.json({
-    success: true
-  })
+res.json({
+ok:true,
+don:don
 })
 
-// =========================
-// ESP32 CHECK LENH
-// =========================
-
-app.get("/check", (req, res) => {
-
-  if (coLenhMo) {
-
-    coLenhMo = false
-
-    res.send("OPEN")
-
-  } else {
-
-    res.send("NONE")
-  }
 })
 
-// =========================
-// ESP32 BAO DA MO
-// =========================
+// DA DEN
 
-app.get("/damo", (req, res) => {
+app.post("/daden/:id",(req,res)=>{
 
-  console.log("ESP32 DA MO")
+const id = Number(req.params.id)
 
-  res.send("OK")
+const don = donhang.find(
+d => d.id == id
+)
+
+if(!don){
+
+return res.json({
+ok:false
 })
 
-// =========================
-// SHIPPER LAY GAO XONG
-// =========================
+}
 
-app.post("/laygaoxong", (req, res) => {
+don.status = "daden"
 
-  const id = req.body.id
-
-  const don = donHang.find(
-    x => x.id == id
-  )
-
-  if (don) {
-
-    don.trangThai =
-      "DANG_GIAO_HANG"
-  }
-
-  res.json({
-    success: true
-  })
+res.json({
+ok:true
 })
 
-// =========================
-// SHIPPER DEN KHACH
-// =========================
-
-app.post("/denkhach", (req, res) => {
-
-  const id = req.body.id
-
-  const don = donHang.find(
-    x => x.id == id
-  )
-
-  if (don) {
-
-    don.trangThai =
-      "DA_DEN_KHACH"
-  }
-
-  res.json({
-    success: true,
-
-    tienCanThu:
-      don.tongTien
-  })
 })
 
-// =========================
-// HOAN THANH DON
-// =========================
+// MO ESP32
 
-app.post("/hoanthanh", (req, res) => {
+app.get("/mo",(req,res)=>{
 
-  const id = req.body.id
+console.log("ESP32 MO KHOA")
 
-  const don = donHang.find(
-    x => x.id == id
-  )
+res.send("OK")
 
-  if (don) {
-
-    don.trangThai =
-      "DA_GIAO"
-
-    const phiShip =
-      Number(don.tienShip || 0)
-
-    const hoaHong =
-      phiShip * 0.15
-
-    const phiHeThong =
-      phiShip * 0.015
-
-    const shipperNhan =
-      phiShip -
-      hoaHong -
-      phiHeThong
-
-    don.tienShipper =
-      shipperNhan
-  }
-
-  res.json({
-    success: true
-  })
 })
 
-// =========================
-// WEBHOOK SEPAY
-// =========================
+// DI GIAO
 
-app.post("/sepay", (req, res) => {
+app.post("/digiao/:id",(req,res)=>{
 
-  const data = req.body
+const id = Number(req.params.id)
 
-  console.log(data)
+const don = donhang.find(
+d => d.id == id
+)
 
-  res.json({
-    success: true
-  })
+if(!don){
+
+return res.json({
+ok:false
 })
 
-// =========================
-// PORT
-// =========================
+}
 
-const PORT =
-  process.env.PORT || 3000
+don.status = "dangiao"
 
-app.listen(PORT, () => {
+res.json({
+ok:true
+})
 
-  console.log(
-    "NAMRICE SERVER OK"
-  )
+})
+
+// HOAN THANH
+
+app.post("/hoanthanh/:id",(req,res)=>{
+
+const id = Number(req.params.id)
+
+const don = donhang.find(
+d => d.id == id
+)
+
+if(!don){
+
+return res.json({
+ok:false
+})
+
+}
+
+don.status = "hoanthanh"
+
+const total = Number(don.total)
+
+const hoahong = total * 0.15
+
+const phihethong = total * 0.015
+
+const shipperNhan =
+
+total - hoahong - phihethong
+
+shipperWallet += shipperNhan
+
+res.json({
+
+ok:true,
+
+wallet:shipperWallet,
+
+shipperNhan:shipperNhan
+
+})
+
+})
+
+// VI SHIPPER
+
+app.get("/wallet",(req,res)=>{
+
+res.json({
+
+wallet:shipperWallet
+
+})
+
+})
+
+app.listen(3000,()=>{
+
+console.log("NAMRICE AUTO RUNNING")
+
 })
