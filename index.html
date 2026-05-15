@@ -10,21 +10,14 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>NamRice Auto</title>
+<title>NamRice Auto Pro</title>
 
 <link
 rel="stylesheet"
 href="https://unpkg.com/leaflet/dist/leaflet.css"
 />
 
-<link
-rel="stylesheet"
-href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
-/>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
 <link
 rel="stylesheet"
@@ -45,21 +38,21 @@ body{
 background:
 linear-gradient(
 180deg,
-#f3f7f5,
-#e7edf2
+#eef4f1,
+#dfe8ee
 );
 
 color:#222;
 
 }
 
-.top{
+.topbar{
 
 background:
 linear-gradient(
 135deg,
 #00c853,
-#009624
+#00a63e
 );
 
 padding:22px;
@@ -67,13 +60,17 @@ padding:22px;
 color:white;
 
 box-shadow:
-0 6px 20px rgba(0,0,0,.2);
+0 8px 25px rgba(0,0,0,.2);
+
+position:sticky;
+top:0;
+z-index:999;
 
 }
 
 .logo{
 
-font-size:32px;
+font-size:34px;
 font-weight:bold;
 
 }
@@ -81,13 +78,13 @@ font-weight:bold;
 .sub{
 
 margin-top:5px;
-opacity:.9;
+opacity:.95;
 
 }
 
 .container{
 
-padding:12px;
+padding:14px;
 
 }
 
@@ -95,24 +92,24 @@ padding:12px;
 
 background:white;
 
-border-radius:24px;
+border-radius:28px;
 
 padding:18px;
 
-margin-bottom:16px;
+margin-bottom:18px;
 
 box-shadow:
-0 6px 25px rgba(0,0,0,.08);
+0 8px 30px rgba(0,0,0,.08);
 
 }
 
 .title{
 
-font-size:24px;
+font-size:26px;
 
 font-weight:bold;
 
-margin-bottom:14px;
+margin-bottom:16px;
 
 }
 
@@ -122,13 +119,13 @@ textarea{
 
 width:100%;
 
-padding:15px;
+padding:16px;
 
 margin-top:12px;
 
 border:none;
 
-border-radius:16px;
+border-radius:18px;
 
 background:#f2f3f5;
 
@@ -138,8 +135,7 @@ font-size:16px;
 
 textarea{
 
-height:90px;
-
+height:100px;
 resize:none;
 
 }
@@ -148,19 +144,27 @@ resize:none;
 
 width:100%;
 
-padding:16px;
-
-margin-top:12px;
+padding:18px;
 
 border:none;
 
-border-radius:16px;
+border-radius:18px;
 
-font-size:17px;
+margin-top:12px;
+
+font-size:18px;
 
 font-weight:bold;
 
 color:white;
+
+transition:.2s;
+
+}
+
+.btn:active{
+
+transform:scale(.97);
 
 }
 
@@ -186,7 +190,7 @@ background:#555;
 
 .money{
 
-font-size:30px;
+font-size:34px;
 
 font-weight:bold;
 
@@ -196,17 +200,69 @@ margin-top:10px;
 
 }
 
+.row{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:10px;
+
+}
+
 .status{
 
 background:#f7f7f7;
 
-padding:15px;
+padding:18px;
 
-border-radius:16px;
+border-radius:18px;
 
 margin-top:15px;
 
-line-height:1.7;
+line-height:1.8;
+
+font-size:17px;
+
+}
+
+.order{
+
+background:#f8f8f8;
+
+padding:18px;
+
+border-radius:20px;
+
+margin-top:15px;
+
+border-left:
+8px solid #00c853;
+
+}
+
+.order h3{
+
+margin-bottom:10px;
+
+}
+
+.badge{
+
+display:inline-block;
+
+padding:8px 14px;
+
+background:#00c853;
+
+color:white;
+
+border-radius:40px;
+
+margin-top:10px;
+
+font-size:14px;
 
 }
 
@@ -219,64 +275,48 @@ border-radius:24px;
 overflow:hidden;
 
 box-shadow:
-0 6px 20px rgba(0,0,0,.1);
+0 8px 25px rgba(0,0,0,.1);
 
 }
 
-.shipgrid{
+.bottomnav{
 
-display:grid;
+position:fixed;
 
-grid-template-columns:
-1fr 1fr;
+bottom:0;
 
-gap:10px;
+left:0;
 
-}
+right:0;
 
-.order{
+background:white;
 
-background:#f8f8f8;
+display:flex;
 
-padding:15px;
+justify-content:space-around;
 
-border-radius:18px;
+padding:12px;
 
-margin-top:12px;
+box-shadow:
+0 -5px 20px rgba(0,0,0,.1);
 
-}
-
-.order-title{
-
-font-weight:bold;
-
-font-size:18px;
-
-margin-bottom:10px;
+z-index:999;
 
 }
 
-.badge{
+.navbtn{
 
-display:inline-block;
-
-padding:8px 12px;
-
-background:#00c853;
-
-color:white;
-
-border-radius:30px;
-
-margin-top:10px;
+text-align:center;
 
 font-size:14px;
 
+color:#555;
+
 }
 
-.bottom{
+.spacer{
 
-height:50px;
+height:90px;
 
 }
 
@@ -286,26 +326,26 @@ height:50px;
 
 <body>
 
-<div class="top">
+<div class="topbar">
 
 <div class="logo">
 🌾 NamRice Auto
 </div>
 
 <div class="sub">
-Đặt gạo • Giao hàng • GPS realtime
+Đặt xe • Giao gạo • GPS realtime • ESP32
 </div>
 
 </div>
 
 <div class="container">
 
-<!-- DAT GAO -->
+<!-- KHACH -->
 
 <div class="card">
 
 <div class="title">
-📦 Đặt gạo
+🛒 Đặt gạo
 </div>
 
 <input
@@ -313,7 +353,7 @@ id="sdt"
 placeholder="📞 Số điện thoại khách"
 />
 
-<select id="gao">
+<select id="loaigao">
 
 <option value="18000">
 🌾 Gạo ST25 - 18.000đ/kg
@@ -365,7 +405,7 @@ onclick="taodon()"
 </button>
 
 <div
-id="tongtien"
+id="bill"
 class="status"
 >
 
@@ -375,7 +415,7 @@ Chưa có đơn hàng
 
 </div>
 
-<!-- SHIPPER -->
+<!-- DON SHIPPER -->
 
 <div class="card">
 
@@ -383,19 +423,28 @@ Chưa có đơn hàng
 🛵 Đơn shipper
 </div>
 
-<div id="danhsachdon">
-
 <div class="order">
 
-<div class="order-title">
-📦 Đơn mới
-</div>
+<h3>
+📦 Đơn mới NamRice
+</h3>
 
 📍 Máy bán gạo NamRice
 <br><br>
 
-💰 105.000đ
+💰 Giá trị:
+<b id="giadonthi">0đ</b>
+
 <br><br>
+
+🚚 Phí ship:
+15.000đ
+
+<br>
+
+<div class="badge">
+⏳ Đang chờ nhận
+</div>
 
 <button
 class="btn blue"
@@ -408,9 +457,7 @@ onclick="nhandon()"
 
 </div>
 
-</div>
-
-<!-- DIEU KHIEN -->
+<!-- SHIPPER -->
 
 <div class="card">
 
@@ -418,7 +465,7 @@ onclick="nhandon()"
 🚚 Điều khiển shipper
 </div>
 
-<div class="shipgrid">
+<div class="row">
 
 <button
 class="btn blue"
@@ -462,17 +509,84 @@ id="shipstatus"
 class="status"
 >
 
-Chưa có hoạt động
+🟢 Hệ thống sẵn sàng
 
 </div>
+
+</div>
+
+<!-- VI SHIPPER -->
+
+<div class="card">
+
+<div class="title">
+💰 Ví shipper
+</div>
+
+<div class="money">
+245.000đ
+</div>
+
+<br>
+
+📈 Hôm nay:
+7 chuyến
+<br>
+
+💵 Hoa hồng:
+15%
+<br>
+
+🏦 Phí hệ thống:
+1.5%
+
+<button
+class="btn green"
+>
+💸 Rút tiền
+</button>
 
 </div>
 
 <!-- MAP -->
 
+<div class="card">
+
+<div class="title">
+🗺️ Bản đồ realtime
+</div>
+
 <div id="map"></div>
 
-<div class="bottom"></div>
+</div>
+
+</div>
+
+<div class="spacer"></div>
+
+<!-- MENU -->
+
+<div class="bottomnav">
+
+<div class="navbtn">
+🏠<br>Trang chủ
+</div>
+
+<div class="navbtn">
+📦<br>Đơn hàng
+</div>
+
+<div class="navbtn">
+🛵<br>Shipper
+</div>
+
+<div class="navbtn">
+💰<br>Ví tiền
+</div>
+
+<div class="navbtn">
+⚙️<br>Cài đặt
+</div>
 
 </div>
 
@@ -480,7 +594,7 @@ Chưa có hoạt động
 
 let tong = 0
 
-let map =
+const map =
 L.map('map').setView(
 [10.0452,105.7469],
 13
@@ -507,7 +621,7 @@ currentLon
 ]).addTo(map)
 
 .bindPopup(
-"📍 Vị trí hiện tại"
+"📍 Vị trí shipper"
 )
 
 map.setView([
@@ -526,33 +640,36 @@ document.getElementById("kg").value
 
 const gia =
 Number(
-document.getElementById("gao").value
+document.getElementById("loaigao").value
 )
 
 const tiengao =
 kg * gia
 
-const ship =
-15000
+const ship = 15000
 
 tong =
 tiengao + ship
 
 document.getElementById(
-"tongtien"
+"giadonthi"
+).innerHTML =
+tong.toLocaleString() + "đ"
+
+document.getElementById(
+"bill"
 ).innerHTML =
 
 `
-📦 Tiền gạo
-
-<div class="money">
+🌾 Tiền gạo:
+<b>
 ${tiengao.toLocaleString()}đ
-</div>
+</b>
 
-<br>
+<br><br>
 
-🛵 Phí ship:
-${ship.toLocaleString()}đ
+🚚 Phí ship:
+15.000đ
 
 <br><br>
 
@@ -563,7 +680,7 @@ ${tong.toLocaleString()}đ
 </div>
 
 <div class="badge">
-⏳ Đang chờ shipper
+📡 Đang tìm shipper
 </div>
 `
 
@@ -571,18 +688,21 @@ ${tong.toLocaleString()}đ
 
 function nhandon(){
 
+const url =
+"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
+
+window.open(url)
+
 document.getElementById(
 "shipstatus"
 ).innerHTML =
 
 `
-📥 Shipper đã nhận đơn
+📥 Đã nhận đơn
 <br><br>
 
 🗺️ Đang chỉ đường tới máy bán gạo
 `
-
-chidduongmay()
 
 }
 
@@ -593,10 +713,10 @@ document.getElementById(
 ).innerHTML =
 
 `
-📍 Đã đến máy bán gạo
+📍 Đã tới máy bán gạo
 <br><br>
 
-🌾 Sẵn sàng lấy gạo
+🌾 Chờ lấy gạo
 `
 
 }
@@ -623,6 +743,19 @@ document.getElementById(
 
 function giaohang(){
 
+const diachi =
+document.getElementById(
+"diachi"
+).value
+
+const url =
+
+"https://www.google.com/maps/dir/?api=1&destination="
+
++ encodeURIComponent(diachi)
+
+window.open(url)
+
 document.getElementById(
 "shipstatus"
 ).innerHTML =
@@ -631,10 +764,8 @@ document.getElementById(
 🚚 Đang giao hàng
 <br><br>
 
-🗺️ Đang chỉ đường tới khách
+🗺️ Google Maps đang dẫn đường realtime
 `
-
-chidduongkhach()
 
 }
 
@@ -645,14 +776,16 @@ document.getElementById(
 ).innerHTML =
 
 `
-✅ Đã giao thành công
+✅ Giao hàng thành công
 <br><br>
 
-💵 Thu khách
+💵 Thu khách:
 
 <div class="money">
 ${tong.toLocaleString()}đ
 </div>
+
+🏦 Tiền sẽ cộng vào ví shipper
 `
 
 }
@@ -660,58 +793,12 @@ ${tong.toLocaleString()}đ
 function goikhach(){
 
 const sdt =
-document.getElementById("sdt").value
+document.getElementById(
+"sdt"
+).value
 
 window.location.href =
 "tel:" + sdt
-
-}
-
-function chidduongmay(){
-
-L.Routing.control({
-
-waypoints:[
-
-L.latLng(
-currentLat,
-currentLon
-),
-
-L.latLng(
-10.0452,
-105.7469
-)
-
-],
-
-routeWhileDragging:false
-
-}).addTo(map)
-
-}
-
-function chidduongkhach(){
-
-L.Routing.control({
-
-waypoints:[
-
-L.latLng(
-currentLat,
-currentLon
-),
-
-L.latLng(
-10.03,
-105.76
-)
-
-],
-
-routeWhileDragging:false
-
-}).addTo(map)
 
 }
 
