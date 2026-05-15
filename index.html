@@ -1,3 +1,6 @@
+<!-- ================== NAMRICE AUTO FULL UPDATE ================== -->
+<!-- COPY ĐÈ TOÀN BỘ FILE index.html -->
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -29,7 +32,7 @@ font-family:Arial;
 }
 
 body{
-background:#eef3f8;
+background:#edf2f7;
 padding-bottom:120px;
 }
 
@@ -42,26 +45,28 @@ linear-gradient(
 #00a63e
 );
 
-padding:22px;
+padding:25px;
 
 color:white;
 
-font-size:32px;
+box-shadow:
+0 4px 20px rgba(0,0,0,.2);
+
+}
+
+.logo{
+
+font-size:50px;
 
 font-weight:bold;
-
-box-shadow:
-0 5px 20px rgba(0,0,0,.2);
 
 }
 
 .sub{
 
-font-size:17px;
-
 margin-top:5px;
 
-opacity:.95;
+font-size:18px;
 
 }
 
@@ -73,20 +78,20 @@ padding:14px;
 
 background:white;
 
-border-radius:28px;
-
 padding:18px;
+
+border-radius:30px;
 
 margin-bottom:18px;
 
 box-shadow:
-0 5px 20px rgba(0,0,0,.08);
+0 5px 25px rgba(0,0,0,.08);
 
 }
 
 .title{
 
-font-size:24px;
+font-size:28px;
 
 font-weight:bold;
 
@@ -100,22 +105,22 @@ textarea{
 
 width:100%;
 
-padding:16px;
+padding:18px;
 
 border:none;
 
-background:#f3f5f7;
+background:#f2f4f8;
 
-border-radius:18px;
+border-radius:22px;
+
+font-size:17px;
 
 margin-top:12px;
-
-font-size:16px;
 
 }
 
 textarea{
-height:90px;
+height:110px;
 resize:none;
 }
 
@@ -127,11 +132,11 @@ padding:18px;
 
 border:none;
 
-border-radius:20px;
+border-radius:22px;
 
 margin-top:12px;
 
-font-size:18px;
+font-size:22px;
 
 font-weight:bold;
 
@@ -144,7 +149,7 @@ background:#00c853;
 }
 
 .blue{
-background:#0d6efd;
+background:#1565ff;
 }
 
 .orange{
@@ -172,19 +177,19 @@ gap:10px;
 
 .money{
 
-font-size:36px;
+font-size:55px;
 
 font-weight:bold;
 
-color:#00b84f;
+color:#00c853;
 
-margin-top:12px;
+margin-top:20px;
 
 }
 
 .status{
 
-background:#f6f6f6;
+background:#f7f7f7;
 
 padding:18px;
 
@@ -192,37 +197,33 @@ border-radius:20px;
 
 margin-top:15px;
 
-line-height:1.8;
+line-height:2;
 
-font-size:17px;
-
-}
-
-.badge{
-
-display:inline-block;
-
-padding:8px 15px;
-
-background:#00c853;
-
-color:white;
-
-border-radius:30px;
-
-margin-top:12px;
+font-size:18px;
 
 }
 
 #map{
 
-height:430px;
+height:450px;
 
 border-radius:25px;
 
 overflow:hidden;
 
 margin-top:15px;
+
+}
+
+.orderItem{
+
+background:#f5f7fa;
+
+padding:18px;
+
+border-radius:20px;
+
+margin-top:12px;
 
 }
 
@@ -251,7 +252,7 @@ z-index:999;
 
 }
 
-.navbtn{
+.nav{
 
 text-align:center;
 
@@ -269,12 +270,6 @@ margin-top:20px;
 
 }
 
-.arrowMarker{
-
-font-size:40px;
-
-}
-
 </style>
 
 </head>
@@ -283,41 +278,45 @@ font-size:40px;
 
 <div class="topbar">
 
+<div class="logo">
 🌾 NamRice Auto
+</div>
 
 <div class="sub">
-Giao gạo • Đặt xe • Chở hàng
+Đặt xe • Giao gạo • Chở hàng • GPS realtime
 </div>
 
 </div>
 
 <div class="container">
 
+<!-- DAT DON -->
+
 <div class="card">
 
 <div class="title">
-🛒 Chọn dịch vụ
+🛒 Đặt đơn
 </div>
 
 <div class="row">
 
 <button
 class="btn green"
-onclick="chonDichVu('gao')"
+onclick="chon('gao')"
 >
 🌾 Giao gạo
 </button>
 
 <button
 class="btn blue"
-onclick="chonDichVu('xe')"
+onclick="chon('xe')"
 >
 🚖 Đặt xe
 </button>
 
 <button
 class="btn orange"
-onclick="chonDichVu('hang')"
+onclick="chon('hang')"
 >
 📦 Chở hàng
 </button>
@@ -326,12 +325,12 @@ onclick="chonDichVu('hang')"
 
 <input
 id="sdt"
-placeholder="📞 Số điện thoại"
+placeholder="📞 Số điện thoại khách"
 />
 
 <!-- GIAO GAO -->
 
-<div id="khungGao">
+<div id="khunggao">
 
 <select id="loaigao">
 
@@ -352,7 +351,7 @@ value="5"
 placeholder="Số kg"
 />
 
-<select id="loaixe">
+<select id="xeGao">
 
 <option value="8000">
 🛵 Xe máy - 8k/km
@@ -370,15 +369,19 @@ placeholder="Số kg"
 
 <input
 id="diachi"
-placeholder="📍 Địa chỉ giao"
+placeholder="📍 Địa chỉ giao hàng"
 />
+
+<textarea
+placeholder="📝 Ghi chú..."
+></textarea>
 
 </div>
 
 <!-- DAT XE -->
 
 <div
-id="khungXe"
+id="khungxe"
 style="display:none"
 >
 
@@ -399,7 +402,7 @@ id="diemden"
 placeholder="🏁 Điểm đến"
 />
 
-<select id="loaixekhach">
+<select id="xeKhach">
 
 <option value="8000">
 🛵 Xe máy - 8k/km
@@ -420,7 +423,7 @@ placeholder="🏁 Điểm đến"
 <!-- CHO HANG -->
 
 <div
-id="khungHang"
+id="khunghang"
 style="display:none"
 >
 
@@ -441,7 +444,7 @@ id="giaohang"
 placeholder="🏁 Nơi giao hàng"
 />
 
-<select id="loaixetai">
+<select id="xeTai">
 
 <option value="13000">
 📦 500kg - 13k/km
@@ -493,6 +496,47 @@ Chưa có đơn
 
 </div>
 
+<!-- DON CHO SHIPPER -->
+
+<div class="card">
+
+<div class="title">
+📦 Đơn đang chờ nhận
+</div>
+
+<div id="listdon">
+
+<div class="orderItem">
+
+🌾 Đơn giao gạo
+
+<br><br>
+
+📍 Máy bán gạo A4
+
+<br>
+
+🏁 Bến Ninh Kiều
+
+<br>
+
+💵 130.000đ
+
+<br><br>
+
+<button
+class="btn blue"
+onclick="nhandon()"
+>
+📥 Nhận đơn này
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 <!-- SHIPPER -->
 
 <div class="card">
@@ -505,37 +549,37 @@ Chưa có đơn
 
 <button
 class="btn blue"
-onclick="nhandon()"
->
-📥 Nhận đơn
-</button>
-
-<button
-class="btn orange"
 onclick="daden()"
 >
 📍 Đã đến
 </button>
 
 <button
-class="btn green"
+class="btn orange"
 onclick="laygao()"
 >
 🌾 Lấy hàng
 </button>
 
 <button
-class="btn red"
-onclick="giaohangreal()"
+class="btn green"
+onclick="digiao()"
 >
 🚚 Đi giao
+</button>
+
+<button
+class="btn red"
+onclick="hoanthanh()"
+>
+✅ Hoàn thành
 </button>
 
 </div>
 
 <button
 class="btn gray"
-onclick="mobando()"
+onclick="mogooogle()"
 >
 🗺️ Mở Google Maps
 </button>
@@ -547,19 +591,12 @@ onclick="goikhach()"
 📞 Gọi khách
 </button>
 
-<button
-class="btn green"
-onclick="hoanthanh()"
->
-✅ Hoàn thành
-</button>
-
 <div
 id="shipstatus"
 class="status"
 >
 
-🟢 Hệ thống sẵn sàng
+🟢 Shipper đang online
 
 </div>
 
@@ -585,6 +622,14 @@ class="status"
 
 💵 Hoa hồng: 15%
 
+<br>
+
+🏦 Phí hệ thống: 1.5%
+
+<button class="btn green">
+💸 Rút tiền
+</button>
+
 </div>
 
 <!-- MAP -->
@@ -592,7 +637,7 @@ class="status"
 <div class="card">
 
 <div class="title">
-🗺️ GPS realtime
+🗺️ GPS Realtime
 </div>
 
 <div id="map"></div>
@@ -601,346 +646,4 @@ class="status"
 
 </div>
 
-<!-- MENU -->
-
-<div class="bottomnav">
-
-<div class="navbtn">
-🏠<br>Trang chủ
-</div>
-
-<div class="navbtn">
-📦<br>Đơn
-</div>
-
-<div class="navbtn">
-🛵<br>Shipper
-</div>
-
-<div class="navbtn">
-💰<br>Ví
-</div>
-
-</div>
-
-<script>
-
-let currentService = "gao"
-
-let tong = 0
-
-const map =
-L.map('map').setView(
-[10.0452,105.7469],
-13
-)
-
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-).addTo(map)
-
-navigator.geolocation.watchPosition((pos)=>{
-
-const lat =
-pos.coords.latitude
-
-const lon =
-pos.coords.longitude
-
-L.marker([lat,lon]).addTo(map)
-
-map.setView([lat,lon],15)
-
-})
-
-function chonDichVu(loai){
-
-currentService = loai
-
-document.getElementById(
-"khungGao"
-).style.display = "none"
-
-document.getElementById(
-"khungXe"
-).style.display = "none"
-
-document.getElementById(
-"khungHang"
-).style.display = "none"
-
-if(loai == "gao"){
-
-document.getElementById(
-"khungGao"
-).style.display = "block"
-
-}
-
-if(loai == "xe"){
-
-document.getElementById(
-"khungXe"
-).style.display = "block"
-
-}
-
-if(loai == "hang"){
-
-document.getElementById(
-"khungHang"
-).style.display = "block"
-
-}
-
-}
-
-function layvitri(){
-
-navigator.geolocation.getCurrentPosition((pos)=>{
-
-const lat =
-pos.coords.latitude
-
-const lon =
-pos.coords.longitude
-
-document.getElementById(
-"diemdon"
-).value =
-lat + "," + lon
-
-})
-
-}
-
-function taodon(){
-
-let giaKm = 0
-
-let km = 5
-
-if(currentService == "gao"){
-
-giaKm =
-Number(
-document.getElementById(
-"loaixe"
-).value
-)
-
-const giaGao =
-Number(
-document.getElementById(
-"loaigao"
-).value
-)
-
-const kg =
-Number(
-document.getElementById(
-"kg"
-).value
-)
-
-tong =
-(giaKm * km) +
-(giaGao * kg)
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-🌾 ĐƠN GIAO GẠO
-
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
-
-📦 Đang tìm shipper
-`
-
-}
-
-if(currentService == "xe"){
-
-giaKm =
-Number(
-document.getElementById(
-"loaixekhach"
-).value
-)
-
-tong = giaKm * km
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-🚖 ĐƠN ĐẶT XE
-
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
-
-🚕 Đang tìm tài xế
-`
-
-}
-
-if(currentService == "hang"){
-
-giaKm =
-Number(
-document.getElementById(
-"loaixetai"
-).value
-)
-
-tong = giaKm * km
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-📦 ĐƠN CHỞ HÀNG
-
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
-
-🚛 Đang tìm xe tải
-`
-
-}
-
-}
-
-function nhandon(){
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-📥 Đã nhận đơn
-<br><br>
-🗺️ Đang tới điểm lấy hàng
-`
-
-}
-
-function daden(){
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-📍 Đã tới nơi
-`
-
-}
-
-function laygao(){
-
-fetch("/mo")
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-🔓 Đã mở khóa
-<br><br>
-📦 Đang lấy hàng
-`
-
-}
-
-function giaohangreal(){
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-🚚 Đang giao hàng
-<br><br>
-🗺️ Google Maps đang dẫn đường
-`
-
-}
-
-function mobando(){
-
-window.open(
-"https://maps.google.com"
-)
-
-}
-
-function goikhach(){
-
-const sdt =
-document.getElementById(
-"sdt"
-).value
-
-window.location.href =
-"tel:" + sdt
-
-}
-
-function hoanthanh(){
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-💵 Tổng cần thu
-
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
-
-<input
-class="sliderdone"
-type="range"
-min="0"
-max="100"
-value="0"
-oninput="checkdone(this.value)"
->
-`
-
-}
-
-function checkdone(v){
-
-if(v >= 100){
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-✅ Hoàn thành đơn
-
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
-`
-
-}
-
-}
-
-</script>
-
-</body>
-</html>
+<div
