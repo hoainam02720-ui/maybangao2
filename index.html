@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
 <style>
 
 body{
@@ -18,13 +21,13 @@ background:#edf1f4;
 }
 
 header{
-background:#00c73c;
+background:#00c853;
 padding:25px;
 color:white;
+font-size:24px;
 font-weight:bold;
-font-size:22px;
-border-bottom-left-radius:25px;
-border-bottom-right-radius:25px;
+border-bottom-left-radius:30px;
+border-bottom-right-radius:30px;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
@@ -47,6 +50,12 @@ font-weight:bold;
 margin-bottom:20px;
 }
 
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
 input,select,textarea{
 width:100%;
 padding:18px;
@@ -65,7 +74,7 @@ padding:18px;
 font-size:22px;
 font-weight:bold;
 color:white;
-margin-top:15px;
+margin-top:12px;
 }
 
 .green{background:#00c853;}
@@ -74,13 +83,7 @@ margin-top:15px;
 .red{background:#ff3d3d;}
 .gray{background:#555;}
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
-
-.bigprice{
+.big{
 font-size:55px;
 font-weight:bold;
 color:#00c853;
@@ -96,7 +99,7 @@ font-size:20px;
 }
 
 #map{
-height:450px;
+height:500px;
 border-radius:25px;
 margin-top:20px;
 }
@@ -109,9 +112,9 @@ right:0;
 background:white;
 display:flex;
 justify-content:space-around;
-padding:12px;
-font-size:18px;
-box-shadow:0 -5px 10px rgba(0,0,0,0.1);
+padding:10px;
+font-size:17px;
+box-shadow:0 -5px 15px rgba(0,0,0,0.1);
 }
 
 .slide{
@@ -168,7 +171,7 @@ width:100%;
 
 </div>
 
-<div id="xedon">
+<div id="xedon" style="display:none">
 
 <button class="blue" onclick="layvitri()">
 📍 Chia sẻ vị trí đón
@@ -198,7 +201,7 @@ width:100%;
 
 </select>
 
-<textarea id="ghichu" placeholder="📝 Ghi chú"></textarea>
+<textarea id="ghichu" placeholder="📝 Ghi chú cho shipper"></textarea>
 
 <select id="thanhtoan">
 <option>💵 Tiền mặt</option>
@@ -265,11 +268,11 @@ Chưa có đơn
 
 </div>
 
-<button class="green" style="width:100%" onclick="hienthucodon()">
+<button class="green" style="width:100%" onclick="hienthanhtruot()">
 ✅ Hoàn thành
 </button>
 
-<div id="hoanthanhbox"></div>
+<div id="slidebox"></div>
 
 <div class="card" id="shipstatus">
 
@@ -285,15 +288,19 @@ Chưa có đơn
 💰 Ví shipper
 </div>
 
-<div class="bigprice" id="vishipper">
+<div class="big" id="vishipper">
 245.000đ
 </div>
 
 <div class="card">
 
-📈 Hôm nay: 7 chuyến<br><br>
+📈 Hôm nay: 7 chuyến
 
-💵 Hoa hồng: 15%<br><br>
+<br><br>
+
+💵 Hoa hồng: 15%
+
+<br><br>
 
 🏦 Phí hệ thống: 1.5%
 
@@ -320,23 +327,18 @@ Chưa có đơn
 <div class="bottom">
 
 <div>🏠<br>Trang chủ</div>
-
 <div>📦<br>Đơn</div>
-
 <div>🛵<br>Shipper</div>
-
 <div>💰<br>Ví</div>
-
 <div>⚙️<br>Cài đặt</div>
 
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-
 <script>
 
 let currentMode = "gao"
+
+let currentDon = null
 
 let map = L.map('map').setView([10.0452,105.7469],13)
 
@@ -345,37 +347,34 @@ maxZoom:19
 }).addTo(map)
 
 let markerKhach = null
-let markerShipper = null
 let routeControl = null
-
-let currentDon = null
 
 function chonMode(mode){
 
 currentMode = mode
 
-document.getElementById("gaobox").style.display="none"
-document.getElementById("xedon").style.display="none"
-document.getElementById("hangbox").style.display="none"
+document.getElementById("gaobox").style.display = "none"
+document.getElementById("xedon").style.display = "none"
+document.getElementById("hangbox").style.display = "none"
 
 if(mode=="gao"){
-document.getElementById("gaobox").style.display="block"
+document.getElementById("gaobox").style.display = "block"
 }
 
 if(mode=="xe"){
-document.getElementById("xedon").style.display="block"
+document.getElementById("xedon").style.display = "block"
 }
 
 if(mode=="hang"){
-document.getElementById("hangbox").style.display="block"
-document.getElementById("xedon").style.display="block"
+document.getElementById("xedon").style.display = "block"
+document.getElementById("hangbox").style.display = "block"
 }
 
 }
 
 function layvitri(){
 
-navigator.geolocation.getCurrentPosition(pos=>{
+navigator.geolocation.getCurrentPosition(function(pos){
 
 let lat = pos.coords.latitude
 let lon = pos.coords.longitude
@@ -388,7 +387,7 @@ map.removeLayer(markerKhach)
 
 markerKhach = L.marker([lat,lon]).addTo(map)
 
-map.setView([lat,lon],15)
+map.setView([lat,lon],16)
 
 })
 
@@ -396,21 +395,21 @@ map.setView([lat,lon],15)
 
 function taodon(){
 
-let xe = Number(document.getElementById("loaixe").value)
-
 let km = Math.floor(Math.random()*8)+3
 
-let ship = km * xe
+let giaxe = Number(document.getElementById("loaixe").value)
 
-let tong = ship
+let tienship = km * giaxe
+
+let tong = tienship
 
 if(currentMode=="gao"){
 
-let kg = Number(document.getElementById("kg").value)
+let kg = Number(document.getElementById("kg").value || 0)
 
-let gia = Number(document.getElementById("loaigao").value)
+let giagao = Number(document.getElementById("loaigao").value)
 
-tong = tong + (kg*gia)
+tong += kg * giagao
 
 }
 
@@ -424,8 +423,10 @@ ${currentMode=="hang"?"📦 ĐƠN CHỞ HÀNG":""}
 
 </div>
 
-<div class="bigprice">
+<div class="big">
+
 ${tong.toLocaleString()}đ
+
 </div>
 
 📏 Khoảng cách: ${km} km
@@ -448,15 +449,15 @@ ${currentMode=="hang"?"📦 Đơn chở hàng":""}
 
 📍 ${document.getElementById("diemdon").value || "Máy bán gạo A4"}
 
-<br>
+<br><br>
 
 🏁 ${document.getElementById("diemden").value}
 
-<br>
+<br><br>
 
 📏 ${km} km
 
-<br>
+<br><br>
 
 💵 ${tong.toLocaleString()}đ
 
@@ -482,8 +483,13 @@ km:km
 function nhandon(){
 
 document.getElementById("shipstatus").innerHTML = `
-📦 Đã nhận đơn<br><br>
+
+📥 Đã nhận đơn
+
+<br><br>
+
 🗺 Đang mở đường realtime
+
 `
 
 }
@@ -491,7 +497,9 @@ document.getElementById("shipstatus").innerHTML = `
 function datoi(){
 
 document.getElementById("shipstatus").innerHTML = `
+
 📍 Đã tới nơi lấy hàng
+
 `
 
 }
@@ -501,8 +509,13 @@ function layhang(){
 fetch("/mo")
 
 document.getElementById("shipstatus").innerHTML = `
-🌾 Đang lấy gạo<br><br>
+
+🌾 Đang lấy gạo
+
+<br><br>
+
 🔓 ESP32 đã mở khóa
+
 `
 
 }
@@ -510,7 +523,9 @@ document.getElementById("shipstatus").innerHTML = `
 function giaohang(){
 
 document.getElementById("shipstatus").innerHTML = `
+
 🚚 Đang giao hàng realtime
+
 `
 
 }
@@ -525,25 +540,23 @@ function goikhach(){
 
 let sdt = document.getElementById("sdt").value
 
-window.location.href="tel:"+sdt
+window.location.href = "tel:" + sdt
 
 }
 
-function hienthucodon(){
+function hienthanhtruot(){
 
-if(!currentDon) return
+if(!currentDon){
+return
+}
 
-document.getElementById("hoanthanhbox").innerHTML = `
+document.getElementById("slidebox").innerHTML = `
 
 <div class="card">
 
-<div style="font-size:28px;font-weight:bold">
-
 💵 Tổng tiền cần thu
 
-</div>
-
-<div class="bigprice">
+<div class="big">
 
 ${currentDon.tong.toLocaleString()}đ
 
@@ -574,9 +587,9 @@ if(v>=100){
 
 let tong = currentDon.tong
 
-let tru = tong*0.165
+let tru = tong * 0.165
 
-let shipperNhan = tong-tru
+let shipperNhan = tong - tru
 
 document.getElementById("shipstatus").innerHTML = `
 
