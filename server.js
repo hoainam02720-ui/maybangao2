@@ -37,7 +37,7 @@ app.post("/sepay", express.json(), async (req, res) => {
 
     try {
 
-      await fetch("http://192.168.1.14/mo")
+      await fetch("http://192.168.1.12/mo")
 
       console.log("DA MO MAY")
 
