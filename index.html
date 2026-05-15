@@ -1,4 +1,308 @@
-<!-- THEM VAO PHAN DAT DON -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
+
+<title>NamRice Auto</title>
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#eef3f8;
+padding-bottom:120px;
+}
+
+.topbar{
+
+background:
+linear-gradient(
+135deg,
+#00c853,
+#00a63e
+);
+
+padding:22px;
+
+color:white;
+
+font-size:32px;
+
+font-weight:bold;
+
+box-shadow:
+0 5px 20px rgba(0,0,0,.2);
+
+}
+
+.sub{
+
+font-size:17px;
+
+margin-top:5px;
+
+opacity:.95;
+
+}
+
+.container{
+padding:14px;
+}
+
+.card{
+
+background:white;
+
+border-radius:28px;
+
+padding:18px;
+
+margin-bottom:18px;
+
+box-shadow:
+0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.title{
+
+font-size:26px;
+
+font-weight:bold;
+
+margin-bottom:15px;
+
+}
+
+input,
+select,
+textarea{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+background:#f3f5f7;
+
+border-radius:18px;
+
+margin-top:12px;
+
+font-size:16px;
+
+}
+
+textarea{
+height:90px;
+resize:none;
+}
+
+.btn{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+border-radius:20px;
+
+margin-top:12px;
+
+font-size:18px;
+
+font-weight:bold;
+
+color:white;
+
+}
+
+.green{
+background:#00c853;
+}
+
+.blue{
+background:#0d6efd;
+}
+
+.orange{
+background:#ff9800;
+}
+
+.red{
+background:#ff3b30;
+}
+
+.gray{
+background:#555;
+}
+
+.row{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:10px;
+
+}
+
+.money{
+
+font-size:36px;
+
+font-weight:bold;
+
+color:#00b84f;
+
+margin-top:12px;
+
+}
+
+.status{
+
+background:#f6f6f6;
+
+padding:18px;
+
+border-radius:20px;
+
+margin-top:15px;
+
+line-height:1.8;
+
+font-size:17px;
+
+}
+
+.badge{
+
+display:inline-block;
+
+padding:8px 15px;
+
+background:#00c853;
+
+color:white;
+
+border-radius:30px;
+
+margin-top:12px;
+
+}
+
+#map{
+
+height:430px;
+
+border-radius:25px;
+
+overflow:hidden;
+
+margin-top:15px;
+
+}
+
+.bottomnav{
+
+position:fixed;
+
+bottom:0;
+
+left:0;
+
+right:0;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+padding:12px;
+
+box-shadow:
+0 -5px 20px rgba(0,0,0,.1);
+
+z-index:999;
+
+}
+
+.navbtn{
+
+text-align:center;
+
+font-size:14px;
+
+color:#555;
+
+}
+
+.arrowMarker{
+
+font-size:42px;
+
+filter:
+drop-shadow(
+0 0 10px rgba(0,0,0,.5)
+);
+
+}
+
+.sliderdone{
+
+width:100%;
+
+margin-top:20px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+🌾 NamRice Auto
+
+<div class="sub">
+Đặt xe • Giao gạo • GPS realtime
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<div class="title">
+🛒 Đặt đơn
+</div>
 
 <select id="loaidon" onchange="doiloaidon()">
 
@@ -11,6 +315,11 @@
 </option>
 
 </select>
+
+<input
+id="sdt"
+placeholder="📞 Số điện thoại khách"
+/>
 
 <div id="datxeBox" style="display:none">
 
@@ -33,38 +342,298 @@ placeholder="🏁 Điểm đến"
 
 </div>
 
-<!-- THEM VAO CSS -->
+<select id="loaigao">
 
-.arrowMarker{
+<option value="18000">
+🌾 Gạo ST25 - 18.000đ/kg
+</option>
 
-font-size:42px;
+<option value="22000">
+🌾 Gạo Nhật - 22.000đ/kg
+</option>
 
-filter:
-drop-shadow(
-0 0 10px rgba(0,0,0,.5)
-);
+<option value="26000">
+🌾 Gạo thơm cao cấp - 26.000đ/kg
+</option>
 
-}
+</select>
 
-.sliderdone{
+<input
+id="kg"
+type="number"
+value="5"
+placeholder="Số kg"
+/>
 
-width:100%;
+<select id="loaixe">
 
-margin-top:20px;
+<option value="xemay">
+🛵 Xe máy - 8k/km
+</option>
 
-}
+<option value="4cho">
+🚗 Xe 4 chỗ - 13k/km
+</option>
 
-/* THEM VAO SCRIPT */
+<option value="6cho">
+🚙 Xe 6 chỗ - 14k/km
+</option>
 
-let markerShipper
+<option value="500kg">
+📦 Xe tải 500kg - 13k/km
+</option>
 
-let markerKhach
+<option value="1tan">
+🚛 Xe tải 1 tấn - 14k/km
+</option>
+
+<option value="2_5tan">
+🚚 Xe tải 2.5 tấn - 16k/km
+</option>
+
+<option value="3_5tan">
+🚛 Xe tải 3.5 tấn - 18k/km
+</option>
+
+</select>
+
+<input
+id="diachi"
+placeholder="📍 Địa chỉ giao hàng"
+/>
+
+<textarea
+placeholder="📝 Ghi chú cho shipper..."
+></textarea>
+
+<select id="pay">
+
+<option>
+💵 Tiền mặt
+</option>
+
+<option>
+🏦 Chuyển khoản
+</option>
+
+</select>
+
+<button
+class="btn green"
+onclick="taodon()"
+>
+🛒 ĐẶT NGAY
+</button>
+
+<div
+id="bill"
+class="status"
+>
+
+Chưa có đơn hàng
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+🛵 Shipper
+</div>
+
+<div class="row">
+
+<button
+class="btn blue"
+onclick="nhandon()"
+>
+📥 Nhận đơn
+</button>
+
+<button
+class="btn orange"
+onclick="daden()"
+>
+📍 Đã đến
+</button>
+
+<button
+class="btn green"
+onclick="laygao()"
+>
+🌾 Lấy gạo
+</button>
+
+<button
+class="btn red"
+onclick="giaohang()"
+>
+🚚 Đi giao
+</button>
+
+</div>
+
+<button
+class="btn gray"
+onclick="mobando()"
+>
+🗺️ Mở Google Maps
+</button>
+
+<button
+class="btn gray"
+onclick="goikhach()"
+>
+📞 Gọi khách
+</button>
+
+<button
+class="btn green"
+onclick="hoanthanh()"
+>
+✅ Hoàn thành
+</button>
+
+<div
+id="shipstatus"
+class="status"
+>
+
+🟢 Hệ thống sẵn sàng
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+💰 Ví shipper
+</div>
+
+<div class="money">
+245.000đ
+</div>
+
+<br>
+
+📈 Hôm nay: 7 chuyến
+
+<br>
+
+💵 Hoa hồng: 15%
+
+<br>
+
+🏦 Phí hệ thống: 1.5%
+
+<button
+class="btn green"
+>
+💸 Rút tiền
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+🗺️ GPS realtime
+</div>
+
+<div id="map"></div>
+
+</div>
+
+</div>
+
+<div class="bottomnav">
+
+<div class="navbtn">
+🏠<br>Trang chủ
+</div>
+
+<div class="navbtn">
+📦<br>Đơn hàng
+</div>
+
+<div class="navbtn">
+🛵<br>Shipper
+</div>
+
+<div class="navbtn">
+💰<br>Ví tiền
+</div>
+
+<div class="navbtn">
+⚙️<br>Cài đặt
+</div>
+
+</div>
+
+<script>
 
 let tong = 0
 
 let khoangcach = 5
 
 let currentMode = "maygao"
+
+const map =
+L.map('map').setView(
+[10.0452,105.7469],
+13
+)
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map)
+
+let markerShipper
+let markerKhach
+
+function capnhatvitri(){
+
+navigator.geolocation.watchPosition((pos)=>{
+
+const lat =
+pos.coords.latitude
+
+const lon =
+pos.coords.longitude
+
+if(markerShipper){
+
+map.removeLayer(
+markerShipper
+)
+
+}
+
+markerShipper =
+L.marker(
+[lat,lon],
+{
+icon:
+L.divIcon({
+className:
+"arrowMarker",
+html:"🛵"
+})
+}
+).addTo(map)
+
+map.setView(
+[lat,lon],
+15
+)
+
+})
+
+}
+
+capnhatvitri()
 
 function doiloaidon(){
 
@@ -134,43 +703,6 @@ map.setView(
 })
 
 }
-
-function capnhatvitri(){
-
-navigator.geolocation.watchPosition((pos)=>{
-
-const lat =
-pos.coords.latitude
-
-const lon =
-pos.coords.longitude
-
-if(markerShipper){
-
-map.removeLayer(
-markerShipper
-)
-
-}
-
-markerShipper =
-L.marker(
-[lat,lon],
-{
-icon:
-L.divIcon({
-className:
-"arrowMarker",
-html:"🛵"
-})
-}
-).addTo(map)
-
-})
-
-}
-
-capnhatvitri()
 
 function taodon(){
 
@@ -329,11 +861,6 @@ ${tong.toLocaleString()}đ
 `
 
 }
-
-document.getElementById(
-"giadonthi"
-).innerHTML =
-tong.toLocaleString() + "đ"
 
 }
 
@@ -570,3 +1097,8 @@ ${tong.toLocaleString()}đ
 }
 
 }
+
+</script>
+
+</body>
+</html>
