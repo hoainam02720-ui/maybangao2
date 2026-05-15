@@ -1,62 +1,81 @@
 const express = require("express")
-const path = require("path")
-
-
-
-const fetch = (...args) =>
-  import('node-fetch').then(({default: fetch}) => fetch(...args))
 
 const app = express()
 
+app.use(express.json())
 
-app.use(express.static(__dirname))
+let coLenhMo = false
+let daMo = false
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"))
-})
-let donHang = []
-
-app.get("/donhang", (req, res) => {
-res.json(donHang)
-})
-
-app.post("/sepay", express.json(), async (req, res) => {
+// WEBHOOK SEPAY
+app.post("/sepay", (req, res) => {
 
   const data = req.body
 
-  console.log(data)
-
   const amount = Number(data.transferAmount || 0)
 
-  const content = String(data.content || "").toLowerCase()
+  const content = String(
+    data.content || ""
+  ).toLowerCase()
+
+  console.log(data)
 
   if (
     amount >= 2000 &&
     content.includes("may gao st25 01")
   ) {
 
-    try {
+    console.log("MO KHOA")
 
-      await fetch("http://192.168.1.12/mo")
-
-      console.log("DA MO MAY")
-
-    } catch (err) {
-
-      console.log(err)
-
-    }
-
+    coLenhMo = true
   }
 
   res.json({
-    ok: true
+    success: true
   })
-
 })
 
-const PORT = process.env.PORT || 3000
+// ESP32 CHECK LENH
+app.get("/check", (req, res) => {
 
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT)
+  if (coLenhMo) {
+
+    coLenhMo = false
+
+    res.send("OPEN")
+
+  } else {
+
+    res.send("NONE")
+  }
+})
+
+// ESP32 BAO DA MO
+app.get("/damo", (req, res) => {
+
+  daMo = true
+
+  console.log("ESP32 DA MO KHOA")
+
+  res.send("OK")
+})
+
+// WEB XEM TRANG THAI
+app.get("/trangthai", (req, res) => {
+
+  if (daMo) {
+
+    daMo = false
+
+    res.send("DA MO KHOA")
+
+  } else {
+
+    res.send("DANG KHOA")
+  }
+})
+
+app.listen(3000, () => {
+
+  console.log("NAMRICE SERVER OK")
 })
