@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>NamRice Auto Pro</title>
+<title>NamRice Auto</title>
 
 <link
 rel="stylesheet"
@@ -277,6 +277,8 @@ overflow:hidden;
 box-shadow:
 0 8px 25px rgba(0,0,0,.1);
 
+margin-top:15px;
+
 }
 
 .bottomnav{
@@ -333,14 +335,14 @@ height:90px;
 </div>
 
 <div class="sub">
-Đặt xe • Giao gạo • GPS realtime • ESP32
+Đặt xe • Giao gạo • GPS realtime
 </div>
 
 </div>
 
 <div class="container">
 
-<!-- KHACH -->
+<!-- DAT GAO -->
 
 <div class="card">
 
@@ -415,7 +417,7 @@ Chưa có đơn hàng
 
 </div>
 
-<!-- DON SHIPPER -->
+<!-- SHIPPER -->
 
 <div class="card">
 
@@ -457,7 +459,7 @@ onclick="nhandon()"
 
 </div>
 
-<!-- SHIPPER -->
+<!-- DIEU KHIEN -->
 
 <div class="card">
 
@@ -504,6 +506,13 @@ onclick="goikhach()"
 📞 Gọi khách
 </button>
 
+<button
+class="btn blue"
+onclick="mobando()"
+>
+🗺️ MỞ GOOGLE MAPS
+</button>
+
 <div
 id="shipstatus"
 class="status"
@@ -515,7 +524,7 @@ class="status"
 
 </div>
 
-<!-- VI SHIPPER -->
+<!-- VI -->
 
 <div class="card">
 
@@ -688,11 +697,6 @@ ${tong.toLocaleString()}đ
 
 function nhandon(){
 
-const url =
-"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
-
-window.open(url)
-
 document.getElementById(
 "shipstatus"
 ).innerHTML =
@@ -701,8 +705,12 @@ document.getElementById(
 📥 Đã nhận đơn
 <br><br>
 
-🗺️ Đang chỉ đường tới máy bán gạo
+🗺️ Đang tới máy bán gạo
 `
+
+window.open(
+"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
+)
 
 }
 
@@ -748,13 +756,13 @@ document.getElementById(
 "diachi"
 ).value
 
-const url =
+window.open(
 
 "https://www.google.com/maps/dir/?api=1&destination="
 
 + encodeURIComponent(diachi)
 
-window.open(url)
+)
 
 document.getElementById(
 "shipstatus"
@@ -776,16 +784,16 @@ document.getElementById(
 ).innerHTML =
 
 `
-✅ Giao hàng thành công
+✅ Giao thành công
 <br><br>
 
-💵 Thu khách:
+💵 Thu khách
 
 <div class="money">
 ${tong.toLocaleString()}đ
 </div>
 
-🏦 Tiền sẽ cộng vào ví shipper
+🏦 Tiền đã cộng vào ví shipper
 `
 
 }
@@ -799,6 +807,33 @@ document.getElementById(
 
 window.location.href =
 "tel:" + sdt
+
+}
+
+function mobando(){
+
+const diachi =
+document.getElementById(
+"diachi"
+).value
+
+if(diachi == ""){
+
+alert(
+"Nhập địa chỉ trước"
+)
+
+return
+
+}
+
+window.open(
+
+"https://www.google.com/maps/search/?api=1&query="
+
++ encodeURIComponent(diachi)
+
+)
 
 }
 
