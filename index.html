@@ -86,7 +86,7 @@ box-shadow:
 
 .title{
 
-font-size:26px;
+font-size:24px;
 
 font-weight:bold;
 
@@ -261,22 +261,17 @@ color:#555;
 
 }
 
-.arrowMarker{
-
-font-size:42px;
-
-filter:
-drop-shadow(
-0 0 10px rgba(0,0,0,.5)
-);
-
-}
-
 .sliderdone{
 
 width:100%;
 
 margin-top:20px;
+
+}
+
+.arrowMarker{
+
+font-size:40px;
 
 }
 
@@ -291,7 +286,7 @@ margin-top:20px;
 🌾 NamRice Auto
 
 <div class="sub">
-Đặt xe • Giao gạo • GPS realtime
+Giao gạo • Đặt xe • Chở hàng
 </div>
 
 </div>
@@ -301,59 +296,51 @@ margin-top:20px;
 <div class="card">
 
 <div class="title">
-🛒 Đặt đơn
+🛒 Chọn dịch vụ
 </div>
 
-<select id="loaidon" onchange="doiloaidon()">
+<div class="row">
 
-<option value="gao">
-🌾 Đặt giao gạo
-</option>
-
-<option value="xe">
-🚖 Đặt xe
-</option>
-
-</select>
-
-<input
-id="sdt"
-placeholder="📞 Số điện thoại khách"
-/>
-
-<div id="datxeBox" style="display:none">
+<button
+class="btn green"
+onclick="chonDichVu('gao')"
+>
+🌾 Giao gạo
+</button>
 
 <button
 class="btn blue"
-onclick="layvitri()"
+onclick="chonDichVu('xe')"
 >
-📍 Chia sẻ vị trí đón
+🚖 Đặt xe
 </button>
 
-<input
-id="diemdon"
-placeholder="📍 Điểm đón khách"
-/>
-
-<input
-id="diemden"
-placeholder="🏁 Điểm đến"
-/>
+<button
+class="btn orange"
+onclick="chonDichVu('hang')"
+>
+📦 Chở hàng
+</button>
 
 </div>
+
+<input
+id="sdt"
+placeholder="📞 Số điện thoại"
+/>
+
+<!-- GIAO GAO -->
+
+<div id="khungGao">
 
 <select id="loaigao">
 
 <option value="18000">
-🌾 Gạo ST25 - 18.000đ/kg
+🌾 ST25 - 18k/kg
 </option>
 
 <option value="22000">
-🌾 Gạo Nhật - 22.000đ/kg
-</option>
-
-<option value="26000">
-🌾 Gạo thơm cao cấp - 26.000đ/kg
+🌾 Gạo Nhật - 22k/kg
 </option>
 
 </select>
@@ -367,44 +354,114 @@ placeholder="Số kg"
 
 <select id="loaixe">
 
-<option value="xemay">
+<option value="8000">
 🛵 Xe máy - 8k/km
 </option>
 
-<option value="4cho">
+<option value="13000">
 🚗 Xe 4 chỗ - 13k/km
 </option>
 
-<option value="6cho">
+<option value="14000">
 🚙 Xe 6 chỗ - 14k/km
-</option>
-
-<option value="500kg">
-📦 Xe tải 500kg - 13k/km
-</option>
-
-<option value="1tan">
-🚛 Xe tải 1 tấn - 14k/km
-</option>
-
-<option value="2_5tan">
-🚚 Xe tải 2.5 tấn - 16k/km
-</option>
-
-<option value="3_5tan">
-🚛 Xe tải 3.5 tấn - 18k/km
 </option>
 
 </select>
 
 <input
 id="diachi"
-placeholder="📍 Địa chỉ giao hàng"
+placeholder="📍 Địa chỉ giao"
 />
 
-<textarea
-placeholder="📝 Ghi chú cho shipper..."
-></textarea>
+</div>
+
+<!-- DAT XE -->
+
+<div
+id="khungXe"
+style="display:none"
+>
+
+<button
+class="btn blue"
+onclick="layvitri()"
+>
+📍 Chia sẻ vị trí đón
+</button>
+
+<input
+id="diemdon"
+placeholder="📍 Điểm đón"
+/>
+
+<input
+id="diemden"
+placeholder="🏁 Điểm đến"
+/>
+
+<select id="loaixekhach">
+
+<option value="8000">
+🛵 Xe máy - 8k/km
+</option>
+
+<option value="13000">
+🚗 Xe 4 chỗ - 13k/km
+</option>
+
+<option value="14000">
+🚙 Xe 6 chỗ - 14k/km
+</option>
+
+</select>
+
+</div>
+
+<!-- CHO HANG -->
+
+<div
+id="khungHang"
+style="display:none"
+>
+
+<button
+class="btn orange"
+onclick="layvitri()"
+>
+📍 Chia sẻ vị trí lấy hàng
+</button>
+
+<input
+id="layhang"
+placeholder="📦 Nơi lấy hàng"
+/>
+
+<input
+id="giaohang"
+placeholder="🏁 Nơi giao hàng"
+/>
+
+<select id="loaixetai">
+
+<option value="13000">
+📦 500kg - 13k/km
+</option>
+
+<option value="14000">
+🚛 1 tấn - 14k/km
+</option>
+
+<option value="16000">
+🚚 2.5 tấn - 16k/km
+</option>
+
+<option value="18000">
+🚛 3.5 tấn - 18k/km
+</option>
+
+</select>
+
+</div>
 
 <select id="pay">
 
@@ -430,11 +487,13 @@ id="bill"
 class="status"
 >
 
-Chưa có đơn hàng
+Chưa có đơn
 
 </div>
 
 </div>
+
+<!-- SHIPPER -->
 
 <div class="card">
 
@@ -462,12 +521,12 @@ onclick="daden()"
 class="btn green"
 onclick="laygao()"
 >
-🌾 Lấy gạo
+🌾 Lấy hàng
 </button>
 
 <button
 class="btn red"
-onclick="giaohang()"
+onclick="giaohangreal()"
 >
 🚚 Đi giao
 </button>
@@ -506,6 +565,8 @@ class="status"
 
 </div>
 
+<!-- VI -->
+
 <div class="card">
 
 <div class="title">
@@ -524,17 +585,9 @@ class="status"
 
 💵 Hoa hồng: 15%
 
-<br>
-
-🏦 Phí hệ thống: 1.5%
-
-<button
-class="btn green"
->
-💸 Rút tiền
-</button>
-
 </div>
+
+<!-- MAP -->
 
 <div class="card">
 
@@ -548,6 +601,8 @@ class="btn green"
 
 </div>
 
+<!-- MENU -->
+
 <div class="bottomnav">
 
 <div class="navbtn">
@@ -555,7 +610,7 @@ class="btn green"
 </div>
 
 <div class="navbtn">
-📦<br>Đơn hàng
+📦<br>Đơn
 </div>
 
 <div class="navbtn">
@@ -563,22 +618,16 @@ class="btn green"
 </div>
 
 <div class="navbtn">
-💰<br>Ví tiền
-</div>
-
-<div class="navbtn">
-⚙️<br>Cài đặt
+💰<br>Ví
 </div>
 
 </div>
 
 <script>
 
+let currentService = "gao"
+
 let tong = 0
-
-let khoangcach = 5
-
-let currentMode = "maygao"
 
 const map =
 L.map('map').setView(
@@ -590,11 +639,6 @@ L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 ).addTo(map)
 
-let markerShipper
-let markerKhach
-
-function capnhatvitri(){
-
 navigator.geolocation.watchPosition((pos)=>{
 
 const lat =
@@ -603,56 +647,49 @@ pos.coords.latitude
 const lon =
 pos.coords.longitude
 
-if(markerShipper){
+L.marker([lat,lon]).addTo(map)
 
-map.removeLayer(
-markerShipper
-)
-
-}
-
-markerShipper =
-L.marker(
-[lat,lon],
-{
-icon:
-L.divIcon({
-className:
-"arrowMarker",
-html:"🛵"
-})
-}
-).addTo(map)
-
-map.setView(
-[lat,lon],
-15
-)
+map.setView([lat,lon],15)
 
 })
 
-}
+function chonDichVu(loai){
 
-capnhatvitri()
+currentService = loai
 
-function doiloaidon(){
-
-const loai =
 document.getElementById(
-"loaidon"
-).value
+"khungGao"
+).style.display = "none"
+
+document.getElementById(
+"khungXe"
+).style.display = "none"
+
+document.getElementById(
+"khungHang"
+).style.display = "none"
+
+if(loai == "gao"){
+
+document.getElementById(
+"khungGao"
+).style.display = "block"
+
+}
 
 if(loai == "xe"){
 
 document.getElementById(
-"datxeBox"
+"khungXe"
 ).style.display = "block"
 
-}else{
+}
+
+if(loai == "hang"){
 
 document.getElementById(
-"datxeBox"
-).style.display = "none"
+"khungHang"
+).style.display = "block"
 
 }
 
@@ -671,34 +708,7 @@ pos.coords.longitude
 document.getElementById(
 "diemdon"
 ).value =
-
 lat + "," + lon
-
-if(markerKhach){
-
-map.removeLayer(
-markerKhach
-)
-
-}
-
-markerKhach =
-L.marker(
-[lat,lon],
-{
-icon:
-L.divIcon({
-className:
-"arrowMarker",
-html:"📍"
-})
-}
-).addTo(map)
-
-map.setView(
-[lat,lon],
-16
-)
 
 })
 
@@ -706,104 +716,16 @@ map.setView(
 
 function taodon(){
 
-const loai =
-document.getElementById(
-"loaidon"
-).value
-
-const xe =
-document.getElementById(
-"loaixe"
-).value
-
 let giaKm = 0
 
-if(xe == "xemay"){
-giaKm = 8000
-}
+let km = 5
 
-if(xe == "4cho"){
-giaKm = 13000
-}
+if(currentService == "gao"){
 
-if(xe == "6cho"){
-giaKm = 14000
-}
-
-if(xe == "500kg"){
-giaKm = 13000
-}
-
-if(xe == "1tan"){
-giaKm = 14000
-}
-
-if(xe == "2_5tan"){
-giaKm = 16000
-}
-
-if(xe == "3_5tan"){
-giaKm = 18000
-}
-
-if(loai == "xe"){
-
-const diemdon =
-document.getElementById(
-"diemdon"
-).value
-
-const diemden =
-document.getElementById(
-"diemden"
-).value
-
-khoangcach = 8
-
-tong =
-khoangcach * giaKm
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-🚖 ĐƠN ĐẶT XE
-
-<br><br>
-
-📍 Điểm đón:
-<b>${diemdon}</b>
-
-<br><br>
-
-🏁 Điểm đến:
-<b>${diemden}</b>
-
-<br><br>
-
-📏 Khoảng cách:
-<b>${khoangcach} km</b>
-
-<br><br>
-
-💵 Tổng tiền:
-
-<div class="money">
-${tong.toLocaleString()}đ
-</div>
-
-<div class="badge">
-🚕 Đang tìm tài xế
-</div>
-`
-
-}else{
-
-const kg =
+giaKm =
 Number(
 document.getElementById(
-"kg"
+"loaixe"
 ).value
 )
 
@@ -814,14 +736,16 @@ document.getElementById(
 ).value
 )
 
-const tienShip =
-khoangcach * giaKm
-
-const tienGao =
-kg * giaGao
+const kg =
+Number(
+document.getElementById(
+"kg"
+).value
+)
 
 tong =
-tienShip + tienGao
+(giaKm * km) +
+(giaGao * kg)
 
 document.getElementById(
 "bill"
@@ -830,34 +754,65 @@ document.getElementById(
 `
 🌾 ĐƠN GIAO GẠO
 
-<br><br>
+<div class="money">
+${tong.toLocaleString()}đ
+</div>
 
-📍 Địa chỉ giao:
-<b>
-${document.getElementById("diachi").value}
-</b>
+📦 Đang tìm shipper
+`
 
-<br><br>
+}
 
-🌾 Tiền gạo:
-<b>
-${tienGao.toLocaleString()}đ
-</b>
+if(currentService == "xe"){
 
-<br><br>
+giaKm =
+Number(
+document.getElementById(
+"loaixekhach"
+).value
+)
 
-🛵 Phí ship:
-<b>
-${tienShip.toLocaleString()}đ
-</b>
+tong = giaKm * km
+
+document.getElementById(
+"bill"
+).innerHTML =
+
+`
+🚖 ĐƠN ĐẶT XE
 
 <div class="money">
 ${tong.toLocaleString()}đ
 </div>
 
-<div class="badge">
-📦 Đang tìm shipper
+🚕 Đang tìm tài xế
+`
+
+}
+
+if(currentService == "hang"){
+
+giaKm =
+Number(
+document.getElementById(
+"loaixetai"
+).value
+)
+
+tong = giaKm * km
+
+document.getElementById(
+"bill"
+).innerHTML =
+
+`
+📦 ĐƠN CHỞ HÀNG
+
+<div class="money">
+${tong.toLocaleString()}đ
 </div>
+
+🚛 Đang tìm xe tải
 `
 
 }
@@ -866,22 +821,14 @@ ${tong.toLocaleString()}đ
 
 function nhandon(){
 
-currentMode = "maygao"
-
-window.open(
-"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
-)
-
 document.getElementById(
 "shipstatus"
 ).innerHTML =
 
 `
 📥 Đã nhận đơn
-
 <br><br>
-
-🗺️ Đang dẫn đường tới máy bán gạo
+🗺️ Đang tới điểm lấy hàng
 `
 
 }
@@ -893,11 +840,7 @@ document.getElementById(
 ).innerHTML =
 
 `
-📍 Đã tới máy bán gạo
-
-<br><br>
-
-🌾 Chờ lấy gạo
+📍 Đã tới nơi
 `
 
 }
@@ -911,59 +854,14 @@ document.getElementById(
 ).innerHTML =
 
 `
-🌾 Đang lấy gạo
-
+🔓 Đã mở khóa
 <br><br>
-
-🔓 ESP32 đã mở khóa
-
-<br><br>
-
-📦 Gạo đang rơi xuống
+📦 Đang lấy hàng
 `
 
 }
 
-function giaohang(){
-
-currentMode = "khach"
-
-const loai =
-document.getElementById(
-"loaidon"
-).value
-
-if(loai == "xe"){
-
-const diemden =
-document.getElementById(
-"diemden"
-).value
-
-window.open(
-
-"https://www.google.com/maps/dir/?api=1&destination="
-
-+ encodeURIComponent(diemden)
-
-)
-
-}else{
-
-const diachi =
-document.getElementById(
-"diachi"
-).value
-
-window.open(
-
-"https://www.google.com/maps/dir/?api=1&destination="
-
-+ encodeURIComponent(diachi)
-
-)
-
-}
+function giaohangreal(){
 
 document.getElementById(
 "shipstatus"
@@ -971,62 +869,17 @@ document.getElementById(
 
 `
 🚚 Đang giao hàng
-
 <br><br>
-
-🗺️ Google Maps đang dẫn đường realtime
+🗺️ Google Maps đang dẫn đường
 `
 
 }
 
 function mobando(){
 
-if(currentMode == "maygao"){
-
 window.open(
-"https://www.google.com/maps/dir/?api=1&destination=10.0452,105.7469"
+"https://maps.google.com"
 )
-
-}else{
-
-const loai =
-document.getElementById(
-"loaidon"
-).value
-
-if(loai == "xe"){
-
-const diemden =
-document.getElementById(
-"diemden"
-).value
-
-window.open(
-
-"https://www.google.com/maps/dir/?api=1&destination="
-
-+ encodeURIComponent(diemden)
-
-)
-
-}else{
-
-const diachi =
-document.getElementById(
-"diachi"
-).value
-
-window.open(
-
-"https://www.google.com/maps/dir/?api=1&destination="
-
-+ encodeURIComponent(diachi)
-
-)
-
-}
-
-}
 
 }
 
@@ -1049,11 +902,7 @@ document.getElementById(
 ).innerHTML =
 
 `
-✅ Kéo thanh để hoàn thành
-
-<br><br>
-
-💵 Tổng tiền cần thu:
+💵 Tổng cần thu
 
 <div class="money">
 ${tong.toLocaleString()}đ
@@ -1067,7 +916,6 @@ max="100"
 value="0"
 oninput="checkdone(this.value)"
 >
-
 `
 
 }
@@ -1081,17 +929,11 @@ document.getElementById(
 ).innerHTML =
 
 `
-✅ Giao thành công
-
-<br><br>
-
-💰 Đã thu khách:
+✅ Hoàn thành đơn
 
 <div class="money">
 ${tong.toLocaleString()}đ
 </div>
-
-🏦 Tiền đã cộng vào ví shipper
 `
 
 }
