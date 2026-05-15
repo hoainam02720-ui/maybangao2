@@ -1,186 +1,239 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>NamRice Auto</title>
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
 body{
 
-margin:0;
-font-family:Arial;
-background:#eef7f0;
+background:#f2f5f7;
+color:#222;
 
 }
 
-/* =========================
-TOP
-========================= */
-
 .top{
 
-background:linear-gradient(
-90deg,
-#00994d,
-#00cc66
+background:
+linear-gradient(
+135deg,
+#00b84f,
+#009944
 );
 
 padding:20px;
+
 color:white;
-box-shadow:0 2px 10px rgba(0,0,0,0.2);
+
+box-shadow:
+0 4px 12px rgba(0,0,0,.2);
+
+}
+
+.logo{
+
+font-size:30px;
+font-weight:bold;
+
+}
+
+.sub{
+
+opacity:.9;
+margin-top:5px;
+
+}
+
+.container{
+
+padding:12px;
+
+}
+
+.card{
+
+background:white;
+
+border-radius:20px;
+
+padding:18px;
+
+margin-bottom:15px;
+
+box-shadow:
+0 5px 18px rgba(0,0,0,.08);
 
 }
 
 .title{
 
-font-size:34px;
+font-size:22px;
+
 font-weight:bold;
 
-}
-
-.subtitle{
-
-font-size:16px;
-margin-top:5px;
-opacity:0.9;
+margin-bottom:15px;
 
 }
-
-/* =========================
-CARD
-========================= */
-
-.card{
-
-background:white;
-margin:15px;
-padding:15px;
-border-radius:20px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-
-}
-
-/* =========================
-INPUT
-========================= */
 
 input,
 select,
 textarea{
 
-width:95%;
+width:100%;
+
 padding:14px;
-margin-top:10px;
+
 border-radius:14px;
-border:1px solid #ccc;
+
+border:none;
+
+background:#f3f3f3;
+
+margin-top:12px;
+
 font-size:16px;
 
 }
 
 textarea{
 
-height:90px;
+height:100px;
+
 resize:none;
 
 }
 
-/* =========================
-BUTTON
-========================= */
+.btn{
 
-button{
+padding:15px;
 
-padding:14px 20px;
 border:none;
+
 border-radius:14px;
-font-size:16px;
+
+font-size:17px;
+
 font-weight:bold;
-margin-top:10px;
-cursor:pointer;
+
+margin-top:12px;
+
+width:100%;
+
+color:white;
 
 }
 
 .green{
 
-background:#00b359;
-color:white;
+background:#00b84f;
 
 }
 
 .blue{
 
 background:#007bff;
-color:white;
 
 }
 
 .orange{
 
-background:#ff8800;
-color:white;
+background:#ff9800;
 
 }
 
-/* =========================
-MAP
-========================= */
+.red{
+
+background:#f44336;
+
+}
+
+.gray{
+
+background:#666;
+
+}
+
+.status{
+
+margin-top:15px;
+
+padding:15px;
+
+background:#f6f6f6;
+
+border-radius:14px;
+
+line-height:1.7;
+
+}
+
+.money{
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#00b84f;
+
+margin-top:10px;
+
+}
 
 #map{
 
-height:55vh;
-width:100%;
+height:350px;
+
+border-radius:20px;
+
+overflow:hidden;
+
+box-shadow:
+0 5px 18px rgba(0,0,0,.1);
 
 }
 
-/* =========================
-RESULT
-========================= */
+.shipper{
 
-#result{
+display:grid;
 
-font-size:22px;
-font-weight:bold;
-margin-top:10px;
-color:#222;
+grid-template-columns:
+1fr 1fr;
+
+gap:10px;
 
 }
 
-/* =========================
-GPS GỢI Ý
-========================= */
+.bottom-space{
 
-#gpsSuggest{
-
-display:none;
-background:#fff3cd;
-padding:12px;
-margin-top:10px;
-border-radius:12px;
-color:#856404;
-font-weight:bold;
-
-}
-
-/* =========================
-ĐƠN HÀNG
-========================= */
-
-.orderItem{
-
-background:white;
-border-radius:18px;
-padding:15px;
-margin-top:10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
+height:50px;
 
 }
 
@@ -190,721 +243,330 @@ box-shadow:0 2px 10px rgba(0,0,0,0.1);
 
 <body>
 
-<!-- =========================
-TOP
-========================= -->
-
 <div class="top">
 
-<div class="title">
-
+<div class="logo">
 🌾 NamRice Auto
-
 </div>
 
-<div class="subtitle">
-
-Đặt xe • Giao gạo • GPS realtime
-
+<div class="sub">
+Đặt gạo • Giao hàng • GPS realtime
 </div>
 
 </div>
 
-<!-- =========================
-FORM
-========================= -->
+<div class="container">
 
 <div class="card">
 
+<div class="title">
+📦 Đặt gạo
+</div>
+
 <input
-id="phone"
-placeholder="📞 Số điện thoại khách">
+id="sdt"
+placeholder="📞 Số điện thoại khách"
+/>
 
-<!-- =========================
-CHẾ ĐỘ
-========================= -->
+<select id="gao">
 
-<select
-id="mode"
-onchange="updateMode()">
-
-<option value="rice">
-
-🌾 Đặt giao gạo
-
+<option value="18000">
+🌾 Gạo ST25 - 18.000đ/kg
 </option>
 
-<option value="ride">
+<option value="22000">
+🌾 Gạo Nhật - 22.000đ/kg
+</option>
 
-🛵 Đặt xe
-
+<option value="26000">
+🌾 Gạo thơm cao cấp - 26.000đ/kg
 </option>
 
 </select>
 
-<!-- =========================
-LOẠI XE
-========================= -->
-
-<select
-id="vehicle">
-
-<option value="xe_may">
-
-🛵 Xe máy
-
-</option>
-
-<option value="oto_4">
-
-🚗 Ô tô 4 chỗ
-
-</option>
-
-<option value="oto_7">
-
-🚙 Ô tô 7 chỗ
-
-</option>
-
-</select>
-
-<!-- =========================
-ĐIỂM ĐÓN
-========================= -->
-
-<div id="fromBox">
+<input
+id="kg"
+type="number"
+value="5"
+placeholder="Số kg"
+/>
 
 <input
-id="from"
-placeholder="📍 Điểm đón">
-
-<button
-class="blue"
-onclick="shareLocation()">
-
-📡 Chia sẻ vị trí trực tiếp
-
-</button>
-
-</div>
-
-<!-- =========================
-GỢI Ý GPS
-========================= -->
-
-<div id="gpsSuggest">
-
-📍 Bạn hãy chia sẻ vị trí của mình
-để bắt đầu đặt xe chính xác
-
-</div>
-
-<!-- =========================
-ĐIỂM ĐẾN
-========================= -->
-
-<input
-id="to"
-placeholder="🏠 Điểm đến / nhận gạo">
-
-<!-- =========================
-GHI CHÚ
-========================= -->
+id="diachi"
+placeholder="📍 Địa chỉ giao hàng"
+/>
 
 <textarea
-id="note"
-
-placeholder="📝 Ghi chú cho shipper...
-Ví dụ:
-• Gọi trước khi tới
-• Hẻm nhỏ xe lớn không vào được
-• Để gạo trước cửa"
-
+placeholder="📝 Ghi chú cho shipper..."
 ></textarea>
 
-<!-- =========================
-ĐẶT NGAY
-========================= -->
+<select id="pay">
+
+<option>
+💵 Tiền mặt
+</option>
+
+<option>
+🏦 Chuyển khoản
+</option>
+
+</select>
 
 <button
-class="green"
-onclick="calculate()">
-
-✅ ĐẶT NGAY
-
+class="btn green"
+onclick="taodon()"
+>
+🛒 ĐẶT GẠO NGAY
 </button>
 
-<div id="result">
+<div
+id="tongtien"
+class="status"
+>
 
-Khoảng cách: 0 km
+Chưa có đơn hàng
 
 </div>
 
 </div>
-
-<!-- =========================
-THANH TOÁN
-========================= -->
 
 <div class="card">
 
-<h3>
+<div class="title">
+🛵 Shipper
+</div>
 
-💳 Thanh toán
-
-</h3>
+<div class="shipper">
 
 <button
-class="green"
-onclick="payQR()">
-
-QR BANKING
-
+class="btn blue"
+onclick="daden()"
+>
+📍 Đã đến
 </button>
 
 <button
-class="orange"
-onclick="cashPayment()">
-
-TIỀN MẶT
-
+class="btn orange"
+onclick="laygao()"
+>
+🌾 Lấy gạo
 </button>
-
-<p id="payment">
-
-Chưa chọn
-
-</p>
-
-</div>
-
-<!-- =========================
-GỌI SHIPPER
-========================= -->
-
-<div class="card">
-
-<h3>
-
-📞 Liên hệ shipper
-
-</h3>
 
 <button
-class="blue"
-onclick="callShipper()">
-
-GỌI MIỄN PHÍ
-
+class="btn green"
+onclick="giaohang()"
+>
+🚚 Đi giao
 </button>
 
-<p>
-
-Shipper nhận đơn mới kết nối cuộc gọi
-
-</p>
-
-</div>
-
-<!-- =========================
-ĐƠN HÀNG
-========================= -->
-
-<div class="card">
-
-<h3>
-
-📦 Đơn đã lưu
-
-</h3>
-
-<div id="orders"></div>
+<button
+class="btn red"
+onclick="hoanthanh()"
+>
+✅ Hoàn thành
+</button>
 
 </div>
 
-<!-- =========================
-MAP
-========================= -->
+<button
+class="btn gray"
+onclick="goikhach()"
+>
+📞 Gọi khách
+</button>
+
+<div
+id="shipstatus"
+class="status"
+>
+
+Chưa có hoạt động
+
+</div>
+
+</div>
 
 <div id="map"></div>
 
+<div class="bottom-space"></div>
+
+</div>
+
 <script>
 
-/* =========================
-MAP
-========================= */
+let tong = 0
 
 let map =
-L.map('map')
-.setView([10.0305,105.7689],14);
-
-/* =========================
-OPENSTREETMAP
-========================= */
-
-L.tileLayer(
-
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-
-{
-maxZoom:19
-}
-
-).addTo(map);
-
-/* =========================
-MÁY GẠO A4 CẦN THƠ
-========================= */
-
-let riceMachineLat = 10.0305;
-let riceMachineLng = 105.7689;
-
-L.marker(
-[riceMachineLat,riceMachineLng]
+L.map('map').setView(
+[10.0452,105.7469],
+13
 )
 
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map)
+
+navigator.geolocation.getCurrentPosition((pos)=>{
+
+const lat =
+pos.coords.latitude
+
+const lon =
+pos.coords.longitude
+
+L.marker([lat,lon])
 .addTo(map)
 
 .bindPopup(
+"📍 Vị trí hiện tại"
+)
 
-"🌾 Máy bán gạo NamRice<br>Đường A4 Cần Thơ"
+map.setView(
+[lat,lon],
+15
+)
 
-);
+})
 
-/* =========================
-GIÁ XE
-========================= */
+function taodon(){
 
-let prices = {
+const kg =
+Number(
+document.getElementById("kg").value
+)
 
-xe_may:7000,
+const gia =
+Number(
+document.getElementById("gao").value
+)
 
-oto_4:12000,
+const tiengao =
+kg * gia
 
-oto_7:15000
+const ship =
+15000
 
-};
+tong =
+tiengao + ship
 
-/* =========================
-ROUTE
-========================= */
-
-let routeLine;
-
-/* =========================
-GPS CHẤM XANH
-========================= */
-
-let liveDot;
-
-/* =========================
-GPS REALTIME
-========================= */
-
-navigator.geolocation.watchPosition(
-
-function(position){
-
-let lat =
-position.coords.latitude;
-
-let lng =
-position.coords.longitude;
-
-/* XOÁ CHẤM CŨ */
-
-if(liveDot){
-
-map.removeLayer(liveDot);
-
-}
-
-/* CHẤM XANH */
-
-liveDot =
-L.circleMarker(
-
-[lat,lng],
-
-{
-
-radius:10,
-
-color:'blue',
-
-fillColor:'blue',
-
-fillOpacity:1
-
-}
-
-).addTo(map);
-
-}
-
-);
-
-/* =========================
-ẨN HIỆN ĐIỂM ĐÓN
-========================= */
-
-function updateMode(){
-
-let mode =
-document.getElementById("mode").value;
-
-/* ĐẶT GẠO */
-
-if(mode=="rice"){
-
-document.getElementById("fromBox")
-.style.display = "none";
-
-document.getElementById("gpsSuggest")
-.style.display = "none";
-
-}
-
-/* ĐẶT XE */
-
-else{
-
-document.getElementById("fromBox")
-.style.display = "block";
-
-document.getElementById("gpsSuggest")
-.style.display = "block";
-
-}
-
-}
-
-/* =========================
-CHIA SẺ GPS
-========================= */
-
-function shareLocation(){
-
-navigator.geolocation.getCurrentPosition(
-
-function(position){
-
-let lat =
-position.coords.latitude;
-
-let lng =
-position.coords.longitude;
-
-document.getElementById("from")
-.value =
-
-lat + "," + lng;
-
-map.setView([lat,lng],16);
-
-alert("Đã chia sẻ vị trí");
-
-}
-
-);
-
-}
-
-/* =========================
-QR
-========================= */
-
-function payQR(){
-
-document.getElementById("payment")
-.innerHTML =
-
-"💳 Thanh toán QR";
-
-}
-
-/* =========================
-TIỀN MẶT
-========================= */
-
-function cashPayment(){
-
-document.getElementById("payment")
-.innerHTML =
-
-"💵 Thanh toán tiền mặt";
-
-}
-
-/* =========================
-GỌI SHIPPER
-========================= */
-
-function callShipper(){
-
-alert(
-
-"📞 Đang chờ shipper nhận đơn..."
-
-);
-
-}
-
-/* =========================
-ĐẶT ĐƠN
-========================= */
-
-async function calculate(){
-
-let mode =
-document.getElementById("mode").value;
-
-let phone =
-document.getElementById("phone").value;
-
-let vehicle =
-document.getElementById("vehicle").value;
-
-let note =
-document.getElementById("note").value;
-
-let pricePerKm =
-prices[vehicle];
-
-/* =========================
-ĐIỂM ĐI
-========================= */
-
-let from;
-
-/* ĐẶT GẠO */
-
-if(mode=="rice"){
-
-from =
-"Đường A4 Cần Thơ, Việt Nam";
-
-}
-
-/* ĐẶT XE */
-
-if(mode=="ride"){
-
-from =
-document.getElementById("from").value
-+ ", Việt Nam";
-
-}
-
-/* =========================
-ĐIỂM ĐẾN
-========================= */
-
-let to =
-document.getElementById("to").value
-+ ", Việt Nam";
-
-/* =========================
-GEOCODE
-========================= */
-
-let fromData =
-await fetch(
-'https://nominatim.openstreetmap.org/search?format=json&q='
-+ encodeURIComponent(from)
-);
-
-let fromJson =
-await fromData.json();
-
-let toData =
-await fetch(
-'https://nominatim.openstreetmap.org/search?format=json&q='
-+ encodeURIComponent(to)
-);
-
-let toJson =
-await toData.json();
-
-/* =========================
-KIỂM TRA
-========================= */
-
-if(fromJson.length==0 || toJson.length==0){
-
-alert("Không tìm thấy địa điểm");
-
-return;
-
-}
-
-/* =========================
-LAT LNG
-========================= */
-
-let lat1 =
-fromJson[0].lat;
-
-let lon1 =
-fromJson[0].lon;
-
-let lat2 =
-toJson[0].lat;
-
-let lon2 =
-toJson[0].lon;
-
-/* =========================
-ROUTING
-========================= */
-
-let routeData =
-await fetch(
-
-`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`
-
-);
-
-let routeJson =
-await routeData.json();
-
-/* =========================
-DISTANCE
-========================= */
-
-let distance =
-routeJson.routes[0].distance / 1000;
-
-/* =========================
-TOTAL
-========================= */
-
-let total =
-distance * pricePerKm;
-
-/* =========================
-HIỆN KẾT QUẢ
-========================= */
-
-document.getElementById("result")
-.innerHTML =
-
-"🚚 Khoảng cách: "
-+ distance.toFixed(2)
-+ " km"
-+ "<br><br>"
-+ "💰 Giá ship: "
-+ total.toFixed(0)
-+ "đ";
-
-/* =========================
-ROUTE
-========================= */
-
-let coords =
-routeJson.routes[0]
-.geometry.coordinates;
-
-let latlngs =
-coords.map(c => [c[1],c[0]]);
-
-/* =========================
-XOÁ ROUTE CŨ
-========================= */
-
-if(routeLine){
-
-map.removeLayer(routeLine);
-
-}
-
-/* =========================
-VẼ ROUTE
-========================= */
-
-routeLine =
-L.polyline(latlngs,{
-
-color:'green',
-
-weight:7
-
-}).addTo(map);
-
-/* =========================
-MARKER ĐIỂM ĐI
-========================= */
-
-L.marker([lat1,lon1])
-
-.addTo(map)
-
-.bindPopup("📍 Điểm đi");
-
-/* =========================
-MARKER ĐIỂM ĐẾN
-========================= */
-
-L.marker([lat2,lon2])
-
-.addTo(map)
-
-.bindPopup("🏠 Điểm đến");
-
-/* =========================
-ZOOM
-========================= */
-
-map.fitBounds(
-routeLine.getBounds()
-);
-
-/* =========================
-LƯU ĐƠN
-========================= */
-
-let orderHTML =
+document.getElementById(
+"tongtien"
+).innerHTML =
 
 `
+<div>
+📦 Tiền gạo:
+</div>
 
-<div class="orderItem">
-
-<div style="font-size:22px;font-weight:bold;color:green;">
-
-${mode=="rice"
-? "🌾 Đặt giao gạo"
-: "🛵 Đặt xe"}
-
+<div class="money">
+${tiengao.toLocaleString()}đ
 </div>
 
 <br>
 
-📞 ${phone}
-
-<br><br>
-
-📍 ${document.getElementById("to").value}
-
-<br><br>
-
-💰 ${total.toFixed(0)}đ
-
-<br><br>
-
-📝 ${note}
-
+<div>
+🛵 Tiền ship:
+${ship.toLocaleString()}đ
 </div>
 
-`;
+<br>
 
-document.getElementById("orders")
-.innerHTML += orderHTML;
+<div>
+💰 Tổng thanh toán:
+</div>
+
+<div class="money">
+${tong.toLocaleString()}đ
+</div>
+
+<br>
+
+<div>
+⏳ Đang chờ shipper...
+</div>
+`
+
+}
+
+function daden(){
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+`
+✅ Shipper đã đến máy bán gạo
+<br><br>
+
+📍 Đang chuẩn bị lấy gạo
+`
+
+}
+
+function laygao(){
+
+fetch("/mo")
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+`
+🌾 Đang lấy gạo...
+<br><br>
+
+🔓 ESP32 đã mở khóa
+<br><br>
+
+📦 Gạo đang rơi xuống
+`
+
+}
+
+function giaohang(){
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+`
+🚚 Đang đi giao hàng
+<br><br>
+
+🗺️ Bản đồ đang chỉ đường
+`
+
+}
+
+function hoanthanh(){
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+`
+✅ Giao thành công
+<br><br>
+
+💵 Thu khách:
+<div class="money">
+${tong.toLocaleString()}đ
+</div>
+`
+
+}
+
+function goikhach(){
+
+const sdt =
+document.getElementById("sdt").value
+
+window.location.href =
+"tel:" + sdt
 
 }
 
 </script>
 
 </body>
-
 </html>
