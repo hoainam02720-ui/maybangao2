@@ -6,34 +6,30 @@
 
 <title>NamRice Auto</title>
 
-<link
-rel="stylesheet"
-href="https://unpkg.com/leaflet/dist/leaflet.css"
-/>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#eef2f5;
-padding-bottom:120px;
+background:#edf1f4;
 }
 
 header{
-background:#00c853;
-padding:28px;
+background:#00c73c;
+padding:25px;
 color:white;
-font-size:30px;
 font-weight:bold;
+font-size:22px;
 border-bottom-left-radius:25px;
 border-bottom-right-radius:25px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 .sub{
-font-size:18px;
+font-size:16px;
 margin-top:10px;
 }
 
@@ -42,82 +38,67 @@ background:white;
 margin:15px;
 padding:20px;
 border-radius:25px;
-box-shadow:0 5px 20px rgba(0,0,0,.08);
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 .title{
-font-size:28px;
+font-size:22px;
 font-weight:bold;
 margin-bottom:20px;
 }
 
-.row{
-display:flex;
-gap:10px;
-margin-bottom:10px;
-}
-
-.btn{
-flex:1;
-padding:18px;
-border:none;
-border-radius:20px;
-font-size:18px;
-font-weight:bold;
-color:white;
-}
-
-.green{
-background:#00c853;
-}
-
-.blue{
-background:#1565ff;
-}
-
-.orange{
-background:#ff9800;
-}
-
-.red{
-background:#ff3b30;
-}
-
-.dark{
-background:#555;
-}
-
-input,
-select,
-textarea{
+input,select,textarea{
 width:100%;
 padding:18px;
 border:none;
-background:#f1f3f8;
 border-radius:18px;
-margin-bottom:12px;
+margin-top:12px;
 font-size:18px;
+background:#f1f3f6;
 box-sizing:border-box;
 }
 
-.card{
-background:#f7f7f7;
-padding:18px;
+button{
+border:none;
 border-radius:20px;
-margin-top:12px;
-line-height:1.8;
+padding:18px;
+font-size:22px;
+font-weight:bold;
+color:white;
+margin-top:15px;
 }
 
-.money{
+.green{background:#00c853;}
+.blue{background:#1565ff;}
+.orange{background:#ff9800;}
+.red{background:#ff3d3d;}
+.gray{background:#555;}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.bigprice{
 font-size:55px;
 font-weight:bold;
 color:#00c853;
+margin-top:20px;
+}
+
+.card{
+background:#f5f7fb;
+padding:20px;
+border-radius:20px;
+margin-top:15px;
+font-size:20px;
 }
 
 #map{
-height:500px;
+height:450px;
 border-radius:25px;
-margin-top:15px;
+margin-top:20px;
 }
 
 .bottom{
@@ -129,7 +110,8 @@ background:white;
 display:flex;
 justify-content:space-around;
 padding:12px;
-box-shadow:0 -5px 20px rgba(0,0,0,.1);
+font-size:18px;
+box-shadow:0 -5px 10px rgba(0,0,0,0.1);
 }
 
 .slide{
@@ -151,29 +133,23 @@ width:100%;
 
 </header>
 
-<!-- DAT DON -->
-
 <div class="box">
 
 <div class="title">
 🛒 Đặt đơn
 </div>
 
-<div class="row">
+<div class="grid">
 
-<button class="btn green" onclick="chon('gao')">
+<button class="green" onclick="chonMode('gao')">
 🌾 Giao gạo
 </button>
 
-<button class="btn blue" onclick="chon('xe')">
-🚖 Đặt xe
+<button class="blue" onclick="chonMode('xe')">
+🚕 Đặt xe
 </button>
 
-</div>
-
-<div class="row">
-
-<button class="btn orange" onclick="chon('hang')">
+<button class="orange" onclick="chonMode('hang')">
 📦 Chở hàng
 </button>
 
@@ -181,164 +157,65 @@ width:100%;
 
 <input id="sdt" placeholder="📞 Số điện thoại khách">
 
-<!-- GIAO GAO -->
-
-<div id="formgao">
+<div id="gaobox">
 
 <select id="loaigao">
-
-<option value="18000">
-🌾 ST25 - 18k/kg
-</option>
-
-<option value="22000">
-🌾 Gạo Nhật - 22k/kg
-</option>
-
+<option value="18000">🌾 ST25 - 18k/kg</option>
+<option value="20000">🌾 Jasmine - 20k/kg</option>
 </select>
 
-<input
-id="kg"
-type="number"
-value="5"
-placeholder="🌾 Số kg"
->
-
-<select id="shipgao">
-
-<option value="8000">
-🛵 Xe máy - 8k/km
-</option>
-
-<option value="13000">
-🚗 Xe 4 chỗ - 13k/km
-</option>
-
-<option value="14000">
-🚙 Xe 6 chỗ - 14k/km
-</option>
-
-</select>
-
-<input
-id="diachigao"
-placeholder="📍 Địa chỉ giao gạo"
->
+<input id="kg" type="number" placeholder="Kg gạo">
 
 </div>
 
-<!-- DAT XE -->
+<div id="xedon">
 
-<div id="formxe" style="display:none">
-
-<button
-class="btn blue"
-onclick="layvitri()"
->
+<button class="blue" onclick="layvitri()">
 📍 Chia sẻ vị trí đón
 </button>
 
-<br><br>
+<input id="diemdon" placeholder="📍 Điểm đón">
 
-<input
-id="diemdon"
-placeholder="📍 Điểm đón (tọa độ)"
->
+</div>
 
-<input
-id="diemden"
-placeholder="🏁 Điểm đến (tọa độ)"
->
+<div id="hangbox" style="display:none">
+
+<input id="hanghoa" placeholder="📦 Loại hàng">
+
+</div>
+
+<input id="diemden" placeholder="🏁 Điểm đến">
 
 <select id="loaixe">
 
-<option value="8000">
-🛵 Xe máy - 8k/km
-</option>
-
-<option value="13000">
-🚗 Xe 4 chỗ - 13k/km
-</option>
-
-<option value="14000">
-🚙 Xe 6 chỗ - 14k/km
-</option>
+<option value="8000">🛵 Xe máy - 8k/km</option>
+<option value="13000">🚗 Xe 4 chỗ - 13k/km</option>
+<option value="14000">🚙 Xe 6 chỗ - 14k/km</option>
+<option value="13000">🚚 Xe tải 500kg - 13k/km</option>
+<option value="14000">🚛 Xe tải 1 tấn - 14k/km</option>
+<option value="16000">🚚 Xe tải 2.5 tấn - 16k/km</option>
+<option value="18000">🚛 Xe tải 3.5 tấn - 18k/km</option>
 
 </select>
 
-</div>
+<textarea id="ghichu" placeholder="📝 Ghi chú"></textarea>
 
-<!-- CHO HANG -->
-
-<div id="formhang" style="display:none">
-
-<button
-class="btn orange"
-onclick="layvitri()"
->
-📍 Chia sẻ vị trí lấy hàng
-</button>
-
-<br><br>
-
-<input
-id="layhang"
-placeholder="📦 Điểm lấy hàng (tọa độ)"
->
-
-<input
-id="giaohang"
-placeholder="🏁 Điểm giao hàng (tọa độ)"
->
-
-<select id="xehang">
-
-<option value="13000">
-🚚 500kg - 13k/km
-</option>
-
-<option value="14000">
-🚛 1 tấn - 14k/km
-</option>
-
-<option value="16000">
-🚛 2.5 tấn - 16k/km
-</option>
-
-<option value="18000">
-🚛 3.5 tấn - 18k/km
-</option>
-
+<select id="thanhtoan">
+<option>💵 Tiền mặt</option>
+<option>🏦 Chuyển khoản</option>
 </select>
 
-</div>
-
-<select>
-
-<option>
-💵 Tiền mặt
-</option>
-
-<option>
-🏦 Chuyển khoản
-</option>
-
-</select>
-
-<button
-class="btn green"
-onclick="datdon()"
->
+<button class="green" style="width:100%" onclick="taodon()">
 🛒 ĐẶT NGAY
 </button>
 
-<div class="card" id="bill">
+<div class="card" id="tongbox">
+
 Chưa có đơn
-</div>
 
 </div>
 
-<!-- DON CHO -->
+</div>
 
 <div class="box">
 
@@ -347,12 +224,12 @@ Chưa có đơn
 </div>
 
 <div id="doncho">
+
 Chưa có đơn
-</div>
 
 </div>
 
-<!-- SHIPPER -->
+</div>
 
 <div class="box">
 
@@ -360,48 +237,39 @@ Chưa có đơn
 🛵 Shipper
 </div>
 
-<div class="row">
+<div class="grid">
 
-<button
-class="btn blue"
-onclick="daden()"
->
+<button class="blue" onclick="nhandon()">
+📥 Nhận đơn
+</button>
+
+<button class="orange" onclick="datoi()">
 📍 Đã đến
 </button>
 
-<button
-class="btn orange"
-onclick="laygao()"
->
+<button class="green" onclick="layhang()">
 🌾 Lấy hàng
 </button>
 
-</div>
-
-<div class="row">
-
-<button
-class="btn green"
-onclick="digiao()"
->
+<button class="red" onclick="giaohang()">
 🚚 Đi giao
 </button>
 
-<button
-class="btn red"
-onclick="mogooogle()"
->
-🗺️ Maps
+<button class="gray" onclick="openMap()">
+🗺 Maps
+</button>
+
+<button class="gray" onclick="goikhach()">
+📞 Gọi khách
 </button>
 
 </div>
 
-<button
-class="btn dark"
-onclick="hoanthanh()"
->
+<button class="green" style="width:100%" onclick="hienthucodon()">
 ✅ Hoàn thành
 </button>
+
+<div id="hoanthanhbox"></div>
 
 <div class="card" id="shipstatus">
 
@@ -411,447 +279,291 @@ onclick="hoanthanh()"
 
 </div>
 
-<!-- VI -->
-
 <div class="box">
 
 <div class="title">
 💰 Ví shipper
 </div>
 
-<div class="money">
+<div class="bigprice" id="vishipper">
 245.000đ
 </div>
 
-<br>
+<div class="card">
 
-📈 Hôm nay: 7 chuyến
+📈 Hôm nay: 7 chuyến<br><br>
 
-<br>
-
-💸 Hoa hồng: 15%
-
-<br>
+💵 Hoa hồng: 15%<br><br>
 
 🏦 Phí hệ thống: 1.5%
 
-<br>
-
-💵 Shipper nhận: 83.5%
-
 </div>
 
-<!-- MAP -->
+<button class="green" style="width:100%">
+💸 Rút tiền
+</button>
+
+</div>
 
 <div class="box">
 
 <div class="title">
-🗺️ GPS realtime
+🗺 GPS Realtime
 </div>
 
 <div id="map"></div>
 
 </div>
 
-<!-- MENU -->
+<div style="height:120px"></div>
 
 <div class="bottom">
 
-<div>🏠</div>
-<div>📦</div>
-<div>🛵</div>
-<div>💰</div>
-<div>⚙️</div>
+<div>🏠<br>Trang chủ</div>
+
+<div>📦<br>Đơn</div>
+
+<div>🛵<br>Shipper</div>
+
+<div>💰<br>Ví</div>
+
+<div>⚙️<br>Cài đặt</div>
 
 </div>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
 <script>
 
-let current = "gao"
+let currentMode = "gao"
 
-let tong = 0
-let km = 0
+let map = L.map('map').setView([10.0452,105.7469],13)
 
-let currentLat = 0
-let currentLon = 0
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:19
+}).addTo(map)
 
-const mayLat = 10.0452
-const mayLon = 105.7469
+let markerKhach = null
+let markerShipper = null
+let routeControl = null
 
-const map =
-L.map('map').setView(
-[10.0452,105.7469],
-13
-)
+let currentDon = null
 
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-).addTo(map)
+function chonMode(mode){
 
-let marker =
-L.marker([10.0452,105.7469])
-.addTo(map)
+currentMode = mode
 
-navigator.geolocation.watchPosition((pos)=>{
+document.getElementById("gaobox").style.display="none"
+document.getElementById("xedon").style.display="none"
+document.getElementById("hangbox").style.display="none"
 
-currentLat =
-pos.coords.latitude
-
-currentLon =
-pos.coords.longitude
-
-marker.setLatLng([
-currentLat,
-currentLon
-])
-
-map.setView([
-currentLat,
-currentLon
-],15)
-
-})
-
-function chon(loai){
-
-current = loai
-
-document.getElementById(
-"formgao"
-).style.display = "none"
-
-document.getElementById(
-"formxe"
-).style.display = "none"
-
-document.getElementById(
-"formhang"
-).style.display = "none"
-
-if(loai=="gao"){
-document.getElementById(
-"formgao"
-).style.display = "block"
+if(mode=="gao"){
+document.getElementById("gaobox").style.display="block"
 }
 
-if(loai=="xe"){
-document.getElementById(
-"formxe"
-).style.display = "block"
+if(mode=="xe"){
+document.getElementById("xedon").style.display="block"
 }
 
-if(loai=="hang"){
-document.getElementById(
-"formhang"
-).style.display = "block"
+if(mode=="hang"){
+document.getElementById("hangbox").style.display="block"
+document.getElementById("xedon").style.display="block"
 }
 
 }
 
 function layvitri(){
 
-navigator.geolocation.getCurrentPosition((pos)=>{
+navigator.geolocation.getCurrentPosition(pos=>{
 
-let lat =
-pos.coords.latitude
+let lat = pos.coords.latitude
+let lon = pos.coords.longitude
 
-let lon =
-pos.coords.longitude
+document.getElementById("diemdon").value = lat + "," + lon
 
-document.getElementById(
-"diemdon"
-).value =
-lat + "," + lon
+if(markerKhach){
+map.removeLayer(markerKhach)
+}
+
+markerKhach = L.marker([lat,lon]).addTo(map)
+
+map.setView([lat,lon],15)
 
 })
 
 }
 
-async function tinhkmthat(
-lat1,
-lon1,
-lat2,
-lon2
-){
+function taodon(){
 
-const url =
+let xe = Number(document.getElementById("loaixe").value)
 
-`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
+let km = Math.floor(Math.random()*8)+3
 
-const res =
-await fetch(url)
+let ship = km * xe
 
-const data =
-await res.json()
+let tong = ship
 
-const distance =
-data.routes[0].distance
+if(currentMode=="gao"){
 
-return (
-distance / 1000
-).toFixed(2)
+let kg = Number(document.getElementById("kg").value)
+
+let gia = Number(document.getElementById("loaigao").value)
+
+tong = tong + (kg*gia)
 
 }
 
-async function datdon(){
+document.getElementById("tongbox").innerHTML = `
 
-let phi = 0
-let hoahong = 0
-let shipper = 0
+<div style="font-size:30px;font-weight:bold">
 
-// GIAO GAO
+${currentMode=="gao"?"🌾 ĐƠN GIAO GẠO":""}
+${currentMode=="xe"?"🚕 ĐƠN ĐẶT XE":""}
+${currentMode=="hang"?"📦 ĐƠN CHỞ HÀNG":""}
 
-if(current=="gao"){
+</div>
 
-km =
-await tinhkmthat(
-currentLat,
-currentLon,
-mayLat,
-mayLon
-)
+<div class="bigprice">
+${tong.toLocaleString()}đ
+</div>
 
-let gia =
-Number(
-document.getElementById(
-"loaigao"
-).value
-)
-
-let kg =
-Number(
-document.getElementById(
-"kg"
-).value
-)
-
-let ship =
-Number(
-document.getElementById(
-"shipgao"
-).value
-)
-
-let tiengao =
-gia * kg
-
-let tienship =
-ship * km
-
-tong =
-tiengao + tienship
-
-hoahong =
-tong * 0.15
-
-phi =
-tong * 0.015
-
-shipper =
-tong - hoahong - phi
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-🌾 ĐƠN GIAO GẠO
+📏 Khoảng cách: ${km} km
 
 <br><br>
 
-<div class="money">
-${Math.floor(tong).toLocaleString()}đ
-</div>
+🚚 Đang tìm tài xế
+
+`
+
+document.getElementById("doncho").innerHTML = `
+
+<div class="card">
+
+${currentMode=="gao"?"🌾 Đơn giao gạo":""}
+${currentMode=="xe"?"🚕 Đơn đặt xe":""}
+${currentMode=="hang"?"📦 Đơn chở hàng":""}
+
+<br><br>
+
+📍 ${document.getElementById("diemdon").value || "Máy bán gạo A4"}
+
+<br>
+
+🏁 ${document.getElementById("diemden").value}
+
+<br>
 
 📏 ${km} km
 
-<br><br>
+<br>
 
-🌾 Tiền gạo:
-${Math.floor(tiengao).toLocaleString()}đ
-
-<br><br>
-
-🚚 Ship:
-${Math.floor(tienship).toLocaleString()}đ
+💵 ${tong.toLocaleString()}đ
 
 <br><br>
 
-💸 Hoa hồng:
-${Math.floor(hoahong).toLocaleString()}đ
+<button class="blue" style="width:100%" onclick="nhandon()">
 
-<br><br>
+📥 NHẬN ĐƠN
 
-🏦 Phí hệ thống:
-${Math.floor(phi).toLocaleString()}đ
+</button>
 
-<br><br>
-
-🛵 Shipper nhận:
-${Math.floor(shipper).toLocaleString()}đ
-`
-
-}
-
-// DAT XE
-
-if(current=="xe"){
-
-const d1 =
-document.getElementById(
-"diemdon"
-).value.split(",")
-
-const d2 =
-document.getElementById(
-"diemden"
-).value.split(",")
-
-km =
-await tinhkmthat(
-Number(d1[0]),
-Number(d1[1]),
-Number(d2[0]),
-Number(d2[1])
-)
-
-let giaxe =
-Number(
-document.getElementById(
-"loaixe"
-).value
-)
-
-tong =
-giaxe * km
-
-hoahong =
-tong * 0.15
-
-phi =
-tong * 0.015
-
-shipper =
-tong - hoahong - phi
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-🚖 ĐƠN ĐẶT XE
-
-<br><br>
-
-<div class="money">
-${Math.floor(tong).toLocaleString()}đ
 </div>
 
-📏 ${km} km
-
-<br><br>
-
-💸 Hoa hồng:
-${Math.floor(hoahong).toLocaleString()}đ
-
-<br><br>
-
-🏦 Phí hệ thống:
-${Math.floor(phi).toLocaleString()}đ
-
-<br><br>
-
-🛵 Tài xế nhận:
-${Math.floor(shipper).toLocaleString()}đ
 `
 
+currentDon = {
+tong:tong,
+km:km
 }
 
 }
 
-function daden(){
+function nhandon(){
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
+document.getElementById("shipstatus").innerHTML = `
+📦 Đã nhận đơn<br><br>
+🗺 Đang mở đường realtime
 `
+
+}
+
+function datoi(){
+
+document.getElementById("shipstatus").innerHTML = `
 📍 Đã tới nơi lấy hàng
 `
 
 }
 
-function laygao(){
+function layhang(){
 
 fetch("/mo")
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
-🌾 ESP32 đã mở khóa
-
-<br><br>
-
-🪣 Đang lấy gạo
+document.getElementById("shipstatus").innerHTML = `
+🌾 Đang lấy gạo<br><br>
+🔓 ESP32 đã mở khóa
 `
 
 }
 
-function digiao(){
+function giaohang(){
 
-window.open(
-"https://www.google.com/maps"
-)
-
-document.getElementById(
-"shipstatus"
-).innerHTML =
-
-`
+document.getElementById("shipstatus").innerHTML = `
 🚚 Đang giao hàng realtime
 `
 
 }
 
-function mogooogle(){
+function openMap(){
 
-window.open(
-"https://www.google.com/maps"
-)
+window.open("https://www.google.com/maps")
 
 }
 
-function hoanthanh(){
+function goikhach(){
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
+let sdt = document.getElementById("sdt").value
 
-`
-💵 Tổng tiền khách trả
+window.location.href="tel:"+sdt
 
-<br><br>
+}
 
-<div class="money">
-${Math.floor(tong).toLocaleString()}đ
+function hienthucodon(){
+
+if(!currentDon) return
+
+document.getElementById("hoanthanhbox").innerHTML = `
+
+<div class="card">
+
+<div style="font-size:28px;font-weight:bold">
+
+💵 Tổng tiền cần thu
+
 </div>
 
-<br>
+<div class="bigprice">
 
-➡️ Kéo để hoàn thành
+${currentDon.tong.toLocaleString()}đ
+
+</div>
+
+📏 Kéo thanh để hoàn thành
 
 <br><br>
 
 <input
-class="slide"
 type="range"
 min="0"
 max="100"
 value="0"
+class="slide"
 oninput="checkdone(this.value)"
 >
+
+</div>
+
 `
 
 }
@@ -860,16 +572,28 @@ function checkdone(v){
 
 if(v>=100){
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
+let tong = currentDon.tong
 
-`
+let tru = tong*0.165
+
+let shipperNhan = tong-tru
+
+document.getElementById("shipstatus").innerHTML = `
+
 ✅ Giao thành công
 
 <br><br>
 
-💰 Đã cộng tiền vào ví shipper
+💵 Đã thu khách: ${tong.toLocaleString()}đ
+
+<br><br>
+
+💸 Trừ hoa hồng + phí hệ thống: ${tru.toLocaleString()}đ
+
+<br><br>
+
+💰 Shipper nhận: ${shipperNhan.toLocaleString()}đ
+
 `
 
 }
