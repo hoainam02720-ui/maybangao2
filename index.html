@@ -181,7 +181,7 @@ width:100%;
 
 <input id="sdt" placeholder="📞 Số điện thoại khách">
 
-<!-- FORM GAO -->
+<!-- GIAO GAO -->
 
 <div id="formgao">
 
@@ -227,7 +227,7 @@ placeholder="📍 Địa chỉ giao gạo"
 
 </div>
 
-<!-- FORM XE -->
+<!-- DAT XE -->
 
 <div id="formxe" style="display:none">
 
@@ -242,12 +242,12 @@ onclick="layvitri()"
 
 <input
 id="diemdon"
-placeholder="📍 Điểm đón"
+placeholder="📍 Điểm đón (tọa độ)"
 >
 
 <input
 id="diemden"
-placeholder="🏁 Điểm đến"
+placeholder="🏁 Điểm đến (tọa độ)"
 >
 
 <select id="loaixe">
@@ -268,7 +268,7 @@ placeholder="🏁 Điểm đến"
 
 </div>
 
-<!-- FORM HANG -->
+<!-- CHO HANG -->
 
 <div id="formhang" style="display:none">
 
@@ -283,12 +283,12 @@ onclick="layvitri()"
 
 <input
 id="layhang"
-placeholder="📦 Điểm lấy hàng"
+placeholder="📦 Điểm lấy hàng (tọa độ)"
 >
 
 <input
 id="giaohang"
-placeholder="🏁 Điểm giao hàng"
+placeholder="🏁 Điểm giao hàng (tọa độ)"
 >
 
 <select id="xehang">
@@ -338,7 +338,7 @@ Chưa có đơn
 
 </div>
 
-<!-- DON CHO NHAN -->
+<!-- DON CHO -->
 
 <div class="box">
 
@@ -472,8 +472,11 @@ let current = "gao"
 let tong = 0
 let km = 0
 
-let currentLat = 10.0452
-let currentLon = 105.7469
+let currentLat = 0
+let currentLon = 0
+
+const mayLat = 10.0452
+const mayLon = 105.7469
 
 const map =
 L.map('map').setView(
@@ -564,18 +567,33 @@ lat + "," + lon
 
 }
 
-function tinhkhoangcach(){
+async function tinhkmthat(
+lat1,
+lon1,
+lat2,
+lon2
+){
+
+const url =
+
+`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
+
+const res =
+await fetch(url)
+
+const data =
+await res.json()
+
+const distance =
+data.routes[0].distance
 
 return (
-Math.random()*8 + 2
-).toFixed(1)
+distance / 1000
+).toFixed(2)
 
 }
 
-function datdon(){
-
-km =
-tinhkhoangcach()
+async function datdon(){
 
 let phi = 0
 let hoahong = 0
@@ -584,6 +602,14 @@ let shipper = 0
 // GIAO GAO
 
 if(current=="gao"){
+
+km =
+await tinhkmthat(
+currentLat,
+currentLon,
+mayLat,
+mayLon
+)
 
 let gia =
 Number(
@@ -637,8 +663,7 @@ document.getElementById(
 ${Math.floor(tong).toLocaleString()}đ
 </div>
 
-📏 Khoảng cách:
-${km} km
+📏 ${km} km
 
 <br><br>
 
@@ -647,7 +672,7 @@ ${Math.floor(tiengao).toLocaleString()}đ
 
 <br><br>
 
-🚚 Phí ship:
+🚚 Ship:
 ${Math.floor(tienship).toLocaleString()}đ
 
 <br><br>
@@ -666,46 +691,29 @@ ${Math.floor(phi).toLocaleString()}đ
 ${Math.floor(shipper).toLocaleString()}đ
 `
 
-document.getElementById(
-"doncho"
-).innerHTML =
-
-`
-<div class="card">
-
-🌾 Đơn giao gạo
-
-<br><br>
-
-📍 Máy bán gạo A4
-
-<br>
-
-🏁
-${document.getElementById("diachigao").value}
-
-<br>
-
-📏 ${km} km
-
-<br>
-
-💵 ${Math.floor(tong).toLocaleString()}đ
-
-<br><br>
-
-<button class="btn blue">
-📥 Nhận đơn giao gạo
-</button>
-
-</div>
-`
-
 }
 
 // DAT XE
 
 if(current=="xe"){
+
+const d1 =
+document.getElementById(
+"diemdon"
+).value.split(",")
+
+const d2 =
+document.getElementById(
+"diemden"
+).value.split(",")
+
+km =
+await tinhkmthat(
+Number(d1[0]),
+Number(d1[1]),
+Number(d2[0]),
+Number(d2[1])
+)
 
 let giaxe =
 Number(
@@ -739,8 +747,7 @@ document.getElementById(
 ${Math.floor(tong).toLocaleString()}đ
 </div>
 
-📏 Khoảng cách:
-${km} km
+📏 ${km} km
 
 <br><br>
 
@@ -756,135 +763,6 @@ ${Math.floor(phi).toLocaleString()}đ
 
 🛵 Tài xế nhận:
 ${Math.floor(shipper).toLocaleString()}đ
-`
-
-document.getElementById(
-"doncho"
-).innerHTML =
-
-`
-<div class="card">
-
-🚖 Đơn đặt xe
-
-<br><br>
-
-📍
-${document.getElementById("diemdon").value}
-
-<br>
-
-🏁
-${document.getElementById("diemden").value}
-
-<br>
-
-📏 ${km} km
-
-<br>
-
-💵 ${Math.floor(tong).toLocaleString()}đ
-
-<br><br>
-
-<button class="btn blue">
-📥 Nhận cuốc xe
-</button>
-
-</div>
-`
-
-}
-
-// CHO HANG
-
-if(current=="hang"){
-
-let giahang =
-Number(
-document.getElementById(
-"xehang"
-).value
-)
-
-tong =
-giahang * km
-
-hoahong =
-tong * 0.15
-
-phi =
-tong * 0.015
-
-shipper =
-tong - hoahong - phi
-
-document.getElementById(
-"bill"
-).innerHTML =
-
-`
-📦 ĐƠN CHỞ HÀNG
-
-<br><br>
-
-<div class="money">
-${Math.floor(tong).toLocaleString()}đ
-</div>
-
-📏 Khoảng cách:
-${km} km
-
-<br><br>
-
-💸 Hoa hồng:
-${Math.floor(hoahong).toLocaleString()}đ
-
-<br><br>
-
-🏦 Phí hệ thống:
-${Math.floor(phi).toLocaleString()}đ
-
-<br><br>
-
-🚚 Tài xế nhận:
-${Math.floor(shipper).toLocaleString()}đ
-`
-
-document.getElementById(
-"doncho"
-).innerHTML =
-
-`
-<div class="card">
-
-📦 Đơn chở hàng
-
-<br><br>
-
-📍
-${document.getElementById("layhang").value}
-
-<br>
-
-🏁
-${document.getElementById("giaohang").value}
-
-<br>
-
-📏 ${km} km
-
-<br>
-
-💵 ${Math.floor(tong).toLocaleString()}đ
-
-<br><br>
-
-<button class="btn blue">
-📥 Nhận đơn chở hàng
-</button>
-
-</div>
 `
 
 }
