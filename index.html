@@ -1,9 +1,3 @@
-Lỗi này là do mày dán thiếu hoặc sai dấu hoặc thiếu)` nên Railway crash luôn.
-
-Mày làm đúng 1 lần này thôi:
-
-MỞ index.html → XOÁ SẠCH TOÀN BỘ → DÁN NGUYÊN FILE NÀY.
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -13,6 +7,7 @@ MỞ index.html → XOÁ SẠCH TOÀN BỘ → DÁN NGUYÊN FILE NÀY.
 <title>NamRice Auto</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <style>
@@ -174,9 +169,13 @@ font-size:17px;
 
 </div>
 
-<input id="diemdon" placeholder="📍 Điểm đón">
+<button class="blue" onclick="layvitri()">
+📍 Lấy GPS hiện tại
+</button>
 
-<input id="diemden" placeholder="🏁 Điểm đến">
+<input id="diemdon" placeholder="📍 Điểm đón (vd: 10.0452,105.7469)">
+
+<input id="diemden" placeholder="🏁 Điểm đến (vd: 10.029,105.768)">
 
 <select id="loaixe">
 
@@ -333,19 +332,80 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
 maxZoom:19
 }).addTo(map)
 
-function taodon(){
+let marker = null
 
-let km = Math.floor(Math.random()*7)+3
+function layvitri(){
 
-let giaxe = Number(document.getElementById("loaixe").value)
+navigator.geolocation.getCurrentPosition((pos)=>{
 
-let tong = km * giaxe
+let lat = pos.coords.latitude
+let lon = pos.coords.longitude
+
+document.getElementById("diemdon").value =
+lat + "," + lon
+
+if(marker){
+map.removeLayer(marker)
+}
+
+marker = L.marker([lat,lon]).addTo(map)
+
+map.setView([lat,lon],15)
+
+})
+
+}
+
+async function taodon(){
+
+const pickup =
+document.getElementById("diemdon").value
+
+const destination =
+document.getElementById("diemden").value
+
+if(!pickup || !destination){
+
+alert("Nhập điểm đón và điểm đến")
+
+return
+
+}
+
+const p = pickup.split(",")
+const d = destination.split(",")
+
+const lat1 = p[0]
+const lon1 = p[1]
+
+const lat2 = d[0]
+const lon2 = d[1]
+
+const route = await fetch(
+
+`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
+
+)
+
+const data = await route.json()
+
+const km = (
+data.routes[0].distance / 1000
+).toFixed(1)
+
+let giaxe =
+Number(document.getElementById("loaixe").value)
+
+let tong =
+km * giaxe
 
 if(mode=="gao"){
 
-let kg = Number(document.getElementById("kg").value)
+let kg =
+Number(document.getElementById("kg").value)
 
-let giagao = Number(document.getElementById("loaigao").value)
+let giagao =
+Number(document.getElementById("loaigao").value)
 
 tong += kg * giagao
 
@@ -355,19 +415,14 @@ document.getElementById("tongbox").innerHTML = `
 
 <div style="font-size:30px;font-weight:bold">
 
-${mode=="gao"?"🌾 ĐƠN GIAO GẠO":""}
-${mode=="xe"?"🚕 ĐƠN ĐẶT XE":""}
-${mode=="hang"?"📦 ĐƠN CHỞ HÀNG":""}
+💵 ${Math.floor(tong).toLocaleString()}đ
 
 </div>
 
-<div class="big">
+<br>
 
-${tong.toLocaleString()}đ
-
-</div>
-
-📏 Khoảng cách: ${km} km
+📏 Khoảng cách thật:
+${km} km
 
 <br><br>
 
@@ -379,17 +434,11 @@ document.getElementById("doncho").innerHTML = `
 
 <div class="card">
 
-${mode=="gao"?"🌾 Đơn giao gạo":""}
-${mode=="xe"?"🚕 Đơn đặt xe":""}
-${mode=="hang"?"📦 Đơn chở hàng":""}
+📍 ${pickup}
 
 <br><br>
 
-📍 ${document.getElementById("diemdon").value}
-
-<br><br>
-
-🏁 ${document.getElementById("diemden").value}
+🏁 ${destination}
 
 <br><br>
 
@@ -397,7 +446,7 @@ ${mode=="hang"?"📦 Đơn chở hàng":""}
 
 <br><br>
 
-💵 ${tong.toLocaleString()}đ
+💵 ${Math.floor(tong).toLocaleString()}đ
 
 <br><br>
 
@@ -420,9 +469,7 @@ tong:tong
 function nhandon(){
 
 document.getElementById("shipstatus").innerHTML = `
-
 📥 Đã nhận đơn
-
 `
 
 }
@@ -430,19 +477,17 @@ document.getElementById("shipstatus").innerHTML = `
 function daden(){
 
 document.getElementById("shipstatus").innerHTML = `
-
 📍 Đã tới nơi
-
 `
 
 }
 
 function layhang(){
 
+fetch("/mo")
+
 document.getElementById("shipstatus").innerHTML = `
-
-🌾 Đã lấy hàng
-
+🌾 ESP32 đã mở khóa
 `
 
 }
@@ -450,9 +495,7 @@ document.getElementById("shipstatus").innerHTML = `
 function digiao(){
 
 document.getElementById("shipstatus").innerHTML = `
-
 🚚 Đang giao hàng
-
 `
 
 }
@@ -489,15 +532,18 @@ document.getElementById("shipstatus").innerHTML = `
 
 <br><br>
 
-💵 Đã thu khách: ${tong.toLocaleString()}đ
+💵 Đã thu khách:
+${Math.floor(tong).toLocaleString()}đ
 
 <br><br>
 
-💸 Trừ phí + hoa hồng: ${tru.toLocaleString()}đ
+💸 Trừ phí:
+${Math.floor(tru).toLocaleString()}đ
 
 <br><br>
 
-💰 Shipper nhận: ${shipperNhan.toLocaleString()}đ
+💰 Shipper nhận:
+${Math.floor(shipperNhan).toLocaleString()}đ
 
 `
 
