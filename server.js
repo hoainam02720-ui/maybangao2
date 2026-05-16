@@ -85,14 +85,21 @@ lon: parseFloat(response.data[0].lon)
 
 async function getDistance(lat1,lon1,lat2,lon2){
 
-const url =
-`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
+const R = 6371
 
-const response = await axios.get(url)
+const dLat = (lat2-lat1) * Math.PI / 180
 
-const route = response.data.routes[0]
+const dLon = (lon2-lon1) * Math.PI / 180
 
-return route.distance / 1000
+const a =
+Math.sin(dLat/2) * Math.sin(dLat/2) +
+Math.cos(lat1 * Math.PI/180) *
+Math.cos(lat2 * Math.PI/180) *
+Math.sin(dLon/2) * Math.sin(dLon/2)
+
+const c = 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+
+return R * c
 
 }
 
