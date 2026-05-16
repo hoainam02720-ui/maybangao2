@@ -1,679 +1,204 @@
-// ====================================
-// 🌾 NAMRICE AUTO - REAL SERVER
-// ====================================
+<!DOCTYPE html>
+<html lang="vi">
 
-const express = require("express")
-const axios = require("axios")
-const cors = require("cors")
-const http = require("http")
-const { Server } = require("socket.io")
+<head>
 
-const app = express()
+<meta charset="UTF-8">
 
-const server = http.createServer(app)
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-const io = new Server(server, {
-  cors: {
-    origin: "*"
-  }
-})
+<title>NamRice Auto</title>
 
-app.use(cors())
-app.use(express.json())
-app.use(express.static("public"))
+<style>
 
-// ====================================
-// ⚙️ CONFIG
-// ====================================
+body{
 
-const PORT = process.env.PORT || 3000
-
-const MACHINE = {
-
-  name: "Máy bán gạo A4",
-
-  address: "Đường A4 Cần Thơ",
-
-  lat: 10.0452,
-
-  lon: 105.7469
+margin:0;
+padding:0;
+background:#f1f1f1;
+font-family:Arial;
 
 }
 
-const SYSTEM_FEE = 0.165
+.header{
 
-// ====================================
-// 💰 PRICE
-// ====================================
-
-const PRICE = {
-
-  rice: {
-
-    st25: 180000,
-
-    jasmine: 220000
-
-  },
-
-  ride: {
-
-    bike: 8000,
-
-    car4: 13000,
-
-    car7: 18000
-
-  },
-
-  delivery: {
-
-    bike: 8000,
-
-    truck500: 13000,
-
-    truck1t: 18000,
-
-    truck25: 22000,
-
-    truck35: 26000
-
-  }
+background:#00c853;
+color:white;
+padding:25px;
+font-size:40px;
+font-weight:bold;
+border-radius:0 0 30px 30px;
 
 }
 
-// ====================================
-// 🗃 DATABASE
-// ====================================
+.box{
 
-let orders = []
-
-let shippers = []
-
-// ====================================
-// 🗺 GET LATLON
-// ====================================
-
-async function getLatLon(address){
-
-  const url =
-  `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
-
-  const res = await axios.get(url)
-
-  if(!res.data[0]){
-
-    throw new Error("Address not found")
-
-  }
-
-  return {
-
-    lat: parseFloat(res.data[0].lat),
-
-    lon: parseFloat(res.data[0].lon)
-
-  }
+background:white;
+margin:20px;
+padding:20px;
+border-radius:25px;
 
 }
 
-// ====================================
-// 🗺 GET REAL ROUTE
-// ====================================
+input,select{
 
-async function getRoute(
-  lat1,
-  lon1,
-  lat2,
-  lon2
-){
-
-  const url =
-  `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`
-
-  const res = await axios.get(url)
-
-  return res.data.routes[0]
+width:100%;
+padding:20px;
+font-size:30px;
+margin-top:15px;
+border:none;
+border-radius:20px;
+background:#f1f1f1;
 
 }
 
-// ====================================
-// 🌾 CREATE RICE ORDER
-// ====================================
+button{
 
-app.post("/api/order/rice", async(req,res)=>{
+width:100%;
+padding:25px;
+font-size:35px;
+font-weight:bold;
+border:none;
+border-radius:25px;
+margin-top:20px;
+color:white;
 
-  try{
+}
 
-    const {
+.green{
 
-      riceType,
+background:#00c853;
 
-      bags,
+}
 
-      customerAddress
+.blue{
 
-    } = req.body
+background:#2962ff;
 
-    const customer =
-    await getLatLon(customerAddress)
+}
 
-    const route =
-    await getRoute(
+.big{
 
-      MACHINE.lat,
-      MACHINE.lon,
+font-size:70px;
+font-weight:bold;
+color:#00c853;
 
-      customer.lat,
-      customer.lon
+}
 
-    )
+</style>
 
-    const km =
-    route.distance / 1000
+</head>
 
-    const shippingFee =
-    km * PRICE.ride.bike
+<body>
 
-    const riceFee =
-    bags * PRICE.rice[riceType]
+<div class="header">
+🌾 NamRice Auto
+</div>
 
-    const total =
-    Math.round(shippingFee + riceFee)
+<div class="box">
 
-    const order = {
+<h1>🌾 Giao gạo</h1>
 
-      id: Date.now(),
+<input
+id="diachi"
+placeholder="Nhập địa chỉ nhận gạo">
 
-      type: "rice",
+<select id="gao">
 
-      riceType,
+<option value="180000">
+ST25 - 180k / túi
+</option>
 
-      bags,
+<option value="220000">
+Jasmine - 220k / túi
+</option>
 
-      totalKg: bags * 5,
+</select>
 
-      machine: MACHINE,
+<select id="soluong">
 
-      customerAddress,
+<option value="1">
+1 túi - 5kg
+</option>
 
-      customer,
+<option value="2">
+2 túi - 10kg
+</option>
 
-      route,
+<option value="3">
+3 túi - 15kg
+</option>
 
-      km,
+<option value="5">
+5 túi - 25kg
+</option>
 
-      shippingFee,
+</select>
 
-      riceFee,
+<button
+class="green"
+onclick="datgao()">
 
-      total,
+🌾 ĐẶT GẠO
 
-      status: "waiting_shipper",
+</button>
 
-      createdAt: new Date()
+<div id="ketqua"></div>
 
-    }
+</div>
 
-    orders.push(order)
+<script>
 
-    io.emit("new_order", order)
+function datgao(){
 
-    res.json({
+let gia =
+Number(
+document.getElementById("gao").value
+)
 
-      success:true,
+let soluong =
+Number(
+document.getElementById("soluong").value
+)
 
-      order
+let tong =
+gia * soluong
 
-    })
+document.getElementById(
+"ketqua"
+).innerHTML = `
 
-  }catch(err){
+<div class="box">
 
-    res.status(500).json({
+<h1>🛵 ĐƠN GẠO</h1>
 
-      success:false,
+<div class="big">
 
-      message: err.message
+${tong.toLocaleString()}đ
 
-    })
+</div>
 
-  }
+<h2>
 
-})
+🌾 ${soluong} túi
 
-// ====================================
-// 🚕 CREATE RIDE ORDER
-// ====================================
+</h2>
 
-app.post("/api/order/ride", async(req,res)=>{
+<h2>
 
-  try{
+📍 Đang tìm shipper
 
-    const {
+</h2>
 
-      pickup,
+</div>
 
-      destination,
+`
 
-      vehicle
+}
 
-    } = req.body
+</script>
 
-    const pickupLocation =
-    await getLatLon(pickup)
+</body>
 
-    const destinationLocation =
-    await getLatLon(destination)
-
-    const route =
-    await getRoute(
-
-      pickupLocation.lat,
-      pickupLocation.lon,
-
-      destinationLocation.lat,
-      destinationLocation.lon
-
-    )
-
-    const km =
-    route.distance / 1000
-
-    const total =
-    Math.round(
-      km * PRICE.ride[vehicle]
-    )
-
-    const order = {
-
-      id: Date.now(),
-
-      type:"ride",
-
-      pickup,
-
-      destination,
-
-      vehicle,
-
-      pickupLocation,
-
-      destinationLocation,
-
-      route,
-
-      km,
-
-      total,
-
-      status:"waiting_shipper",
-
-      createdAt:new Date()
-
-    }
-
-    orders.push(order)
-
-    io.emit("new_order", order)
-
-    res.json({
-
-      success:true,
-
-      order
-
-    })
-
-  }catch(err){
-
-    res.status(500).json({
-
-      success:false,
-
-      message: err.message
-
-    })
-
-  }
-
-})
-
-// ====================================
-// 📦 CREATE DELIVERY ORDER
-// ====================================
-
-app.post("/api/order/delivery", async(req,res)=>{
-
-  try{
-
-    const {
-
-      pickup,
-
-      destination,
-
-      vehicle
-
-    } = req.body
-
-    const pickupLocation =
-    await getLatLon(pickup)
-
-    const destinationLocation =
-    await getLatLon(destination)
-
-    const route =
-    await getRoute(
-
-      pickupLocation.lat,
-      pickupLocation.lon,
-
-      destinationLocation.lat,
-      destinationLocation.lon
-
-    )
-
-    const km =
-    route.distance / 1000
-
-    const total =
-    Math.round(
-      km *
-      PRICE.delivery[vehicle]
-    )
-
-    const order = {
-
-      id: Date.now(),
-
-      type:"delivery",
-
-      pickup,
-
-      destination,
-
-      vehicle,
-
-      pickupLocation,
-
-      destinationLocation,
-
-      route,
-
-      km,
-
-      total,
-
-      status:"waiting_shipper",
-
-      createdAt:new Date()
-
-    }
-
-    orders.push(order)
-
-    io.emit("new_order", order)
-
-    res.json({
-
-      success:true,
-
-      order
-
-    })
-
-  }catch(err){
-
-    res.status(500).json({
-
-      success:false,
-
-      message: err.message
-
-    })
-
-  }
-
-})
-
-// ====================================
-// 🛵 SHIPPER RECEIVE ORDER
-// ====================================
-
-app.post("/api/shipper/receive", (req,res)=>{
-
-  const {
-
-    orderId,
-
-    shipperId
-
-  } = req.body
-
-  const order =
-  orders.find(
-    o => o.id == orderId
-  )
-
-  if(!order){
-
-    return res.json({
-
-      success:false
-
-    })
-
-  }
-
-  order.status =
-  "shipper_received"
-
-  order.shipperId =
-  shipperId
-
-  io.emit(
-    "order_updated",
-    order
-  )
-
-  res.json({
-
-    success:true,
-
-    order
-
-  })
-
-})
-
-// ====================================
-// 📍 SHIPPER ARRIVED
-// ====================================
-
-app.post("/api/shipper/arrived", (req,res)=>{
-
-  const {orderId} = req.body
-
-  const order =
-  orders.find(
-    o => o.id == orderId
-  )
-
-  if(!order){
-
-    return res.json({
-
-      success:false
-
-    })
-
-  }
-
-  order.status =
-  "arrived"
-
-  io.emit(
-    "order_updated",
-    order
-  )
-
-  res.json({
-
-    success:true,
-
-    order
-
-  })
-
-})
-
-// ====================================
-// 🌾 OPEN ESP32
-// ====================================
-
-app.post("/api/machine/open", async(req,res)=>{
-
-  try{
-
-    await axios.get(
-      "http://192.168.1.14/mo"
-    )
-
-    res.json({
-
-      success:true
-
-    })
-
-  }catch(err){
-
-    res.json({
-
-      success:false,
-
-      message:
-      "ESP32 offline"
-
-    })
-
-  }
-
-})
-
-// ====================================
-// ✅ COMPLETE ORDER
-// ====================================
-
-app.post("/api/order/complete", (req,res)=>{
-
-  const {orderId} = req.body
-
-  const order =
-  orders.find(
-    o => o.id == orderId
-  )
-
-  if(!order){
-
-    return res.json({
-
-      success:false
-
-    })
-
-  }
-
-  const fee =
-  Math.round(
-    order.total *
-    SYSTEM_FEE
-  )
-
-  const shipperReceive =
-  order.total - fee
-
-  order.status =
-  "completed"
-
-  order.systemFee =
-  fee
-
-  order.shipperReceive =
-  shipperReceive
-
-  io.emit(
-    "order_completed",
-    order
-  )
-
-  res.json({
-
-    success:true,
-
-    customerPaid:
-    order.total,
-
-    systemFee:fee,
-
-    shipperReceive
-
-  })
-
-})
-
-// ====================================
-// 📦 GET ORDERS
-// ====================================
-
-app.get("/api/orders",(req,res)=>{
-
-  res.json(orders)
-
-})
-
-// ====================================
-// 🔌 SOCKET
-// ====================================
-
-io.on("connection",(socket)=>{
-
-  console.log(
-    "🟢 Client connected"
-  )
-
-  socket.on(
-    "shipper_location",
-    (data)=>{
-
-      io.emit(
-        "shipper_location_update",
-        data
-      )
-
-    }
-  )
-
-  socket.on(
-    "disconnect",
-    ()=>{
-
-      console.log(
-        "🔴 Client disconnected"
-      )
-
-    }
-  )
-
-})
-
-// ====================================
-// 🚀 START
-// ====================================
-
-server.listen(PORT,()=>{
-
-  console.log(
-    `🌾 NamRice Auto Running Port ${PORT}`
-  )
-
-})
+</html>
