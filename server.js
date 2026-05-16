@@ -1,311 +1,60 @@
-const express = require("express")
-const axios = require("axios")
-const cors = require("cors")
+const express = require("express");
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(express.json())
-app.use(express.static("./"))
+app.use(express.json());
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
-// =========================
-// GIÁ
-// =========================
+//================= BIEN MO KHOA =================
+let trangThaiMo = false;
 
-const PRICE = {
+//================= TEST =================
+app.get("/", (req, res) => {
 
-bike: 8000,
+    res.send("NamRice Auto OK");
+});
 
-car4: 13000,
+//================= ESP32 CHECK =================
+app.get("/check", (req, res) => {
 
-car7: 18000,
+    if (trangThaiMo) {
 
-truck500: 13000,
+        console.log("ESP32 DA NHAN LENH");
 
-truck1t: 18000,
+        trangThaiMo = false;
 
-truck25: 22000,
+        return res.send("OPEN");
+    }
 
-truck35: 26000
+    res.send("WAIT");
+});
 
-}
+//================= SEPAY WEBHOOK =================
+app.post("/sepay", (req, res) => {
 
-// =========================
-// MÁY BÁN GẠO
-// =========================
+    console.log("Nhan webhook:", req.body);
 
-const MACHINE = {
+    const amount = Number(req.body.transferAmount || 0);
 
-name: "Máy bán gạo A4",
+    const content = (req.body.content || "").toLowerCase();
 
-address: "Đường A4 Cần Thơ",
+    //================= DIEU KIEN =================
+    if (
+        amount >= 2000 &&
+        content.includes("may gao st25 01")
+    ) {
 
-lat: 10.0452,
+        console.log("THANH TOAN HOP LE");
 
-lon: 105.7469
+        trangThaiMo = true;
+    }
 
-}
+    res.send("OK");
+});
 
-// =========================
-// LẤY TỌA ĐỘ
-// =========================
+//================= START =================
+app.listen(PORT, () => {
 
-async function getLatLon(address){
-
-const url =
-`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`
-
-const response = await axios.get(url,{
-headers:{
-"User-Agent":"NamRiceAuto"
-}
-})
-
-if(!response.data.length){
-
-throw new Error("Không tìm thấy địa chỉ")
-
-}
-
-return {
-
-lat: parseFloat(response.data[0].lat),
-
-lon: parseFloat(response.data[0].lon)
-
-}
-
-}
-
-// =========================
-// TÍNH KM THẬT
-// =========================
-
-async function getDistance(lat1,lon1,lat2,lon2){
-
-const url =
-`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
-
-const response = await axios.get(url)
-
-if(!response.data.routes.length){
-throw new Error("Không tính được khoảng cách")
-}
-
-const route = response.data.routes[0]
-
-const km = route.distance / 1000
-
-return Number(km.toFixed(1))
-
-}
-
-// =========================
-// ĐẶT XE
-// =========================
-
-app.post("/api/order/ride", async(req,res)=>{
-
-try{
-
-const {
-pickup,
-destination,
-vehicle
-} = req.body
-
-const p1 = await getLatLon(pickup)
-
-const p2 = await getLatLon(destination)
-
-const km = await getDistance(
-p1.lat,
-p1.lon,
-p2.lat,
-p2.lon
-)
-
-const total =
-Math.round(km * PRICE[vehicle])
-
-res.json({
-
-success:true,
-
-order:{
-
-pickupLat:p1.lat,
-pickupLon:p1.lon,
-
-destinationLat:p2.lat,
-destinationLon:p2.lon,
-
-km:km.toFixed(1),
-
-total,
-
-status:"Đang tìm tài xế"
-
-}
-
-})
-
-}catch(err){
-
-res.status(500).json({
-
-success:false,
-
-message:err.message
-
-})
-
-}
-
-})
-
-// =========================
-// GIAO HÀNG
-// =========================
-
-app.post("/api/order/delivery", async(req,res)=>{
-
-try{
-
-const {
-pickup,
-destination,
-vehicle
-} = req.body
-
-const p1 = await getLatLon(pickup)
-
-const p2 = await getLatLon(destination)
-
-const km = await getDistance(
-p1.lat,
-p1.lon,
-p2.lat,
-p2.lon
-)
-
-const total =
-Math.round(km * PRICE[vehicle])
-
-res.json({
-
-success:true,
-
-order:{
-
-pickupLat:p1.lat,
-pickupLon:p1.lon,
-
-destinationLat:p2.lat,
-destinationLon:p2.lon,
-
-km:km.toFixed(1),
-
-total,
-
-status:"Shipper đang lấy hàng"
-
-}
-
-})
-
-}catch(err){
-
-res.status(500).json({
-
-success:false,
-
-message:err.message
-
-})
-
-}
-
-})
-
-// =========================
-// GIAO GẠO
-// =========================
-
-app.post("/api/order/rice", async(req,res)=>{
-
-try{
-
-const {
-customerAddress,
-bags
-} = req.body
-
-const customer =
-await getLatLon(customerAddress)
-
-const km = await getDistance(
-MACHINE.lat,
-MACHINE.lon,
-customer.lat,
-customer.lon
-)
-
-const ricePrice =
-parseInt(bags) * 5 * 22000
-
-const shipFee =
-Math.round(km * PRICE.bike)
-
-const total =
-ricePrice + shipFee
-
-res.json({
-
-success:true,
-
-order:{
-
-machineLat:MACHINE.lat,
-machineLon:MACHINE.lon,
-
-customerLat:customer.lat,
-customerLon:customer.lon,
-
-bags,
-
-km:km.toFixed(1),
-
-total,
-
-status:"Đang giao gạo"
-
-}
-
-})
-
-}catch(err){
-
-res.status(500).json({
-
-success:false,
-
-message:err.message
-
-})
-
-}
-
-})
-
-// =========================
-// CHẠY SERVER
-// =========================
-
-app.listen(PORT,()=>{
-
-console.log("NAMRICE AUTO RUNNING")
-
-})
+    console.log("Server dang chay cong", PORT);
+});
