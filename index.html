@@ -1,70 +1,64 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html><html lang="vi">
+<head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>NamRice Auto</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<style>
+<title>NamRice Auto</title><link rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"/><script
+src="https://unpkg.com/leaflet/dist/leaflet.js">
+</script><style>
 
 body{
 margin:0;
 padding:0;
 font-family:Arial;
-background:#eceff1;
+background:#edf1f4;
 }
 
 .top{
 background:#00c853;
-padding:40px;
+padding:35px;
 border-radius:0 0 35px 35px;
 color:white;
 }
 
 .top h1{
 margin:0;
-font-size:60px;
+font-size:55px;
 }
 
 .top p{
-font-size:30px;
+font-size:28px;
 margin-top:10px;
 }
 
 .box{
 background:white;
-margin:20px;
+margin:18px;
 padding:25px;
 border-radius:30px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
-h2{
-font-size:55px;
-margin-top:0;
+.title{
+font-size:45px;
+font-weight:bold;
+margin-bottom:20px;
 }
 
-input,select{
-width:100%;
-padding:22px;
-font-size:35px;
-margin-top:15px;
-border:none;
-border-radius:20px;
-background:#f1f1f1;
-box-sizing:border-box;
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
 }
 
 button{
 width:100%;
 padding:22px;
-font-size:38px;
+font-size:32px;
+font-weight:bold;
 border:none;
 border-radius:22px;
-margin-top:20px;
-font-weight:bold;
+margin-top:15px;
 color:white;
 }
 
@@ -88,23 +82,33 @@ background:#ff3d00;
 background:#616161;
 }
 
-.ketqua{
-background:#f5f5f5;
+input,select{
+width:100%;
+padding:22px;
+font-size:30px;
+margin-top:15px;
+border:none;
+border-radius:20px;
+background:#f1f3f6;
+box-sizing:border-box;
+}
+
+.card{
+background:#f5f7fb;
 padding:25px;
 border-radius:25px;
-margin-top:25px;
-font-size:35px;
-overflow:auto;
+margin-top:20px;
+font-size:30px;
 }
 
 .big{
-font-size:90px;
-color:#00c853;
+font-size:70px;
 font-weight:bold;
+color:#00c853;
 }
 
 #map{
-height:500px;
+height:450px;
 border-radius:25px;
 margin-top:20px;
 }
@@ -117,124 +121,194 @@ right:0;
 background:white;
 display:flex;
 justify-content:space-around;
-padding:20px;
-font-size:30px;
-box-shadow:0 -2px 10px rgba(0,0,0,0.2);
+padding:18px;
+font-size:24px;
+box-shadow:0 -2px 10px rgba(0,0,0,0.15);
 }
 
 .bottom div{
 text-align:center;
 }
 
-</style>
-</head>
+</style></head><body><div class="top"><h1>🌾 NamRice Auto</h1><p>
+Đặt xe • Giao gạo • Chở hàng • GPS realtime
+</p></div><div class="box"><div class="title">
+🛒 Chọn dịch vụ
+</div><div class="grid"><button class="green"
+onclick="chonmode('gao')">
 
-<body>
+🌾 Giao gạo
 
-<div class="top">
-<h1>🌾 NamRice Auto</h1>
-<p>Đặt xe • Giao gạo • GPS realtime</p>
-</div>
+</button><button class="blue"
+onclick="chonmode('xe')">
 
-<div class="box">
+🚕 Đặt xe
 
-<h2>🛒 Đặt xe</h2>
+</button><button class="orange"
+onclick="chonmode('hang')">
 
-<button class="blue" onclick="laygps()">📍 Lấy GPS hiện tại</button>
+📦 Chở hàng
 
-<input id="pickup" placeholder="Điểm đón">
+</button></div><button class="blue"
+onclick="laygps()">
 
-<input id="dropoff" placeholder="Điểm đến">
+📍 Lấy GPS hiện tại
 
-<select id="loaixe">
-<option value="8000">🛵 Xe máy - 8k/km</option>
-<option value="13000">🚗 Xe 4 chỗ - 13k/km</option>
-<option value="18000">🚙 Xe 7 chỗ - 18k/km</option>
-</select>
+</button><input
+id="pickup"
+placeholder="📍 Điểm đón"
+/>
 
-<button class="green" onclick="taodon()">🛒 ĐẶT NGAY</button>
+<input
+id="dropoff"
+placeholder="🏁 Điểm đến"
+/>
 
-<div class="ketqua" id="ketqua">
-Chưa có đơn
-</div>
+<div id="gaobox"><select id="loaigao"><option value="18000">
+🌾 ST25 - 18k/kg
+</option><option value="20000">
+🌾 Jasmine - 20k/kg
+</option></select><input
+id="kg"
+type="number"
+placeholder="🌾 Số kg gạo"
+/>
 
-</div>
+</div><select id="loaixe"><option value="8000">
+🛵 Xe máy - 8k/km
+</option><option value="13000">
+🚗 Xe 4 chỗ - 13k/km
+</option><option value="14000">
+🚙 Xe 7 chỗ - 14k/km
+</option><option value="18000">
+🚛 Xe tải - 18k/km
+</option></select><button class="green"
+onclick="taodon()">
 
-<div class="box">
+🛒 ĐẶT NGAY
 
-<h2>🗺️ GPS Realtime</h2>
+</button><div class="card"
+id="ketqua">Chưa có đơn
 
-<div id="map"></div>
+</div></div><div class="box"><div class="title">
+🛵 Shipper
+</div><div class="grid"><button class="blue"
+onclick="daden()">
 
-</div>
+📍 Đã đến
 
-<div class="box">
+</button><button class="orange"
+onclick="layhang()">
 
-<h2>🛵 Shipper</h2>
+🌾 Lấy hàng
 
-<button class="blue">📍 Đã đến</button>
+</button><button class="green"
+onclick="digiao()">
 
-<button class="orange">🌾 Lấy hàng</button>
+🚚 Đi giao
 
-<button class="green">🚚 Đi giao</button>
+</button><button class="red"
+onclick="openMaps()">
 
-<button class="red" onclick="openMaps()">🗺️ Maps</button>
+🗺 Maps
 
-<button class="gray" onclick="hoanthanh()">✅ Hoàn thành</button>
+</button></div><button class="gray"
+onclick="hoanthanh()">
 
-<div class="ketqua" id="shipstatus">
-🚚 Đang chờ nhận đơn
-</div>
+✅ Hoàn thành
 
-</div>
+</button><div class="card"
+id="shipstatus">🚚 Đang chờ nhận đơn
 
-<div class="box">
+</div></div><div class="box"><div class="title">
+💰 Ví shipper
+</div><div class="big"
+id="vi">0đ
 
-<h2>💰 Ví shipper</h2>
+</div></div><div class="box"><div class="title">
+🗺 GPS Realtime
+</div><div id="map"></div></div><div style="height:120px"></div><div class="bottom"><div>
+🏠<br>Trang chủ
+</div><div>
+📦<br>Đơn
+</div><div>
+🛵<br>Shipper
+</div><div>
+💰<br>Ví
+</div></div><script>
 
-<div class="big" id="vi">0đ</div>
-
-</div>
-
-<div style="height:150px"></div>
-
-<div class="bottom">
-<div>🏠<br>Trang chủ</div>
-<div>📦<br>Đơn</div>
-<div>🛵<br>Shipper</div>
-<div>💰<br>Ví</div>
-<div>⚙️<br>Cài đặt</div>
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<script>
+let mode = "gao"
 
 let currentDon = null
-let shipperWallet = 0
 
-let map = L.map('map').setView([10.0452,105.7469],13)
+let wallet = 0
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-attribution:'OpenStreetMap'
-}).addTo(map)
+function chonmode(v){
 
-let marker = L.marker([10.0452,105.7469]).addTo(map)
+mode = v
+
+if(v=="gao"){
+
+document.getElementById(
+"gaobox"
+).style.display = "block"
+
+}else{
+
+document.getElementById(
+"gaobox"
+).style.display = "none"
+
+}
+
+}
+
+let map =
+L.map('map').setView(
+[10.0452,105.7469],
+13
+)
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+maxZoom:19
+}
+).addTo(map)
+
+let marker =
+L.marker([10.0452,105.7469])
+.addTo(map)
 
 function laygps(){
 
-navigator.geolocation.getCurrentPosition((pos)=>{
+navigator.geolocation.getCurrentPosition(
 
-let lat = pos.coords.latitude
-let lon = pos.coords.longitude
+(pos)=>{
 
-document.getElementById("pickup").value = lat + "," + lon
+let lat =
+pos.coords.latitude
 
-map.setView([lat,lon],16)
+let lon =
+pos.coords.longitude
 
-marker.setLatLng([lat,lon])
+document.getElementById(
+"pickup"
+).value =
+lat + "," + lon
 
-})
+map.setView(
+[lat,lon],
+16
+)
+
+marker.setLatLng(
+[lat,lon]
+)
+
+}
+
+)
 
 }
 
@@ -242,113 +316,204 @@ async function getLatLon(text){
 
 if(text.includes(",")){
 
-let tach = text.split(",")
+let t = text.split(",")
 
-return {
-lat:parseFloat(tach[0]),
-lon:parseFloat(tach[1])
+return{
+
+lat:parseFloat(t[0]),
+
+lon:parseFloat(t[1])
+
 }
 
 }
 
-let url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(text)
+let url =
+"https://nominatim.openstreetmap.org/search?format=json&q="
++ encodeURIComponent(text)
 
-let res = await fetch(url)
+let res =
+await fetch(url)
 
-let data = await res.json()
+let data =
+await res.json()
 
-return {
+return{
+
 lat:parseFloat(data[0].lat),
+
 lon:parseFloat(data[0].lon)
-}
 
 }
-
-function distance(lat1,lon1,lat2,lon2){
-
-let R = 6371
-
-let dLat = (lat2-lat1) * Math.PI/180
-let dLon = (lon2-lon1) * Math.PI/180
-
-let a =
-Math.sin(dLat/2) * Math.sin(dLat/2) +
-Math.cos(lat1*Math.PI/180) *
-Math.cos(lat2*Math.PI/180) *
-Math.sin(dLon/2) *
-Math.sin(dLon/2)
-
-let c = 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
-
-return R*c
 
 }
 
 async function taodon(){
 
-let pickup = document.getElementById("pickup").value
+try{
 
-let dropoff = document.getElementById("dropoff").value
+let pickup =
+document.getElementById(
+"pickup"
+).value
 
-let gia = parseInt(document.getElementById("loaixe").value)
+let dropoff =
+document.getElementById(
+"dropoff"
+).value
 
 if(!pickup || !dropoff){
 
-alert("Nhập đủ địa chỉ")
+alert("Nhập địa chỉ")
 
 return
 
 }
 
-let p1 = await getLatLon(pickup)
+let p1 =
+await getLatLon(pickup)
 
-let p2 = await getLatLon(dropoff)
+let p2 =
+await getLatLon(dropoff)
 
-let km = distance(p1.lat,p1.lon,p2.lat,p2.lon)
+let routeUrl =
+`https://router.project-osrm.org/route/v1/driving/${p1.lon},${p1.lat};${p2.lon},${p2.lat}?overview=false`
 
-let tong = Math.round(km * gia)
+let response =
+await fetch(routeUrl)
 
-currentDon = {
-tong:tong,
-distance:km
+let data =
+await response.json()
+
+let km =
+(
+data.routes[0].distance
+/1000
+).toFixed(1)
+
+let gia =
+parseInt(
+document.getElementById(
+"loaixe"
+).value
+)
+
+let tong =
+Math.round(km * gia)
+
+if(mode=="gao"){
+
+let kg =
+parseInt(
+document.getElementById(
+"kg"
+).value || 0
+)
+
+let giagao =
+parseInt(
+document.getElementById(
+"loaigao"
+).value
+)
+
+tong += kg * giagao
+
 }
 
-document.getElementById("ketqua").innerHTML = `
-🚕 <b>ĐƠN ĐẶT XE</b>
+currentDon = {
+
+tong:tong,
+km:km
+
+}
+
+document.getElementById(
+"ketqua"
+).innerHTML = `
+
+🚕 ĐƠN ĐẶT
 
 <br><br>
 
-<div class="big">${tong.toLocaleString()}đ</div>
+<div class="big">
 
-📏 Khoảng cách: ${km.toFixed(1)} km
+${tong.toLocaleString()}đ
+
+</div>
+
+📏 Khoảng cách thật:
+${km} km
 
 <br><br>
 
-🚖 Đang tìm tài xế
+🚚 Đang tìm tài xế
+
 `
 
 map.fitBounds([
+
 [p1.lat,p1.lon],
+
 [p2.lat,p2.lon]
+
 ])
 
-L.marker([p1.lat,p1.lon]).addTo(map)
+L.marker([
+p1.lat,
+p1.lon
+]).addTo(map)
 
-L.marker([p2.lat,p2.lon]).addTo(map)
+L.marker([
+p2.lat,
+p2.lon
+]).addTo(map)
+
+}catch(e){
+
+alert("Không tìm được địa chỉ")
+
+}
+
+}
+
+function daden(){
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+"📍 Đã đến nơi"
+
+}
+
+function layhang(){
+
+fetch("/mo")
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+"🌾 Đã lấy hàng"
+
+}
+
+function digiao(){
+
+document.getElementById(
+"shipstatus"
+).innerHTML =
+
+"🚚 Đang giao hàng"
 
 }
 
 function openMaps(){
 
-if(!currentDon){
-
-alert("Chưa có đơn")
-
-return
-
-}
-
-window.open("https://maps.google.com")
+window.open(
+"https://maps.google.com"
+)
 
 }
 
@@ -362,41 +527,49 @@ return
 
 }
 
-let tong = currentDon.tong
+let tong =
+currentDon.tong
 
-let tru = tong * 0.165
+let tru =
+tong * 0.165
 
-let shipperNhan = tong - tru
+let nhan =
+tong - tru
 
-shipperWallet += shipperNhan
+wallet += nhan
 
-document.getElementById("vi").innerHTML =
-shipperWallet.toLocaleString() + "đ"
+document.getElementById(
+"vi"
+).innerHTML =
 
-document.getElementById("shipstatus").innerHTML = `
+Math.round(wallet)
+.toLocaleString()
++ "đ"
+
+document.getElementById(
+"shipstatus"
+).innerHTML = `
 
 ✅ Giao thành công
 
 <br><br>
 
-💵 Đã thu khách:
+💵 Đã thu:
 ${tong.toLocaleString()}đ
 
 <br><br>
 
-💸 Trừ phí + hoa hồng:
+💸 Trừ phí:
 ${Math.round(tru).toLocaleString()}đ
 
 <br><br>
 
 💰 Shipper nhận:
-${Math.round(shipperNhan).toLocaleString()}đ
+${Math.round(nhan).toLocaleString()}đ
 
 `
 
 }
 
-</script>
-
-</body>
+</script></body>
 </html>
