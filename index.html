@@ -1,623 +1,679 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+// ====================================
+// 🌾 NAMRICE AUTO - REAL SERVER
+// ====================================
 
-<title>NamRice Auto</title>
+const express = require("express")
+const axios = require("axios")
+const cors = require("cors")
+const http = require("http")
+const { Server } = require("socket.io")
 
-<link
-rel="stylesheet"
-href="https://unpkg.com/leaflet/dist/leaflet.css"
-/>
+const app = express()
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+const server = http.createServer(app)
 
-<style>
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+})
 
-body{
+app.use(cors())
+app.use(express.json())
+app.use(express.static("public"))
 
-margin:0;
-font-family:Arial;
-background:#edf1f4;
+// ====================================
+// ⚙️ CONFIG
+// ====================================
 
-}
+const PORT = process.env.PORT || 3000
 
-.header{
+const MACHINE = {
 
-background:#00c853;
-color:white;
-padding:30px;
-font-size:45px;
-font-weight:bold;
-border-bottom-left-radius:30px;
-border-bottom-right-radius:30px;
+  name: "Máy bán gạo A4",
 
-}
+  address: "Đường A4 Cần Thơ",
 
-.box{
+  lat: 10.0452,
 
-background:white;
-margin:20px;
-padding:20px;
-border-radius:30px;
+  lon: 105.7469
 
 }
 
-input,
-select{
+const SYSTEM_FEE = 0.165
 
-width:100%;
-padding:20px;
-font-size:20px;
-border:none;
-border-radius:20px;
-margin-top:15px;
-background:#f1f1f1;
-box-sizing:border-box;
+// ====================================
+// 💰 PRICE
+// ====================================
 
-}
+const PRICE = {
 
-button{
+  rice: {
 
-width:100%;
-padding:22px;
-font-size:24px;
-font-weight:bold;
-border:none;
-border-radius:20px;
-margin-top:15px;
-color:white;
+    st25: 180000,
 
-}
+    jasmine: 220000
 
-.green{
+  },
 
-background:#00c853;
+  ride: {
 
-}
+    bike: 8000,
 
-.blue{
+    car4: 13000,
 
-background:#2962ff;
+    car7: 18000
 
-}
+  },
 
-.orange{
+  delivery: {
 
-background:orange;
+    bike: 8000,
+
+    truck500: 13000,
+
+    truck1t: 18000,
+
+    truck25: 22000,
+
+    truck35: 26000
+
+  }
 
 }
 
-.red{
+// ====================================
+// 🗃 DATABASE
+// ====================================
 
-background:#ff3d00;
+let orders = []
+
+let shippers = []
+
+// ====================================
+// 🗺 GET LATLON
+// ====================================
+
+async function getLatLon(address){
+
+  const url =
+  `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
+
+  const res = await axios.get(url)
+
+  if(!res.data[0]){
+
+    throw new Error("Address not found")
+
+  }
+
+  return {
+
+    lat: parseFloat(res.data[0].lat),
+
+    lon: parseFloat(res.data[0].lon)
+
+  }
 
 }
 
-.gray{
-
-background:#555;
-
-}
-
-.big{
-
-font-size:70px;
-font-weight:bold;
-color:#00c853;
-word-break:break-word;
-
-}
-
-#map{
-
-height:400px;
-border-radius:20px;
-margin-top:20px;
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="header">
-
-🌾 NamRice Auto
-
-</div>
-
-<div class="box">
-
-<h1>🛒 Đặt đơn</h1>
-
-<button
-class="green"
-onclick="mode='gao'"
->
-
-🌾 Giao gạo
-
-</button>
-
-<button
-class="blue"
-onclick="mode='xe'"
->
-
-🚕 Đặt xe
-
-</button>
-
-<input
-id="pickup"
-value="đường A4 cần thơ"
-style="display:none"
->
-
-<input
-id="dropoff"
-placeholder="📍 Điểm đến"
->
-
-<select id="loaixe">
-
-<option value="8000">
-🛵 Xe máy - 8k/km
-</option>
-
-<option value="13000">
-🚗 Xe 4 chỗ - 13k/km
-</option>
-
-<option value="18000">
-🚙 Xe 7 chỗ - 18k/km
-</option>
-
-</select>
-
-<select id="loaigao">
-
-<option value="18000">
-🌾 ST25 - 18k/kg
-</option>
-
-<option value="22000">
-🌾 Jasmine - 22k/kg
-</option>
-
-</select>
-
-<input
-id="kg"
-type="number"
-placeholder="Số kg gạo"
-value="5"
->
-
-<button
-class="green"
-onclick="taodon()"
->
-
-🛒 ĐẶT NGAY
-
-</button>
-
-<div
-id="ketqua"
-style="
-margin-top:20px;
-font-size:22px;
-"
->
-
-Chưa có đơn
-
-</div>
-
-</div>
-
-<div class="box">
-
-<h1>🗺 GPS Realtime</h1>
-
-<div id="map"></div>
-
-</div>
-
-<div class="box">
-
-<h1>🛵 Shipper</h1>
-
-<button
-class="blue"
-onclick="daden()"
->
-
-📍 Đã đến
-
-</button>
-
-<button
-class="orange"
-onclick="layhang()"
->
-
-🌾 Lấy hàng
-
-</button>
-
-<button
-class="green"
-onclick="digiao()"
->
-
-🚚 Đi giao
-
-</button>
-
-<button
-class="red"
-onclick="openMaps()"
->
-
-🗺 Maps
-
-</button>
-
-<button
-class="gray"
-onclick="hoanthanh()"
->
-
-✅ Hoàn thành
-
-</button>
-
-<div
-id="shipstatus"
-style="
-margin-top:20px;
-font-size:22px;
-"
->
-
-🚚 Đang chờ nhận đơn
-
-</div>
-
-</div>
-
-<div class="box">
-
-<h1>💰 Ví shipper</h1>
-
-<div
-id="vi"
-class="big"
->
-
-250.000đ
-
-</div>
-
-</div>
-
-<script>
-
-let mode = "gao"
-
-let currentDon = null
-
-let wallet = 250000
-
-let map =
-L.map('map').setView(
-[10.0452,105.7469],
-13
-)
-
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-maxZoom:19
-}
-).addTo(map)
-
-async function getLatLon(diachi){
-
-let url =
-"https://nominatim.openstreetmap.org/search?format=json&q="
-+
-encodeURIComponent(diachi)
-
-let res =
-await fetch(url)
-
-let data =
-await res.json()
-
-if(data.length==0){
-
-throw "Không tìm được"
-
-}
-
-return {
-
-lat:parseFloat(data[0].lat),
-lon:parseFloat(data[0].lon)
-
-}
-
-}
-
-async function taodon(){
-
-try{
-
-let pickup =
-"đường A4 cần thơ"
-
-let dropoff =
-document.getElementById(
-"dropoff"
-).value
-
-if(!dropoff){
-
-alert("Nhập điểm đến")
-return
-
-}
-
-let p1 =
-await getLatLon(pickup)
-
-let p2 =
-await getLatLon(dropoff)
-
-let routeUrl =
-`https://router.project-osrm.org/route/v1/driving/${p1.lon},${p1.lat};${p2.lon},${p2.lat}?overview=full&geometries=geojson`
-
-let response =
-await fetch(routeUrl)
-
-let data =
-await response.json()
-
-if(!data.routes[0]){
-
-alert("Không tìm được đường")
-return
-
-}
-
-let route =
-data.routes[0]
-
-let km =
-(route.distance/1000).toFixed(1)
-
-let gia =
-parseInt(
-document.getElementById(
-"loaixe"
-).value
-)
-
-let tong =
-Math.round(km * gia)
-
-if(mode=="gao"){
-
-let kg =
-parseInt(
-document.getElementById(
-"kg"
-).value
-)
-
-let giagao =
-parseInt(
-document.getElementById(
-"loaigao"
-).value
-)
-
-tong += kg * giagao
-
-}
-
-currentDon = {
-
-tong:tong,
-km:km
-
-}
-
-window.mapLink =
-`https://www.google.com/maps/dir/${p1.lat},${p1.lon}/${p2.lat},${p2.lon}`
-
-document.getElementById(
-"ketqua"
-).innerHTML = `
-
-🚕 ĐƠN ĐẶT XE
-
-<br><br>
-
-<div class="big">
-
-${tong.toLocaleString()}đ
-
-</div>
-
-<br>
-
-📏 Khoảng cách thật:
-${km} km
-
-<br><br>
-
-🚚 Đang tìm tài xế
-
-<br><br>
-
-<button
-onclick="openMaps()"
-class="blue"
->
-
-🗺 Chỉ đường thật
-
-</button>
-
-`
-
-map.eachLayer((layer)=>{
-
-if(
-layer instanceof L.Marker ||
-layer instanceof L.Polyline
+// ====================================
+// 🗺 GET REAL ROUTE
+// ====================================
+
+async function getRoute(
+  lat1,
+  lon1,
+  lat2,
+  lon2
 ){
 
-map.removeLayer(layer)
+  const url =
+  `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`
+
+  const res = await axios.get(url)
+
+  return res.data.routes[0]
 
 }
+
+// ====================================
+// 🌾 CREATE RICE ORDER
+// ====================================
+
+app.post("/api/order/rice", async(req,res)=>{
+
+  try{
+
+    const {
+
+      riceType,
+
+      bags,
+
+      customerAddress
+
+    } = req.body
+
+    const customer =
+    await getLatLon(customerAddress)
+
+    const route =
+    await getRoute(
+
+      MACHINE.lat,
+      MACHINE.lon,
+
+      customer.lat,
+      customer.lon
+
+    )
+
+    const km =
+    route.distance / 1000
+
+    const shippingFee =
+    km * PRICE.ride.bike
+
+    const riceFee =
+    bags * PRICE.rice[riceType]
+
+    const total =
+    Math.round(shippingFee + riceFee)
+
+    const order = {
+
+      id: Date.now(),
+
+      type: "rice",
+
+      riceType,
+
+      bags,
+
+      totalKg: bags * 5,
+
+      machine: MACHINE,
+
+      customerAddress,
+
+      customer,
+
+      route,
+
+      km,
+
+      shippingFee,
+
+      riceFee,
+
+      total,
+
+      status: "waiting_shipper",
+
+      createdAt: new Date()
+
+    }
+
+    orders.push(order)
+
+    io.emit("new_order", order)
+
+    res.json({
+
+      success:true,
+
+      order
+
+    })
+
+  }catch(err){
+
+    res.status(500).json({
+
+      success:false,
+
+      message: err.message
+
+    })
+
+  }
 
 })
 
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-maxZoom:19
-}
-).addTo(map)
+// ====================================
+// 🚕 CREATE RIDE ORDER
+// ====================================
 
-L.marker([
-p1.lat,
-p1.lon
-]).addTo(map)
+app.post("/api/order/ride", async(req,res)=>{
 
-L.marker([
-p2.lat,
-p2.lon
-]).addTo(map)
+  try{
 
-let coords =
-route.geometry.coordinates.map(c=>[
-c[1],
-c[0]
-])
+    const {
 
-L.polyline(coords,{
-color:'blue',
-weight:6
-}).addTo(map)
+      pickup,
 
-map.fitBounds(coords)
+      destination,
 
-}catch(e){
+      vehicle
 
-alert("Không tìm được địa chỉ")
+    } = req.body
 
-}
+    const pickupLocation =
+    await getLatLon(pickup)
 
-}
+    const destinationLocation =
+    await getLatLon(destination)
 
-function openMaps(){
+    const route =
+    await getRoute(
 
-window.open(
-window.mapLink,
-"_blank"
-)
+      pickupLocation.lat,
+      pickupLocation.lon,
 
-}
+      destinationLocation.lat,
+      destinationLocation.lon
 
-function daden(){
+    )
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
-"📍 Đã đến nơi"
+    const km =
+    route.distance / 1000
 
-}
+    const total =
+    Math.round(
+      km * PRICE.ride[vehicle]
+    )
 
-function layhang(){
+    const order = {
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
-"🌾 Đã lấy hàng"
+      id: Date.now(),
 
-}
+      type:"ride",
 
-function digiao(){
+      pickup,
 
-document.getElementById(
-"shipstatus"
-).innerHTML =
-"🚚 Đang giao hàng"
+      destination,
 
-}
+      vehicle,
 
-function hoanthanh(){
+      pickupLocation,
 
-if(!currentDon){
+      destinationLocation,
 
-alert("Chưa có đơn")
-return
+      route,
 
-}
+      km,
 
-let tong =
-currentDon.tong
+      total,
 
-let tru =
-tong * 0.165
+      status:"waiting_shipper",
 
-let nhan =
-tong - tru
+      createdAt:new Date()
 
-wallet += nhan
+    }
 
-document.getElementById(
-"vi"
-).innerHTML =
-Math.round(wallet).toLocaleString()
-+
-"đ"
+    orders.push(order)
 
-document.getElementById(
-"shipstatus"
-).innerHTML = `
+    io.emit("new_order", order)
 
-✅ Giao thành công
+    res.json({
 
-<br><br>
+      success:true,
 
-💵 Đã thu:
-${tong.toLocaleString()}đ
+      order
 
-<br><br>
+    })
 
-💸 Trừ phí:
-${Math.round(tru).toLocaleString()}đ
+  }catch(err){
 
-<br><br>
+    res.status(500).json({
 
-💰 Shipper nhận:
-${Math.round(nhan).toLocaleString()}đ
+      success:false,
 
-`
+      message: err.message
 
-}
+    })
 
-</script>
+  }
 
-</body>
-</html>
+})
+
+// ====================================
+// 📦 CREATE DELIVERY ORDER
+// ====================================
+
+app.post("/api/order/delivery", async(req,res)=>{
+
+  try{
+
+    const {
+
+      pickup,
+
+      destination,
+
+      vehicle
+
+    } = req.body
+
+    const pickupLocation =
+    await getLatLon(pickup)
+
+    const destinationLocation =
+    await getLatLon(destination)
+
+    const route =
+    await getRoute(
+
+      pickupLocation.lat,
+      pickupLocation.lon,
+
+      destinationLocation.lat,
+      destinationLocation.lon
+
+    )
+
+    const km =
+    route.distance / 1000
+
+    const total =
+    Math.round(
+      km *
+      PRICE.delivery[vehicle]
+    )
+
+    const order = {
+
+      id: Date.now(),
+
+      type:"delivery",
+
+      pickup,
+
+      destination,
+
+      vehicle,
+
+      pickupLocation,
+
+      destinationLocation,
+
+      route,
+
+      km,
+
+      total,
+
+      status:"waiting_shipper",
+
+      createdAt:new Date()
+
+    }
+
+    orders.push(order)
+
+    io.emit("new_order", order)
+
+    res.json({
+
+      success:true,
+
+      order
+
+    })
+
+  }catch(err){
+
+    res.status(500).json({
+
+      success:false,
+
+      message: err.message
+
+    })
+
+  }
+
+})
+
+// ====================================
+// 🛵 SHIPPER RECEIVE ORDER
+// ====================================
+
+app.post("/api/shipper/receive", (req,res)=>{
+
+  const {
+
+    orderId,
+
+    shipperId
+
+  } = req.body
+
+  const order =
+  orders.find(
+    o => o.id == orderId
+  )
+
+  if(!order){
+
+    return res.json({
+
+      success:false
+
+    })
+
+  }
+
+  order.status =
+  "shipper_received"
+
+  order.shipperId =
+  shipperId
+
+  io.emit(
+    "order_updated",
+    order
+  )
+
+  res.json({
+
+    success:true,
+
+    order
+
+  })
+
+})
+
+// ====================================
+// 📍 SHIPPER ARRIVED
+// ====================================
+
+app.post("/api/shipper/arrived", (req,res)=>{
+
+  const {orderId} = req.body
+
+  const order =
+  orders.find(
+    o => o.id == orderId
+  )
+
+  if(!order){
+
+    return res.json({
+
+      success:false
+
+    })
+
+  }
+
+  order.status =
+  "arrived"
+
+  io.emit(
+    "order_updated",
+    order
+  )
+
+  res.json({
+
+    success:true,
+
+    order
+
+  })
+
+})
+
+// ====================================
+// 🌾 OPEN ESP32
+// ====================================
+
+app.post("/api/machine/open", async(req,res)=>{
+
+  try{
+
+    await axios.get(
+      "http://192.168.1.14/mo"
+    )
+
+    res.json({
+
+      success:true
+
+    })
+
+  }catch(err){
+
+    res.json({
+
+      success:false,
+
+      message:
+      "ESP32 offline"
+
+    })
+
+  }
+
+})
+
+// ====================================
+// ✅ COMPLETE ORDER
+// ====================================
+
+app.post("/api/order/complete", (req,res)=>{
+
+  const {orderId} = req.body
+
+  const order =
+  orders.find(
+    o => o.id == orderId
+  )
+
+  if(!order){
+
+    return res.json({
+
+      success:false
+
+    })
+
+  }
+
+  const fee =
+  Math.round(
+    order.total *
+    SYSTEM_FEE
+  )
+
+  const shipperReceive =
+  order.total - fee
+
+  order.status =
+  "completed"
+
+  order.systemFee =
+  fee
+
+  order.shipperReceive =
+  shipperReceive
+
+  io.emit(
+    "order_completed",
+    order
+  )
+
+  res.json({
+
+    success:true,
+
+    customerPaid:
+    order.total,
+
+    systemFee:fee,
+
+    shipperReceive
+
+  })
+
+})
+
+// ====================================
+// 📦 GET ORDERS
+// ====================================
+
+app.get("/api/orders",(req,res)=>{
+
+  res.json(orders)
+
+})
+
+// ====================================
+// 🔌 SOCKET
+// ====================================
+
+io.on("connection",(socket)=>{
+
+  console.log(
+    "🟢 Client connected"
+  )
+
+  socket.on(
+    "shipper_location",
+    (data)=>{
+
+      io.emit(
+        "shipper_location_update",
+        data
+      )
+
+    }
+  )
+
+  socket.on(
+    "disconnect",
+    ()=>{
+
+      console.log(
+        "🔴 Client disconnected"
+      )
+
+    }
+  )
+
+})
+
+// ====================================
+// 🚀 START
+// ====================================
+
+server.listen(PORT,()=>{
+
+  console.log(
+    `🌾 NamRice Auto Running Port ${PORT}`
+  )
+
+})
