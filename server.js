@@ -38,7 +38,7 @@ app.post("/sepay", (req, res) => {
 
 const apiKey = req.headers["authorization"];
 
-if (apiKey !== process.env.SEPAY_API_KEY SD2L7YWAGSCEJA0NJO4NTVIK8Q4V2T1U3CPMXMV3GGLDHKPPQX1W6HJBUWTEWYSU) {
+if (apiKey !== process.env.SEPAY_API_KEY) {
 
     return res.status(403).send("Forbidden");
 }    
