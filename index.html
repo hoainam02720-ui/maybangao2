@@ -1,67 +1,71 @@
-<!DOCTYPE html><html>
-<head><meta charset="UTF-8"><meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NamRice Auto</title><link
-rel="stylesheet"
-href="https://unpkg.com/leaflet/dist/leaflet.css"
-/><script
-src="https://unpkg.com/leaflet/dist/leaflet.js">
-</script><style>
+<title>NamRice Auto</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
 
 body{
-
 margin:0;
 padding:0;
-background:#eceff1;
 font-family:Arial;
-
+background:#eceff1;
 }
 
-.header{
-
+.top{
 background:#00c853;
+padding:40px;
+border-radius:0 0 35px 35px;
 color:white;
-padding:30px;
-font-size:55px;
-font-weight:bold;
-border-radius:0 0 40px 40px;
+}
 
+.top h1{
+margin:0;
+font-size:60px;
+}
+
+.top p{
+font-size:30px;
+margin-top:10px;
 }
 
 .box{
-
 background:white;
-margin:25px;
+margin:20px;
 padding:25px;
-border-radius:35px;
+border-radius:30px;
+}
 
+h2{
+font-size:55px;
+margin-top:0;
 }
 
 input,select{
-
 width:100%;
-padding:25px;
-font-size:40px;
-margin-top:20px;
+padding:22px;
+font-size:35px;
+margin-top:15px;
 border:none;
-border-radius:25px;
+border-radius:20px;
 background:#f1f1f1;
 box-sizing:border-box;
-
 }
 
 button{
-
 width:100%;
-padding:25px;
-font-size:45px;
-font-weight:bold;
+padding:22px;
+font-size:38px;
 border:none;
-border-radius:25px;
+border-radius:22px;
 margin-top:20px;
+font-weight:bold;
 color:white;
-
 }
 
 .green{
@@ -72,282 +76,327 @@ background:#00c853;
 background:#2962ff;
 }
 
-#map{
+.orange{
+background:#ff9800;
+}
 
+.red{
+background:#ff3d00;
+}
+
+.gray{
+background:#616161;
+}
+
+.ketqua{
+background:#f5f5f5;
+padding:25px;
+border-radius:25px;
+margin-top:25px;
+font-size:35px;
+overflow:auto;
+}
+
+.big{
+font-size:90px;
+color:#00c853;
+font-weight:bold;
+}
+
+#map{
 height:500px;
 border-radius:25px;
 margin-top:20px;
-
 }
 
-</style></head><body><div class="header">🌾 NamRice Auto
-
-</div><div class="box"><h1>🚕 Đặt xe</h1><button
-class="blue"
-onclick="laygps()">
-
-📍 Lấy GPS hiện tại
-
-</button><input
-id="pickup"
-placeholder="Điểm đón"
-/>
-
-<input
-id="dropoff"
-placeholder="Điểm đến"
-/>
-
-<select id="loaixe"><option>Xe máy</option><option>Xe 4 chỗ</option><option>Xe tải</option></select><button
-class="green"
-onclick="taodon()">
-
-🛒 ĐẶT NGAY
-
-</button><div id="ketqua"></div></div><div class="box"><h1>🗺 GPS Realtime</h1><div id="map"></div></div><script>
-
-let map =
-L.map('map').setView(
-[10.0452,105.7469],
-13
-)
-
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-maxZoom:19
+.bottom{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:20px;
+font-size:30px;
+box-shadow:0 -2px 10px rgba(0,0,0,0.2);
 }
-).addTo(map)
 
-let marker =
-L.marker(
-[10.0452,105.7469]
-).addTo(map)
+.bottom div{
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="top">
+<h1>🌾 NamRice Auto</h1>
+<p>Đặt xe • Giao gạo • GPS realtime</p>
+</div>
+
+<div class="box">
+
+<h2>🛒 Đặt xe</h2>
+
+<button class="blue" onclick="laygps()">📍 Lấy GPS hiện tại</button>
+
+<input id="pickup" placeholder="Điểm đón">
+
+<input id="dropoff" placeholder="Điểm đến">
+
+<select id="loaixe">
+<option value="8000">🛵 Xe máy - 8k/km</option>
+<option value="13000">🚗 Xe 4 chỗ - 13k/km</option>
+<option value="18000">🚙 Xe 7 chỗ - 18k/km</option>
+</select>
+
+<button class="green" onclick="taodon()">🛒 ĐẶT NGAY</button>
+
+<div class="ketqua" id="ketqua">
+Chưa có đơn
+</div>
+
+</div>
+
+<div class="box">
+
+<h2>🗺️ GPS Realtime</h2>
+
+<div id="map"></div>
+
+</div>
+
+<div class="box">
+
+<h2>🛵 Shipper</h2>
+
+<button class="blue">📍 Đã đến</button>
+
+<button class="orange">🌾 Lấy hàng</button>
+
+<button class="green">🚚 Đi giao</button>
+
+<button class="red" onclick="openMaps()">🗺️ Maps</button>
+
+<button class="gray" onclick="hoanthanh()">✅ Hoàn thành</button>
+
+<div class="ketqua" id="shipstatus">
+🚚 Đang chờ nhận đơn
+</div>
+
+</div>
+
+<div class="box">
+
+<h2>💰 Ví shipper</h2>
+
+<div class="big" id="vi">0đ</div>
+
+</div>
+
+<div style="height:150px"></div>
+
+<div class="bottom">
+<div>🏠<br>Trang chủ</div>
+<div>📦<br>Đơn</div>
+<div>🛵<br>Shipper</div>
+<div>💰<br>Ví</div>
+<div>⚙️<br>Cài đặt</div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+let currentDon = null
+let shipperWallet = 0
+
+let map = L.map('map').setView([10.0452,105.7469],13)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+attribution:'OpenStreetMap'
+}).addTo(map)
+
+let marker = L.marker([10.0452,105.7469]).addTo(map)
 
 function laygps(){
 
-navigator.geolocation.getCurrentPosition(
+navigator.geolocation.getCurrentPosition((pos)=>{
 
-function(pos){
+let lat = pos.coords.latitude
+let lon = pos.coords.longitude
 
-let lat =
-pos.coords.latitude
+document.getElementById("pickup").value = lat + "," + lon
 
-let lon =
-pos.coords.longitude
+map.setView([lat,lon],16)
 
-document.getElementById("pickup").value =
-lat + "," + lon
+marker.setLatLng([lat,lon])
 
-map.setView(
-[lat,lon],
-16
-)
-
-marker.setLatLng(
-[lat,lon]
-)
+})
 
 }
 
-)
+async function getLatLon(text){
+
+if(text.includes(",")){
+
+let tach = text.split(",")
+
+return {
+lat:parseFloat(tach[0]),
+lon:parseFloat(tach[1])
+}
+
+}
+
+let url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(text)
+
+let res = await fetch(url)
+
+let data = await res.json()
+
+return {
+lat:parseFloat(data[0].lat),
+lon:parseFloat(data[0].lon)
+}
+
+}
+
+function distance(lat1,lon1,lat2,lon2){
+
+let R = 6371
+
+let dLat = (lat2-lat1) * Math.PI/180
+let dLon = (lon2-lon1) * Math.PI/180
+
+let a =
+Math.sin(dLat/2) * Math.sin(dLat/2) +
+Math.cos(lat1*Math.PI/180) *
+Math.cos(lat2*Math.PI/180) *
+Math.sin(dLon/2) *
+Math.sin(dLon/2)
+
+let c = 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+
+return R*c
 
 }
 
 async function taodon(){
 
-let pickup =
-document.getElementById("pickup").value
+let pickup = document.getElementById("pickup").value
 
-let dropoff =
-document.getElementById("dropoff").value
+let dropoff = document.getElementById("dropoff").value
 
-let loaixe =
-document.getElementById("loaixe").value
+let gia = parseInt(document.getElementById("loaixe").value)
 
 if(!pickup || !dropoff){
 
-alert("Nhập địa chỉ")
+alert("Nhập đủ địa chỉ")
 
 return
 
 }
 
-let pick =
-await timtoado(pickup)
+let p1 = await getLatLon(pickup)
 
-let drop =
-await timtoado(dropoff)
+let p2 = await getLatLon(dropoff)
 
-let distance =
-getDistanceFromLatLonInKm(
+let km = distance(p1.lat,p1.lon,p2.lat,p2.lon)
 
-pick.lat,
-pick.lon,
+let tong = Math.round(km * gia)
 
-drop.lat,
-drop.lon
-
-)
-
-let gia = 8000
-
-if(loaixe=="Xe 4 chỗ"){
-gia = 13000
+currentDon = {
+tong:tong,
+distance:km
 }
 
-if(loaixe=="Xe tải"){
-gia = 20000
-}
+document.getElementById("ketqua").innerHTML = `
+🚕 <b>ĐƠN ĐẶT XE</b>
 
-let tong =
-Math.round(distance * gia)
+<br><br>
 
-document.getElementById("ketqua").innerHTML =
+<div class="big">${tong.toLocaleString()}đ</div>
 
-`
-
-<div style="
-background:#f5f5f5;
-padding:25px;
-border-radius:25px;
-margin-top:20px;
-">
-
-<h1>
-🚕 ĐƠN ĐẶT XE
-</h1>
-
-<div style="
-font-size:70px;
-color:#00c853;
-font-weight:bold;
-">
-
-${tong.toLocaleString()}đ
-
-</div>
-
-<br>
-
-📏 Khoảng cách:
-${distance.toFixed(1)} km
+📏 Khoảng cách: ${km.toFixed(1)} km
 
 <br><br>
 
 🚖 Đang tìm tài xế
+`
 
-</div>
+map.fitBounds([
+[p1.lat,p1.lon],
+[p2.lat,p2.lon]
+])
+
+L.marker([p1.lat,p1.lon]).addTo(map)
+
+L.marker([p2.lat,p2.lon]).addTo(map)
+
+}
+
+function openMaps(){
+
+if(!currentDon){
+
+alert("Chưa có đơn")
+
+return
+
+}
+
+window.open("https://maps.google.com")
+
+}
+
+function hoanthanh(){
+
+if(!currentDon){
+
+alert("Chưa có đơn")
+
+return
+
+}
+
+let tong = currentDon.tong
+
+let tru = tong * 0.165
+
+let shipperNhan = tong - tru
+
+shipperWallet += shipperNhan
+
+document.getElementById("vi").innerHTML =
+shipperWallet.toLocaleString() + "đ"
+
+document.getElementById("shipstatus").innerHTML = `
+
+✅ Giao thành công
+
+<br><br>
+
+💵 Đã thu khách:
+${tong.toLocaleString()}đ
+
+<br><br>
+
+💸 Trừ phí + hoa hồng:
+${Math.round(tru).toLocaleString()}đ
+
+<br><br>
+
+💰 Shipper nhận:
+${Math.round(shipperNhan).toLocaleString()}đ
 
 `
 
-map.setView(
-[drop.lat,drop.lon],
-15
-)
-
-marker.setLatLng(
-[drop.lat,drop.lon]
-)
-
 }
 
-async function timtoado(diachi){
+</script>
 
-if(diachi.includes(",")){
-
-let p =
-diachi.split(",")
-
-return{
-
-lat:parseFloat(p[0]),
-
-lon:parseFloat(p[1])
-
-}
-
-}
-
-let url =
-
-"https://nominatim.openstreetmap.org/search?format=json&q="
-
-+ encodeURIComponent(diachi)
-
-let res =
-await fetch(url)
-
-let data =
-await res.json()
-
-if(data.length==0){
-
-alert("Không tìm thấy địa chỉ")
-
-throw new Error()
-
-}
-
-return{
-
-lat:
-parseFloat(data[0].lat),
-
-lon:
-parseFloat(data[0].lon)
-
-}
-
-}
-
-function getDistanceFromLatLonInKm(
-lat1,
-lon1,
-lat2,
-lon2
-){
-
-let R = 6371
-
-let dLat =
-deg2rad(lat2-lat1)
-
-let dLon =
-deg2rad(lon2-lon1)
-
-let a =
-
-Math.sin(dLat/2) *
-Math.sin(dLat/2)
-
-+
-
-Math.cos(deg2rad(lat1)) *
-
-Math.cos(deg2rad(lat2)) *
-
-Math.sin(dLon/2) *
-
-Math.sin(dLon/2)
-
-let c =
-
-2 * Math.atan2(
-Math.sqrt(a),
-Math.sqrt(1-a)
-)
-
-return R * c
-
-}
-
-function deg2rad(deg){
-
-return deg *
-(Math.PI/180)
-
-}
-
-</script></body>
+</body>
 </html>
