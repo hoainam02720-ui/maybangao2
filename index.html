@@ -24,7 +24,7 @@ header{
 background:#00c853;
 padding:25px;
 color:white;
-font-size:25px;
+font-size:28px;
 font-weight:bold;
 border-bottom-left-radius:25px;
 border-bottom-right-radius:25px;
@@ -59,16 +59,19 @@ color:white;
 margin-top:12px;
 }
 
-.green{background:#00c853;}
-.blue{background:#1565ff;}
-.orange{background:#ff9800;}
-.red{background:#ff3d3d;}
+.blue{
+background:#1565ff;
+}
+
+.green{
+background:#00c853;
+}
 
 .card{
 background:#f5f7fb;
 padding:20px;
 border-radius:20px;
-margin-top:15px;
+margin-top:20px;
 font-size:20px;
 }
 
@@ -97,7 +100,7 @@ margin-top:20px;
 
 <div class="box">
 
-<h2>🛒 Đặt đơn</h2>
+<h2>🛒 Đặt xe</h2>
 
 <button class="blue"
 onclick="laygps()">
@@ -108,12 +111,12 @@ onclick="laygps()">
 
 <input
 id="pickup"
-placeholder="Điểm đón: 10.0452,105.7469"
+placeholder="Điểm đón"
 >
 
 <input
 id="destination"
-placeholder="Điểm đến: 10.029,105.768"
+placeholder="Điểm đến VD: Bến Ninh Kiều"
 >
 
 <select id="vehicle">
@@ -126,8 +129,8 @@ placeholder="Điểm đến: 10.029,105.768"
 🚗 Xe 4 chỗ - 13k/km
 </option>
 
-<option value="14000">
-🚙 Xe 7 chỗ - 14k/km
+<option value="15000">
+🚙 Xe 7 chỗ - 15k/km
 </option>
 
 </select>
@@ -190,7 +193,9 @@ document.getElementById(
 lat + "," + lon
 
 if(marker){
+
 map.removeLayer(marker)
+
 }
 
 marker =
@@ -204,14 +209,37 @@ map.setView([lat,lon],15)
 
 }
 
+async function timtoado(place){
+
+let url =
+
+`https://nominatim.openstreetmap.org/search?format=json&q=${place}`
+
+let res =
+await fetch(url)
+
+let data =
+await res.json()
+
+return {
+
+lat:data[0].lat,
+lon:data[0].lon
+
+}
+
+}
+
 async function taodon(){
 
-const pickup =
+try{
+
+let pickup =
 document.getElementById(
 "pickup"
 ).value
 
-const destination =
+let destination =
 document.getElementById(
 "destination"
 ).value
@@ -221,54 +249,54 @@ pickup=="" ||
 destination==""
 ){
 
-alert("Nhập đủ địa chỉ")
+alert("Nhập địa chỉ")
 
 return
 
 }
 
-const p =
+let p =
 pickup.split(",")
 
-const d =
-destination.split(",")
-
-const lat1 =
+let lat1 =
 parseFloat(p[0])
 
-const lon1 =
+let lon1 =
 parseFloat(p[1])
 
-const lat2 =
-parseFloat(d[0])
+let des =
+await timtoado(destination)
 
-const lon2 =
-parseFloat(d[1])
+let lat2 =
+des.lat
 
-const url =
+let lon2 =
+des.lon
+
+let routeUrl =
 
 `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
 
-const response =
-await fetch(url)
+let response =
+await fetch(routeUrl)
 
-const data =
+let data =
 await response.json()
 
-const km =
+let km =
 (
 data.routes[0].distance
 /1000
 ).toFixed(1)
 
-const gia =
+let gia =
 Number(
 document.getElementById(
 "vehicle"
 ).value
 )
 
-const tong =
+let tong =
 Math.floor(km * gia)
 
 document.getElementById(
@@ -290,9 +318,21 @@ ${km} km
 
 <br><br>
 
-🚚 Đang tìm tài xế
+🚖 Đang tìm tài xế
 
 `
+
+L.marker([lat2,lon2])
+.addTo(map)
+
+map.setView([lat2,lon2],13)
+
+}
+catch(e){
+
+alert("Không tìm được địa điểm")
+
+}
 
 }
 
