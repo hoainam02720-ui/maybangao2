@@ -19,20 +19,18 @@ app.get("/", (req, res) => {
 //========================
 // ESP32 CHECK
 //========================
+
 app.get("/check", (req, res) => {
 
     if (trangThaiMo) {
-
-        console.log("GUI LENH OPEN");
 
         trangThaiMo = false;
 
         return res.send("OPEN");
     }
 
-    res.send("OPEN");
+    res.send("WAIT");
 });
-
 //========================
 // SEPAY WEBHOOK
 //========================
