@@ -30,7 +30,7 @@ app.get("/check", (req, res) => {
         return res.send("OPEN");
     }
 
-    res.send("WAIT");
+    res.send("OPEN");
 });
 
 //========================
