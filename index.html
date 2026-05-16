@@ -4,86 +4,94 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>NamRice Auto</title>
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <style>
 
 body{
-
 margin:0;
 padding:0;
-background:#f1f1f1;
-font-family:Arial;
-
+font-family:sans-serif;
+background:#eceff1;
 }
 
 .header{
-
 background:#00c853;
 color:white;
 padding:25px;
-font-size:40px;
+font-size:42px;
 font-weight:bold;
-border-radius:0 0 30px 30px;
-
+text-align:center;
+border-bottom-left-radius:25px;
+border-bottom-right-radius:25px;
 }
 
 .box{
-
 background:white;
 margin:20px;
 padding:20px;
 border-radius:25px;
-
 }
 
-input,select{
+.title{
+font-size:38px;
+font-weight:bold;
+margin-bottom:20px;
+}
 
+input,
+select{
 width:100%;
-padding:20px;
-font-size:30px;
-margin-top:15px;
+padding:22px;
+font-size:34px;
 border:none;
 border-radius:20px;
 background:#f1f1f1;
-
+margin-bottom:20px;
+box-sizing:border-box;
 }
 
 button{
-
 width:100%;
-padding:25px;
-font-size:35px;
+padding:24px;
+font-size:38px;
 font-weight:bold;
 border:none;
-border-radius:25px;
-margin-top:20px;
-color:white;
-
-}
-
-.green{
-
+border-radius:20px;
 background:#00c853;
-
-}
-
-.blue{
-
-background:#2962ff;
-
+color:white;
 }
 
 .big{
-
 font-size:70px;
 font-weight:bold;
 color:#00c853;
+word-break:break-all;
+}
 
+.status{
+font-size:32px;
+line-height:1.7;
+}
+
+#map{
+height:500px;
+border-radius:20px;
+margin-top:20px;
+}
+
+.actionBtn{
+margin-top:15px;
+background:#2962ff;
 }
 
 </style>
@@ -96,109 +104,532 @@ color:#00c853;
 🌾 NamRice Auto
 </div>
 
+<!-- ĐẶT XE -->
+
 <div class="box">
 
-<h1>🌾 Giao gạo</h1>
+<div class="title">
+🚕 ĐẶT XE
+</div>
 
 <input
-id="diachi"
-placeholder="Nhập địa chỉ nhận gạo">
+id="pickupRide"
+placeholder="Điểm đón"
+/>
 
-<select id="gao">
+<input
+id="destinationRide"
+placeholder="Điểm đến"
+/>
 
-<option value="180000">
-ST25 - 180k / túi
+<select id="vehicleRide">
+
+<option value="bike">
+🏍 Xe máy - 8k/km
 </option>
 
-<option value="220000">
-Jasmine - 220k / túi
+<option value="car4">
+🚗 Xe 4 chỗ - 13k/km
+</option>
+
+<option value="car7">
+🚙 Xe 7 chỗ - 18k/km
 </option>
 
 </select>
 
-<select id="soluong">
+<button onclick="datXe()">
+ĐẶT XE
+</button>
+
+</div>
+
+<!-- GIAO HÀNG -->
+
+<div class="box">
+
+<div class="title">
+📦 GIAO HÀNG
+</div>
+
+<input
+id="pickupDelivery"
+placeholder="Điểm lấy hàng"
+/>
+
+<input
+id="destinationDelivery"
+placeholder="Điểm giao hàng"
+/>
+
+<select id="vehicleDelivery">
+
+<option value="bike">
+🏍 Xe máy - 8k/km
+</option>
+
+<option value="truck500">
+🚚 500kg - 13k/km
+</option>
+
+<option value="truck1t">
+🚛 1 tấn - 18k/km
+</option>
+
+<option value="truck25">
+🚛 2.5 tấn - 22k/km
+</option>
+
+<option value="truck35">
+🚛 3.5 tấn - 26k/km
+</option>
+
+</select>
+
+<button onclick="giaoHang()">
+GIAO HÀNG
+</button>
+
+</div>
+
+<!-- GIAO GẠO -->
+
+<div class="box">
+
+<div class="title">
+🌾 GIAO GẠO
+</div>
+
+<input
+id="riceAddress"
+placeholder="Địa chỉ giao gạo"
+/>
+
+<select id="bags">
 
 <option value="1">
-1 túi - 5kg
+1 túi (5kg)
 </option>
 
 <option value="2">
-2 túi - 10kg
+2 túi (10kg)
 </option>
 
 <option value="3">
-3 túi - 15kg
+3 túi (15kg)
+</option>
+
+<option value="4">
+4 túi (20kg)
 </option>
 
 <option value="5">
-5 túi - 25kg
+5 túi (25kg)
 </option>
 
 </select>
 
-<button
-class="green"
-onclick="datgao()">
-
-🌾 ĐẶT GẠO
-
+<button onclick="giaoGao()">
+ĐẶT GẠO
 </button>
 
-<div id="ketqua"></div>
+</div>
+
+<!-- KẾT QUẢ -->
+
+<div class="box">
+
+<div class="title">
+📋 ĐƠN HÀNG
+</div>
+
+<div
+id="ketqua"
+class="status"
+>
+
+Chưa có đơn
+
+</div>
+
+</div>
+
+<!-- BẢN ĐỒ -->
+
+<div class="box">
+
+<div class="title">
+🗺 GPS Realtime
+</div>
+
+<div id="map"></div>
+
+<button
+class="actionBtn"
+onclick="openMaps()"
+>
+MỞ CHỈ ĐƯỜNG
+</button>
 
 </div>
 
 <script>
 
-function datgao(){
-
-let gia =
-Number(
-document.getElementById("gao").value
+let map =
+L.map("map").setView(
+[10.0452,105.7469],
+13
 )
 
-let soluong =
-Number(
-document.getElementById("soluong").value
-)
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+maxZoom:19
+}
+).addTo(map)
 
-let tong =
-gia * soluong
+let line = null
 
-document.getElementById(
-"ketqua"
-).innerHTML = `
+window.mapLink = ""
 
-<div class="box">
+async function getRoute(start,end){
 
-<h1>🛵 ĐƠN GẠO</h1>
+const url =
+`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=full&geometries=geojson`
+
+const response =
+await fetch(url)
+
+const data =
+await response.json()
+
+return data.routes[0]
+
+}
+
+function drawRoute(coords){
+
+if(line){
+map.removeLayer(line)
+}
+
+line =
+L.polyline(
+coords,
+{
+color:"blue",
+weight:6
+}
+).addTo(map)
+
+map.fitBounds(coords)
+
+}
+
+async function datXe(){
+
+try{
+
+const pickup =
+document.getElementById("pickupRide").value
+
+const destination =
+document.getElementById("destinationRide").value
+
+const vehicle =
+document.getElementById("vehicleRide").value
+
+const response =
+await fetch("/api/order/ride",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+pickup,
+destination,
+vehicle
+})
+
+})
+
+const data =
+await response.json()
+
+if(!data.success){
+
+alert(data.message)
+return
+
+}
+
+const order = data.order
+
+document.getElementById("ketqua").innerHTML = `
 
 <div class="big">
-
-${tong.toLocaleString()}đ
-
+${order.total.toLocaleString()}đ
 </div>
 
-<h2>
+<br>
 
-🌾 ${soluong} túi
+📏 Khoảng cách:
+${order.km} km
 
-</h2>
+<br><br>
 
-<h2>
-
-📍 Đang tìm shipper
-
-</h2>
-
-</div>
+🚕 ${order.status}
 
 `
+
+const start = [
+order.pickupLat,
+order.pickupLon
+]
+
+const end = [
+order.destinationLat,
+order.destinationLon
+]
+
+L.marker(start).addTo(map)
+L.marker(end).addTo(map)
+
+const route =
+await getRoute(start,end)
+
+const coords =
+route.geometry.coordinates.map(c=>[
+c[1],
+c[0]
+])
+
+drawRoute(coords)
+
+window.mapLink =
+`https://www.google.com/maps/dir/${order.pickupLat},${order.pickupLon}/${order.destinationLat},${order.destinationLon}`
+
+}catch(err){
+
+alert("Lỗi")
+
+}
+
+}
+
+async function giaoHang(){
+
+try{
+
+const pickup =
+document.getElementById("pickupDelivery").value
+
+const destination =
+document.getElementById("destinationDelivery").value
+
+const vehicle =
+document.getElementById("vehicleDelivery").value
+
+const response =
+await fetch("/api/order/delivery",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+pickup,
+destination,
+vehicle
+})
+
+})
+
+const data =
+await response.json()
+
+if(!data.success){
+
+alert(data.message)
+return
+
+}
+
+const order = data.order
+
+document.getElementById("ketqua").innerHTML = `
+
+<div class="big">
+${order.total.toLocaleString()}đ
+</div>
+
+<br>
+
+📏 Khoảng cách:
+${order.km} km
+
+<br><br>
+
+📦 ${order.status}
+
+`
+
+const start = [
+order.pickupLat,
+order.pickupLon
+]
+
+const end = [
+order.destinationLat,
+order.destinationLon
+]
+
+L.marker(start).addTo(map)
+L.marker(end).addTo(map)
+
+const route =
+await getRoute(start,end)
+
+const coords =
+route.geometry.coordinates.map(c=>[
+c[1],
+c[0]
+])
+
+drawRoute(coords)
+
+window.mapLink =
+`https://www.google.com/maps/dir/${order.pickupLat},${order.pickupLon}/${order.destinationLat},${order.destinationLon}`
+
+}catch(err){
+
+alert("Lỗi")
+
+}
+
+}
+
+async function giaoGao(){
+
+try{
+
+const customerAddress =
+document.getElementById("riceAddress").value
+
+const bags =
+document.getElementById("bags").value
+
+const response =
+await fetch("/api/order/rice",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+customerAddress,
+bags
+})
+
+})
+
+const data =
+await response.json()
+
+if(!data.success){
+
+alert(data.message)
+return
+
+}
+
+const order = data.order
+
+document.getElementById("ketqua").innerHTML = `
+
+🌾 Máy bán gạo:
+Đường A4 Cần Thơ
+
+<br><br>
+
+<div class="big">
+${order.total.toLocaleString()}đ
+</div>
+
+<br>
+
+📏 Khoảng cách:
+${order.km} km
+
+<br><br>
+
+🌾 ${order.bags} túi gạo
+
+<br><br>
+
+🚚 ${order.status}
+
+`
+
+const start = [
+order.machineLat,
+order.machineLon
+]
+
+const end = [
+order.customerLat,
+order.customerLon
+]
+
+L.marker(start).addTo(map)
+L.marker(end).addTo(map)
+
+const route =
+await getRoute(start,end)
+
+const coords =
+route.geometry.coordinates.map(c=>[
+c[1],
+c[0]
+])
+
+drawRoute(coords)
+
+window.mapLink =
+`https://www.google.com/maps/dir/${order.machineLat},${order.machineLon}/${order.customerLat},${order.customerLon}`
+
+}catch(err){
+
+alert("Lỗi")
+
+}
+
+}
+
+function openMaps(){
+
+if(!window.mapLink){
+
+alert("Chưa có tuyến đường")
+return
+
+}
+
+window.open(
+window.mapLink,
+"_blank"
+)
 
 }
 
 </script>
 
 </body>
-
 </html>
