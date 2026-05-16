@@ -6,21 +6,24 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-//================= BIEN MO KHOA =================
+//========================
 let trangThaiMo = false;
+//========================
 
-//================= TEST =================
+// TEST WEB
 app.get("/", (req, res) => {
 
     res.send("NamRice Auto OK");
 });
 
-//================= ESP32 CHECK =================
+//========================
+// ESP32 CHECK
+//========================
 app.get("/check", (req, res) => {
 
     if (trangThaiMo) {
 
-        console.log("ESP32 DA NHAN LENH");
+        console.log("GUI LENH OPEN");
 
         trangThaiMo = false;
 
@@ -30,16 +33,17 @@ app.get("/check", (req, res) => {
     res.send("WAIT");
 });
 
-//================= SEPAY WEBHOOK =================
+//========================
+// SEPAY WEBHOOK
+//========================
 app.post("/sepay", (req, res) => {
 
-    console.log("Nhan webhook:", req.body);
+    console.log(req.body);
 
     const amount = Number(req.body.transferAmount || 0);
 
     const content = (req.body.content || "").toLowerCase();
 
-    //================= DIEU KIEN =================
     if (
         amount >= 2000 &&
         content.includes("may gao st25 01")
@@ -53,8 +57,8 @@ app.post("/sepay", (req, res) => {
     res.send("OK");
 });
 
-//================= START =================
+//========================
 app.listen(PORT, () => {
 
-    console.log("Server dang chay cong", PORT);
+    console.log("Server running:", PORT);
 });
