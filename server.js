@@ -34,26 +34,32 @@ app.get("/check", (req, res) => {
 //========================
 // SEPAY WEBHOOK
 //========================
-app.post("/sepay", (req, res) => 
+app.post("/sepay", (req, res) => {
 
-    {
-    console.log(req.body);
+  const apiKey = req.headers["authorization"];
 
-    const amount = Number(req.body.transferAmount || 0);
+  if (apiKey !== process.env.SEPAY_API_KEY) {
+    return res.status(403).send("Forbidden");
+  }
 
-    const content = (req.body.content || "").toLowerCase();
+  console.log(req.body);
 
-    if (
-        amount >= 2000 &&
-        content.includes("may gao st25 01")
-    ) {
+  const amount = Number(req.body.transferAmount || 0);
 
-        console.log("THANH TOAN HOP LE");
+  const content = (req.body.content || "").toLowerCase();
 
-        trangThaiMo = true;
-    }
+  if (
+    amount >= 2000 &&
+    content.includes("may gao st25 01")
+  ) {
 
-    res.send("OK");
+    console.log("THANH TOAN HOP LE");
+
+    trangThaiMo = true;
+  }
+
+  res.send("OK");
+
 });
 
 //========================
