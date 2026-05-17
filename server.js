@@ -34,14 +34,9 @@ app.get("/check", (req, res) => {
 //========================
 // SEPAY WEBHOOK
 //========================
-app.post("/sepay", (req, res) => {
+app.post("/sepay", (req, res) => 
 
-const apiKey = req.headers["authorization"];
-
-if (apiKey !== process.env.SEPAY_API_KEY) {
-
-    return res.status(403).send("Forbidden");
-}    
+    {
     console.log(req.body);
 
     const amount = Number(req.body.transferAmount || 0);
