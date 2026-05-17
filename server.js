@@ -36,30 +36,29 @@ app.get("/check", (req, res) => {
 //========================
 app.post("/sepay", (req, res) => {
 
-  const apiKey = req.headers["authorization"];
+    const apiKey = req.headers["authorization"];
 
-  if (apiKey !== process.env.SEPAY_API_KEY) {
-    return res.status(403).send("Forbidden");
-  }
+    if (apiKey !== process.env.SEPAY_API_KEY) {
+        return res.status(403).send("Forbidden");
+    }
 
-  console.log(req.body);
+    console.log(req.body);
 
-  const amount = Number(req.body.transferAmount || 0);
+    const amount = Number(req.body.transferAmount || 0);
 
-  const content = (req.body.content || "").toLowerCase();
+    const content = (req.body.content || "").toLowerCase();
 
-  if (
-    amount >= 2000 &&
-    content.includes("may gao st25 01")
-  ) {
+    if (
+        amount >= 2000 &&
+        content.includes("may gao st25 01")
+    ) {
 
-    console.log("THANH TOAN HOP LE");
+        console.log("THANH TOAN HOP LE");
 
-    trangThaiMo = true;
-  }
+        trangThaiMo = true;
+    }
 
-  res.send("OK");
-
+    res.send("OK");
 });
 
 //========================
