@@ -32,6 +32,21 @@ let esp32 = null;
 app.get("/", (req, res) => {
 
     res.send("NAMRICE REALTIME OK");
+});
+    app.get("/open5", (req, res) => {
+
+    if (esp32) {
+
+        esp32.send("OPEN_5");
+
+        res.send("DA MO RELAY 5");
+
+    } else {
+
+        res.send("ESP32 OFFLINE");
+
+    }
+
 
 });
 
