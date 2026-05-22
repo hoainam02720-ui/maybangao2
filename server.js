@@ -33,22 +33,32 @@ app.get("/", (req, res) => {
 
     res.send("NAMRICE REALTIME OK");
 });
-    app.get("/open5", (req, res) => {
+    
+app.get("/open5", (req, res) => {
 
-    if (esp32) {
+  // KIEM TRA KEY
+  if(req.query.key !== "NAMRICE_SECRET_2026") {
 
-        esp32.send(JSON.stringify({
-  type: "open",
-  relay: 5
-}));
+    return res.send("SAI KEY");
 
-        res.send("DA MO RELAY 5");
+  }
 
-    } else {
+  // GUI LENH MO RELAY
+  if (esp32) {
 
-        res.send("ESP32 OFFLINE");
+    esp32.send(JSON.stringify({
+      type: "open",
+      relay: 5
+    }));
 
-    }
+    res.send("DA MO RELAY 5");
+
+  } else {
+
+    res.send("ESP32 OFFLINE");
+
+  }
+
 
 
 });
