@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
 
 const app = express();
 
@@ -6,41 +8,69 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-//========================
-let trangThaiMo = false;
-//========================
+// ====================================
+// SERVER
+// ====================================
 
+const server = http.createServer(app);
+
+const wss = new WebSocket.Server({ server });
+
+// ====================================
+// ESP32
+// ====================================
+
+let esp32 = null;
+
+// ====================================
 // TEST WEB
+// ====================================
+
 app.get("/", (req, res) => {
 
-    res.send("NamRice Auto OK");
+    res.send("NAMRICE REALTIME OK");
+
 });
 
-//========================
-// ESP32 CHECK
-//========================
+// ====================================
+// ESP32 CONNECT
+// ====================================
 
-app.get("/check", (req, res) => {
+wss.on("connection", (ws) => {
 
-    if (trangThaiMo) {
+    console.log("ESP32 ONLINE");
 
-        trangThaiMo = false;
+    esp32 = ws;
 
-        return res.send("OPEN");
-    }
+    ws.on("close", () => {
 
-    res.send("WAIT");
+        console.log("ESP32 OFFLINE");
+
+        esp32 = null;
+
+    });
+
+    ws.on("message", (msg) => {
+
+        console.log("ESP32:", msg.toString());
+
+    });
+
 });
-//========================
+
+// ====================================
 // SEPAY WEBHOOK
-//========================
+// ====================================
+
 app.post("/sepay", (req, res) => {
 
-    const apiKey = req.headers["authorization"] || ""
+    const apiKey = req.headers["authorization"] || "";
 
-if (apiKey !== "Apikey Aa12345678@") {
-    return res.status(403).send("Forbidden")
-}
+    if (apiKey !== "Apikey Aa12345678@") {
+
+        return res.status(403).send("Forbidden");
+
+    }
 
     console.log(req.body);
 
@@ -48,21 +78,111 @@ if (apiKey !== "Apikey Aa12345678@") {
 
     const content = (req.body.content || "").toLowerCase();
 
+    // ====================================
+    // GẠO Ô 1
+    // ====================================
+
     if (
         amount >= 2000 &&
-        content.includes("may gao st25 01")
+        content.includes("gao1")
     ) {
 
-        console.log("THANH TOAN HOP LE");
+        console.log("MO O GAO 1");
 
-        trangThaiMo = true;
+        if (esp32) {
+
+            esp32.send("OPEN_1");
+
+        }
+
+    }
+
+    // ====================================
+    // GẠO Ô 2
+    // ====================================
+
+    if (
+        amount >= 2000 &&
+        content.includes("gao2")
+    ) {
+
+        console.log("MO O GAO 2");
+
+        if (esp32) {
+
+            esp32.send("OPEN_2");
+
+        }
+
+    }
+
+    // ====================================
+    // GẠO Ô 3
+    // ====================================
+
+    if (
+        amount >= 2000 &&
+        content.includes("gao3")
+    ) {
+
+        console.log("MO O GAO 3");
+
+        if (esp32) {
+
+            esp32.send("OPEN_3");
+
+        }
+
+    }
+
+    // ====================================
+    // GẠO Ô 4
+    // ====================================
+
+    if (
+        amount >= 2000 &&
+        content.includes("gao4")
+    ) {
+
+        console.log("MO O GAO 4");
+
+        if (esp32) {
+
+            esp32.send("OPEN_4");
+
+        }
+
+    }
+
+    // ====================================
+    // GẠO Ô 5
+    // ====================================
+
+    if (
+        amount >= 2000 &&
+        content.includes("gao5")
+    ) {
+
+        console.log("MO O GAO 5");
+
+        if (esp32) {
+
+            esp32.send("OPEN_5");
+
+        }
+
     }
 
     res.send("OK");
+
 });
 
-//========================
-app.listen(PORT, () => {
+// ====================================
+// START
+// ====================================
 
-    console.log("Server running:", PORT);
+server.listen(PORT, () => {
+
+    console.log("SERVER RUNNING:", PORT);
+
 });
