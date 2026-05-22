@@ -14,7 +14,10 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({
+    server,
+    path: "/"
+});
 
 // ====================================
 // ESP32
