@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({
     server,
-    path: "/"
+    path: "/ws"
 });
 
 // ====================================
