@@ -104,9 +104,16 @@ wss.on("connection", (ws) => {
 
     ws.on("message", (msg) => {
 
-        console.log("ESP32:", msg.toString());
+    const data = JSON.parse(msg);
 
-    });
+    if(data.type === "online") {
+
+        lastOnline = Date.now();
+    }
+
+    console.log(data);
+
+});
 
 });
 
