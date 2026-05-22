@@ -3,6 +3,7 @@ const http = require("http");
 const WebSocket = require("ws");
 
 const app = express();
+let lastOnline = 0;
 
 app.use(express.json());
 
@@ -80,6 +81,26 @@ wss.on("connection", (ws) => {
         esp32 = null;
 
     });
+
+    app.get("/status", (req, res) => {
+
+    if(req.query.key !== "NAMRICE_SECRET_2026") {
+
+        return res.send("SAI KEY");
+    }
+
+    const now = Date.now();
+
+    if(now - lastOnline < 40000) {
+
+        res.send("ESP32 ONLINE");
+
+    } else {
+
+        res.send("ESP32 OFFLINE");
+    }
+
+});
 
     ws.on("message", (msg) => {
 
