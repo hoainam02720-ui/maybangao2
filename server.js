@@ -37,7 +37,10 @@ app.get("/", (req, res) => {
 
     if (esp32) {
 
-        esp32.send("OPEN_5");
+        esp32.send(JSON.stringify({
+  type: "open",
+  relay: 5
+}));
 
         res.send("DA MO RELAY 5");
 
